@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://ldai1er9.wdf.sap.corp:44300/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='ER9CLNT500')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://ldai1er9.wdf.sap.corp:44300/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='ER9CLNT500')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://ldai1er9.wdf.sap.corp:44300/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='ER9CLNT500')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://ldai1er9.wdf.sap.corp:44300/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='ER9CLNT500')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://ldai1er9.wdf.sap.corp:44300/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='ER9CLNT500')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZJV_ODATACLIENT_TEST_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="C_CrcyExchRateCurrencyPairVHType" sap:label="Currency Pair Value Help" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="SourceCurrency"/>
+                    <PropertyRef Name="TargetCurrency"/>
+                </Key>
+                <Property Name="SourceCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="From Currency" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="TargetCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="To Currency" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="CurrencyPair" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="Currency Pair"/>
+            </EntityType>
+            <EntityType Name="C_CurrencyExchangeRateType" sap:label="Currency Exchange Rate" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ExchangeRateType"/>
+                    <PropertyRef Name="SourceCurrency"/>
+                    <PropertyRef Name="TargetCurrency"/>
+                    <PropertyRef Name="ExchangeRateEffectiveDate"/>
+                    <PropertyRef Name="DraftUUID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="Activation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Copy_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Edit_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Preparation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Validation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DirectQuotedEffectiveExchRate_fc" Type="Edm.Byte" sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ExchangeRateEffectiveDateFoEd_fc" Type="Edm.Byte" sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ExchangeRateTypeForEdit_fc" Type="Edm.Byte" sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="IndirectQuotedEffctvExchRate_fc" Type="Edm.Byte" sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SourceCurrencyForEdit_fc" Type="Edm.Byte" sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TargetCurrencyForEdit_fc" Type="Edm.Byte" sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ExchangeRateType" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Exchange Rate Type"/>
+                <Property Name="SourceCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="From Currency" sap:semantics="currency-code"/>
+                <Property Name="TargetCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="To Currency" sap:semantics="currency-code"/>
+                <Property Name="ExchangeRateEffectiveDate" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="ExchangeRateTypeForEdit" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:field-control="ExchangeRateTypeForEdit_fc" sap:label="Exchange Rate Type" sap:value-list="standard"/>
+                <Property Name="SourceCurrencyForEdit" Type="Edm.String" MaxLength="5" sap:field-control="SourceCurrencyForEdit_fc" sap:label="From Currency" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="TargetCurrencyForEdit" Type="Edm.String" MaxLength="5" sap:field-control="TargetCurrencyForEdit_fc" sap:label="To Currency" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="ExchangeRateEffectiveDateFoEd" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:field-control="ExchangeRateEffectiveDateFoEd_fc" sap:filter-restriction="interval" sap:label="Valid From" sap:quickinfo="Date As of Which the Exchange Rate Is Effective"/>
+                <Property Name="ExchangeRate" Type="Edm.Decimal" Precision="9" Scale="5" sap:label="Exchange Rate"/>
+                <Property Name="NumberOfSourceCurrencyUnits" Type="Edm.Decimal" Precision="9" Scale="0" sap:label="Ratio (from)" sap:quickinfo="Ratio for the &quot;from&quot; currency units"/>
+                <Property Name="NumberOfTargetCurrencyUnits" Type="Edm.Decimal" Precision="9" Scale="0" sap:label="Ratio (to)" sap:quickinfo="Ratio for the &quot;to&quot; currency units"/>
+                <Property Name="ExchRateIsIndirectQuotation" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Exchange Rate Is Indirect Quotation" sap:quickinfo="Single-Character Flag"/>
+                <Property Name="ExchangeRateQuotationName" Type="Edm.String" MaxLength="255" sap:display-format="UpperCase" sap:label="Quotation" sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="AbsoluteExchangeRate" Type="Edm.Decimal" Precision="9" Scale="5" sap:label="Exchange Rate" sap:quickinfo="Absolute Exchange Rate"/>
+                <Property Name="EffectiveExchangeRate" Type="Edm.Decimal" Precision="12" Scale="5" sap:label="Effective Exch. Rate" sap:quickinfo="Effective Exchange Rate"/>
+                <Property Name="DirectQuotedEffectiveExchRate" Type="Edm.Decimal" Precision="9" Scale="5" sap:field-control="DirectQuotedEffectiveExchRate_fc" sap:label="Direct Exch. Rate" sap:quickinfo="Direct Quoted Effective Exchange Rate"/>
+                <Property Name="IndirectQuotedEffctvExchRate" Type="Edm.Decimal" Precision="9" Scale="5" sap:field-control="IndirectQuotedEffctvExchRate_fc" sap:label="Indirect Exch. Rate" sap:quickinfo="Indirect Quoted Effective Exchange Rate"/>
+                <Property Name="StatisticsExchangeRate" Type="Edm.Decimal" Precision="12" Scale="5" sap:label="Rate 1:1" sap:quickinfo="Effective Exchange Rate"/>
+                <Property Name="CurrencyPair" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="Currency Pair" sap:value-list="standard"/>
+                <Property Name="NumberOfIncompleteFields" Type="Edm.Byte"/>
+                <Property Name="Status" Type="Edm.Byte"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has Draft" sap:heading="" sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Key" sap:heading="" sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Created On" sap:heading="" sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Last Changed On" sap:heading="" sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has active" sap:heading="" sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" sap:display-format="UpperCase" sap:label="Is active" sap:heading="" sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Relationship="ZJV_ODATACLIENT_TEST_SRV.assoc_168BF48BA1B15761CCF052F4E3FF24FC" FromRole="FromRole_assoc_168BF48BA1B15761CCF052F4E3FF24FC" ToRole="ToRole_assoc_168BF48BA1B15761CCF052F4E3FF24FC"/>
+                <NavigationProperty Name="SiblingEntity" Relationship="ZJV_ODATACLIENT_TEST_SRV.assoc_AFAB9F8DF2B924E3EC078918FE80FE0C" FromRole="FromRole_assoc_AFAB9F8DF2B924E3EC078918FE80FE0C" ToRole="ToRole_assoc_AFAB9F8DF2B924E3EC078918FE80FE0C"/>
+            </EntityType>
+            <EntityType Name="I_BankFeeExchRateTypeVHType" sap:label="Bank Fee: Value Help Exchange Rate Type" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ExchangeRateType"/>
+                </Key>
+                <Property Name="ExchangeRateType" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Exchange Rate Type"/>
+                <Property Name="ExchangeRateTypeName" Type="Edm.String" MaxLength="40" sap:label="Usage" sap:quickinfo="Exchange rate type usage"/>
+            </EntityType>
+            <EntityType Name="I_CurrencyType" sap:label="Currency" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Currency"/>
+                </Key>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5" sap:text="Currency_Text" sap:label="Currency" sap:quickinfo="Currency Key" sap:semantics="currency-code"/>
+                <Property Name="Currency_Text" Type="Edm.String" MaxLength="40" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Decimals" Type="Edm.Byte" sap:label="Decimal Places" sap:quickinfo="Number of decimal places"/>
+                <Property Name="CurrencyISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO Code" sap:quickinfo="ISO Currency Code"/>
+                <Property Name="AlternativeCurrencyKey" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Alternative Key"/>
+                <Property Name="IsPrimaryCurrencyForISOCrcy" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Primary" sap:quickinfo="Primary SAP Currency Code for ISO Code"/>
+            </EntityType>
+            <EntityType Name="I_DraftAdministrativeDataType" sap:label="Draft Administration Data" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Draft (Technical ID)"/>
+                <Property Name="DraftEntityType" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Draft Entity ID"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Created On"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="CreatedByUserDescription" sap:label="Draft Created By"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Last Changed On"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="LastChangedByUserDescription" sap:label="Draft Last Changed By"/>
+                <Property Name="DraftAccessType" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Draft Access Type"/>
+                <Property Name="ProcessingStartDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft In Process Since"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="InProcessByUserDescription" sap:label="Draft In Process By"/>
+                <Property Name="DraftIsKeptByUser" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft Is Kept By User"/>
+                <Property Name="EnqueueStartDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Locked Since"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft Created By Me"/>
+                <Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft Last Changed By Me"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft In Process By Me"/>
+                <Property Name="CreatedByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Draft Created By (Description)"/>
+                <Property Name="LastChangedByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Draft Last Changed By (Description)"/>
+                <Property Name="InProcessByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Draft In Process By (Description)"/>
+            </EntityType>
+            <ComplexType Name="ValidationFunctionResult">
+                <Property Name="IsValid" Type="Edm.Boolean" sap:label="Is valid"/>
+            </ComplexType>
+            <Association Name="assoc_AFAB9F8DF2B924E3EC078918FE80FE0C" sap:content-version="1">
+                <End Type="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" Multiplicity="1" Role="FromRole_assoc_AFAB9F8DF2B924E3EC078918FE80FE0C"/>
+                <End Type="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" Multiplicity="0..1" Role="ToRole_assoc_AFAB9F8DF2B924E3EC078918FE80FE0C"/>
+            </Association>
+            <Association Name="assoc_168BF48BA1B15761CCF052F4E3FF24FC" sap:content-version="1">
+                <End Type="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" Multiplicity="1" Role="FromRole_assoc_168BF48BA1B15761CCF052F4E3FF24FC"/>
+                <End Type="ZJV_ODATACLIENT_TEST_SRV.I_DraftAdministrativeDataType" Multiplicity="0..1" Role="ToRole_assoc_168BF48BA1B15761CCF052F4E3FF24FC"/>
+            </Association>
+            <EntityContainer Name="ZJV_ODATACLIENT_TEST_SRV_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="C_CrcyExchRateCurrencyPairVH" EntityType="ZJV_ODATACLIENT_TEST_SRV.C_CrcyExchRateCurrencyPairVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="C_CurrencyExchangeRate" EntityType="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_BankFeeExchRateTypeVH" EntityType="ZJV_ODATACLIENT_TEST_SRV.I_BankFeeExchRateTypeVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_Currency" EntityType="ZJV_ODATACLIENT_TEST_SRV.I_CurrencyType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_DraftAdministrativeData" EntityType="ZJV_ODATACLIENT_TEST_SRV.I_DraftAdministrativeDataType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:addressable="false" sap:content-version="1"/>
+                <AssociationSet Name="assoc_168BF48BA1B15761CCF052F4E3FF24FC" Association="ZJV_ODATACLIENT_TEST_SRV.assoc_168BF48BA1B15761CCF052F4E3FF24FC" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="C_CurrencyExchangeRate" Role="FromRole_assoc_168BF48BA1B15761CCF052F4E3FF24FC"/>
+                    <End EntitySet="I_DraftAdministrativeData" Role="ToRole_assoc_168BF48BA1B15761CCF052F4E3FF24FC"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_AFAB9F8DF2B924E3EC078918FE80FE0C" Association="ZJV_ODATACLIENT_TEST_SRV.assoc_AFAB9F8DF2B924E3EC078918FE80FE0C" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="C_CurrencyExchangeRate" Role="FromRole_assoc_AFAB9F8DF2B924E3EC078918FE80FE0C"/>
+                    <End EntitySet="C_CurrencyExchangeRate" Role="ToRole_assoc_AFAB9F8DF2B924E3EC078918FE80FE0C"/>
+                </AssociationSet>
+                <FunctionImport Name="C_CurrencyExchangeRateActivation" ReturnType="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" EntitySet="C_CurrencyExchangeRate" m:HttpMethod="POST" sap:action-for="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" sap:applicable-path="Activation_ac">
+                    <Parameter Name="ExchangeRateType" Type="Edm.String" Mode="In" MaxLength="4"/>
+                    <Parameter Name="SourceCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="TargetCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="ExchangeRateEffectiveDate" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                </FunctionImport>
+                <FunctionImport Name="C_CurrencyExchangeRateCopy" ReturnType="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" EntitySet="C_CurrencyExchangeRate" m:HttpMethod="POST" sap:action-for="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" sap:applicable-path="Copy_ac">
+                    <Parameter Name="ExchangeRateType" Type="Edm.String" Mode="In" MaxLength="4"/>
+                    <Parameter Name="SourceCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="TargetCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="ExchangeRateEffectiveDate" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                </FunctionImport>
+                <FunctionImport Name="C_CurrencyExchangeRateEdit" ReturnType="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" EntitySet="C_CurrencyExchangeRate" m:HttpMethod="POST" sap:action-for="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" sap:applicable-path="Edit_ac">
+                    <Parameter Name="ExchangeRateType" Type="Edm.String" Mode="In" MaxLength="4"/>
+                    <Parameter Name="SourceCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="TargetCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="ExchangeRateEffectiveDate" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="PreserveChanges" Type="Edm.Boolean" Mode="In" Nullable="true"/>
+                </FunctionImport>
+                <FunctionImport Name="C_CurrencyExchangeRatePreparation" ReturnType="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" EntitySet="C_CurrencyExchangeRate" m:HttpMethod="POST" sap:action-for="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" sap:applicable-path="Preparation_ac">
+                    <Parameter Name="ExchangeRateType" Type="Edm.String" Mode="In" MaxLength="4"/>
+                    <Parameter Name="SourceCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="TargetCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="ExchangeRateEffectiveDate" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In" Nullable="true"/>
+                </FunctionImport>
+                <FunctionImport Name="C_CurrencyExchangeRateValidation" ReturnType="ZJV_ODATACLIENT_TEST_SRV.ValidationFunctionResult" m:HttpMethod="GET" sap:action-for="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" sap:applicable-path="Validation_ac">
+                    <Parameter Name="ExchangeRateType" Type="Edm.String" Mode="In" MaxLength="4"/>
+                    <Parameter Name="SourceCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="TargetCurrency" Type="Edm.String" Mode="In" MaxLength="5"/>
+                    <Parameter Name="ExchangeRateEffectiveDate" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In" Nullable="true"/>
+                </FunctionImport>
+            </EntityContainer>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.ZJV_ODATACLIENT_TEST_SRV_Entities/C_CurrencyExchangeRate" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.DraftRoot">
+                    <Record>
+                        <PropertyValue Property="ActivationAction" String="ZJV_ODATACLIENT_TEST_SRV.ZJV_ODATACLIENT_TEST_SRV_Entities/C_CurrencyExchangeRateActivation"/>
+                        <PropertyValue Property="EditAction" String="ZJV_ODATACLIENT_TEST_SRV.ZJV_ODATACLIENT_TEST_SRV_Entities/C_CurrencyExchangeRateEdit"/>
+                        <PropertyValue Property="PreparationAction" String="ZJV_ODATACLIENT_TEST_SRV.ZJV_ODATACLIENT_TEST_SRV_Entities/C_CurrencyExchangeRatePreparation"/>
+                        <PropertyValue Property="ValidationFunction" String="ZJV_ODATACLIENT_TEST_SRV.ZJV_ODATACLIENT_TEST_SRV_Entities/C_CurrencyExchangeRateValidation"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>Activation_ac</PropertyPath>
+                                <PropertyPath>Copy_ac</PropertyPath>
+                                <PropertyPath>Edit_ac</PropertyPath>
+                                <PropertyPath>Preparation_ac</PropertyPath>
+                                <PropertyPath>Validation_ac</PropertyPath>
+                                <PropertyPath>DirectQuotedEffectiveExchRate_fc</PropertyPath>
+                                <PropertyPath>ExchangeRateEffectiveDateFoEd_fc</PropertyPath>
+                                <PropertyPath>ExchangeRateTypeForEdit_fc</PropertyPath>
+                                <PropertyPath>IndirectQuotedEffctvExchRate_fc</PropertyPath>
+                                <PropertyPath>SourceCurrencyForEdit_fc</PropertyPath>
+                                <PropertyPath>TargetCurrencyForEdit_fc</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="ExchangeRateEffectiveDateFoEd"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>Activation_ac</PropertyPath>
+                                <PropertyPath>Copy_ac</PropertyPath>
+                                <PropertyPath>Edit_ac</PropertyPath>
+                                <PropertyPath>Preparation_ac</PropertyPath>
+                                <PropertyPath>Validation_ac</PropertyPath>
+                                <PropertyPath>DirectQuotedEffectiveExchRate_fc</PropertyPath>
+                                <PropertyPath>ExchangeRateEffectiveDateFoEd_fc</PropertyPath>
+                                <PropertyPath>ExchangeRateTypeForEdit_fc</PropertyPath>
+                                <PropertyPath>IndirectQuotedEffctvExchRate_fc</PropertyPath>
+                                <PropertyPath>SourceCurrencyForEdit_fc</PropertyPath>
+                                <PropertyPath>TargetCurrencyForEdit_fc</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.C_CrcyExchRateCurrencyPairVHType/SourceCurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="I_Currency"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="SourceCurrency"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Decimals"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CurrencyISOCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="AlternativeCurrencyKey"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IsPrimaryCurrencyForISOCrcy"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.C_CrcyExchRateCurrencyPairVHType/TargetCurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="I_Currency"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="TargetCurrency"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Decimals"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CurrencyISOCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="AlternativeCurrencyKey"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IsPrimaryCurrencyForISOCrcy"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType/ExchangeRateTypeForEdit" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Bank Fee: Value Help Exchange Rate Type"/>
+                        <PropertyValue Property="CollectionPath" String="I_BankFeeExchRateTypeVH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ExchangeRateTypeForEdit"/>
+                                    <PropertyValue Property="ValueListProperty" String="ExchangeRateType"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="ExchangeRateTypeName"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType/SourceCurrencyForEdit" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="I_Currency"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="SourceCurrencyForEdit"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Decimals"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CurrencyISOCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="AlternativeCurrencyKey"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IsPrimaryCurrencyForISOCrcy"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType/TargetCurrencyForEdit" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="I_Currency"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="TargetCurrencyForEdit"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Decimals"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CurrencyISOCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="AlternativeCurrencyKey"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IsPrimaryCurrencyForISOCrcy"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType/CurrencyPair" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Currency Pair Value Help"/>
+                        <PropertyValue Property="CollectionPath" String="C_CrcyExchRateCurrencyPairVH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyPair"/>
+                                    <PropertyValue Property="ValueListProperty" String="CurrencyPair"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SourceCurrency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="TargetCurrency"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.ZJV_ODATACLIENT_TEST_SRV_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Rollup" EnumMember="None"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.C_CurrencyExchangeRateType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>ExchangeRateEffectiveDateFoEd</PropertyPath>
+                        <PropertyPath>TargetCurrencyForEdit</PropertyPath>
+                        <PropertyPath>SourceCurrencyForEdit</PropertyPath>
+                        <PropertyPath>ExchangeRateTypeForEdit</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZJV_ODATACLIENT_TEST_SRV.I_CurrencyType/Currency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.UnitSpecificScale" Path="Decimals"/>
+            </Annotations>
+            <atom:link rel="self" href="https://ldai1er9.wdf.sap.corp:44300/sap/opu/odata/sap/ZJV_ODATACLIENT_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://ldai1er9.wdf.sap.corp:44300/sap/opu/odata/sap/ZJV_ODATACLIENT_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,49 @@
+{
+  "name": "odata-library",
+  "version": "0.9.4",
+  "description": "OData client for testing Netweawer OData services.",
+  "main": "index.js",
+  "dependencies": {
+    "gulp-prettier": "^3.0.0",
+    "http-parser-js": "^0.5.0",
+    "jsdom": "^13.2.0",
+    "lodash": "^4.17.10",
+    "superagent": "^3.8.3",
+    "xml2js": "^0.4.19"
+  },
+  "scripts": {
+    "test": "nyc --reporter=lcov --reporter=text mocha --recursive ./test/unit/ ./test/func/",
+    "unit": "mocha --recursive ./test/unit/ ./test/func/",
+    "unit-cov": "nyc --reporter=lcov --reporter=text mocha --recursive ./test/unit/",
+    "func-cov": "nyc --reporter=lcov --reporter=text mocha --recursive ./test/func/",
+    "unit-debug": "mocha --inspect-brk --recursive ./test/unit/ ./test/func/",
+    "validate": "npx gulp validate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.wdf.sap.corp:I335255/odata-v4-client.git"
+  },
+  "keywords": [
+    "OData"
+  ],
+  "author": "SAP SE",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-cached": "^1.1.1",
+    "gulp-eslint": "^6.0.0",
+    "gulp-mocha": "^7.0.2",
+    "jasmine": "^3.2.0",
+    "mocha": "^6.2.2",
+    "nyc": "^13.1.0",
+    "proxyquire": "^2.1.3",
+    "gulp-istanbul": "^1.1.3",
+    "sinon": "^7.5.0",
+    "husky": "^4.2.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run validate"
+    }
+  }
+}

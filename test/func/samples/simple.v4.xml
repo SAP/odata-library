@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="com.sap.gateway.srvd.zjv_rap_test.v0001" Alias="SAP__self">
+            <EntityType Name="C_CurrencyExchangeRateType">
+                <Key>
+                    <PropertyRef Name="ExchangeRateType"/>
+                    <PropertyRef Name="SourceCurrency"/>
+                    <PropertyRef Name="TargetCurrency"/>
+                    <PropertyRef Name="ExchangeRateEffectiveDate"/>
+                    <PropertyRef Name="DraftUUID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ExchangeRateType" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="SourceCurrency" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="TargetCurrency" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="ExchangeRateEffectiveDate" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="ExchangeRateTypeForEdit" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="SourceCurrencyForEdit" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="TargetCurrencyForEdit" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="ExchangeRateEffectiveDateFoEd" Type="Edm.Date"/>
+                <Property Name="ExchangeRate" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5"/>
+                <Property Name="NumberOfSourceCurrencyUnits" Type="Edm.Decimal" Nullable="false" Precision="9"/>
+                <Property Name="NumberOfTargetCurrencyUnits" Type="Edm.Decimal" Nullable="false" Precision="9"/>
+                <Property Name="ExchRateIsIndirectQuotation" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="ExchangeRateQuotationName" Type="Edm.String" Nullable="false" MaxLength="255"/>
+                <Property Name="AbsoluteExchangeRate" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5"/>
+                <Property Name="EffectiveExchangeRate" Type="Edm.Decimal" Nullable="false" Precision="12" Scale="5"/>
+                <Property Name="DirectQuotedEffectiveExchRate" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5"/>
+                <Property Name="IndirectQuotedEffctvExchRate" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5"/>
+                <Property Name="StatisticsExchangeRate" Type="Edm.Decimal" Nullable="false" Precision="12" Scale="5"/>
+                <Property Name="CurrencyPair" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="NumberOfIncompleteFields" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="Status" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="__FieldControl" Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateControl"/>
+                <Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zjv_rap_test.v0001.SAP__Message)" Nullable="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="com.sap.gateway.srvd.zjv_rap_test.v0001.I_DraftAdministrativeDataType"/>
+                <NavigationProperty Name="SiblingEntity" Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType"/>
+            </EntityType>
+            <EntityType Name="I_DraftAdministrativeDataType">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="DraftEntityType" Type="Edm.String" Nullable="false" MaxLength="30"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="CreatedByUser" Type="Edm.String" Nullable="false" MaxLength="12"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" Nullable="false" MaxLength="12"/>
+                <Property Name="DraftAccessType" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="ProcessingStartDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="InProcessByUser" Type="Edm.String" Nullable="false" MaxLength="12"/>
+                <Property Name="DraftIsKeptByUser" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="EnqueueStartDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="CreatedByUserDescription" Type="Edm.String" Nullable="false" MaxLength="80"/>
+                <Property Name="LastChangedByUserDescription" Type="Edm.String" Nullable="false" MaxLength="80"/>
+                <Property Name="InProcessByUserDescription" Type="Edm.String" Nullable="false" MaxLength="80"/>
+            </EntityType>
+            <ComplexType Name="C_CurrencyExchangeRateControl">
+                <Property Name="DirectQuotedEffectiveExchRate" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="ExchangeRateEffectiveDateFoEd" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="ExchangeRateTypeForEdit" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="IndirectQuotedEffctvExchRate" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="SourceCurrencyForEdit" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="TargetCurrencyForEdit" Type="Edm.Byte" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="C_CurrencyExchangeRateOperationControl">
+                <Property Name="ACTIVATION" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="COPY" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="EDIT" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="PREPARATION" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="SAP__Message">
+                <Property Name="code" Type="Edm.String" Nullable="false"/>
+                <Property Name="message" Type="Edm.String" Nullable="false"/>
+                <Property Name="longtextUrl" Type="Edm.String" Nullable="true"/>
+                <Property Name="numericSeverity" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="target" Type="Edm.String" Nullable="false"/>
+                <Property Name="transition" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
+            <Action Name="EditAction" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean" Nullable="false"/>
+                <ReturnType Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+            </Action>
+            <Action Name="COPY" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+                <ReturnType Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+            </Action>
+            <Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+                <ReturnType Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+            </Action>
+            <Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String" Nullable="false"/>
+                <ReturnType Type="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType" Nullable="false"/>
+            </Action>
+            <EntityContainer Name="Container">
+                <EntitySet Name="C_CurrencyExchangeRate" EntityType="com.sap.gateway.srvd.zjv_rap_test.v0001.C_CurrencyExchangeRateType">
+                    <NavigationPropertyBinding Path="DraftAdministrativeData" Target="I_DraftAdministrativeData"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="C_CurrencyExchangeRate"/>
+                </EntitySet>
+                <EntitySet Name="I_DraftAdministrativeData" EntityType="com.sap.gateway.srvd.zjv_rap_test.v0001.I_DraftAdministrativeDataType"/>
+            </EntityContainer>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/ExchangeRateType">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Exchange Rate Type"/>
+                <Annotation Term="SAP__common.Heading" String="ExRt"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/ExchangeRateTypeForEdit">
+                <Annotation Term="SAP__common.FieldControl" Path="__FieldControl/ExchangeRateTypeForEdit"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_bankfeeexchratetypevh/0001;ps='srvd-zjv_rap_test-0001';va='com.sap.gateway.srvd.zjv_rap_test.v0001.et-c_currencyexchangerate.exchangeratetypeforedit'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Exchange Rate Type"/>
+                <Annotation Term="SAP__common.Heading" String="ExRt"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/SourceCurrencyForEdit">
+                <Annotation Term="SAP__common.FieldControl" Path="__FieldControl/SourceCurrencyForEdit"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_currency/0001;ps='srvd-zjv_rap_test-0001';va='com.sap.gateway.srvd.zjv_rap_test.v0001.et-c_currencyexchangerate.sourcecurrencyforedit'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="From Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/TargetCurrencyForEdit">
+                <Annotation Term="SAP__common.FieldControl" Path="__FieldControl/TargetCurrencyForEdit"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_currency/0001;ps='srvd-zjv_rap_test-0001';va='com.sap.gateway.srvd.zjv_rap_test.v0001.et-c_currencyexchangerate.targetcurrencyforedit'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="To Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/ExchangeRateEffectiveDateFoEd">
+                <Annotation Term="SAP__common.FieldControl" Path="__FieldControl/ExchangeRateEffectiveDateFoEd"/>
+                <Annotation Term="SAP__common.Label" String="Valid From"/>
+                <Annotation Term="SAP__common.Heading" String="Exchange Rate Effective Date"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Date As of Which the Exchange Rate Is Effective"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/ExchRateIsIndirectQuotation">
+                <Annotation Term="SAP__common.Label" String="Exchange Rate Is Indirect Quotation"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Single-Character Flag"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/ExchangeRateQuotationName">
+                <Annotation Term="SAP__common.Label" String="Quotation"/>
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/AbsoluteExchangeRate">
+                <Annotation Term="SAP__common.Label" String="Exchange Rate"/>
+                <Annotation Term="SAP__common.Heading" String="Absolute Exchange Rate"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Absolute Exchange Rate"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/DirectQuotedEffectiveExchRate">
+                <Annotation Term="SAP__common.FieldControl" Path="__FieldControl/DirectQuotedEffectiveExchRate"/>
+                <Annotation Term="SAP__common.Label" String="Direct Exch. Rate"/>
+                <Annotation Term="SAP__common.Heading" String="Direct Quoted Effective Exchange Rate"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Direct Quoted Effective Exchange Rate"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/IndirectQuotedEffctvExchRate">
+                <Annotation Term="SAP__common.FieldControl" Path="__FieldControl/IndirectQuotedEffctvExchRate"/>
+                <Annotation Term="SAP__common.Label" String="Indirect Exch. Rate"/>
+                <Annotation Term="SAP__common.Heading" String="Indirect Quoted Effective Exchange Rate"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Indirect Quoted Effective Exchange Rate"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/StatisticsExchangeRate">
+                <Annotation Term="SAP__common.Label" String="Rate 1:1"/>
+                <Annotation Term="SAP__common.Heading" String="Effective Exchange Rate"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Effective Exchange Rate"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/CurrencyPair">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/c_crcyexchratecurrencypairvh/0001;ps='srvd-zjv_rap_test-0001';va='com.sap.gateway.srvd.zjv_rap_test.v0001.et-c_currencyexchangerate.currencypair'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Currency Pair"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/HasDraftEntity">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Has Draft"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has draft document"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/DraftUUID">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Key"/>
+                <Annotation Term="SAP__common.QuickInfo" String="UUID serving as key (parent key, root key)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/DraftEntityCreationDateTime">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Created On"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/DraftEntityLastChangeDateTime">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Last Changed On"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/HasActiveEntity">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Has active"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/IsActiveEntity">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Is active"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Is active document"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/__FieldControl">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/C_CurrencyExchangeRate">
+                <Annotation Term="SAP__common.DraftRoot">
+                    <Record>
+                        <PropertyValue Property="EditAction" String="com.sap.gateway.srvd.zjv_rap_test.v0001.EditAction"/>
+                        <PropertyValue Property="ActivationAction" String="com.sap.gateway.srvd.zjv_rap_test.v0001.ActivationAction"/>
+                        <PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.zjv_rap_test.v0001.PreparationAction"/>
+                        <PropertyValue Property="ValidationFunction" String="com.sap.gateway.srvd.zjv_rap_test.v0001.ValidationFunction"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="true"/>
+                        <PropertyValue Property="UnsupportedExpressions" EnumMember="SAP__capabilities.SearchExpressions/AND SAP__capabilities.SearchExpressions/OR SAP__capabilities.SearchExpressions/NOT SAP__capabilities.SearchExpressions/group SAP__capabilities.SearchExpressions/phrase"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="Filterable" Bool="true"/>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="ExchangeRateEffectiveDateFoEd"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>DraftEntityOperationCode</PropertyPath>
+                                <PropertyPath>__FieldControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>DraftEntityOperationCode</PropertyPath>
+                                <PropertyPath>__FieldControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.EditAction(SAP__self.C_CurrencyExchangeRateType)">
+                <Annotation Term="SAP__core.OperationAvailable">
+                    <Null/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.COPY(SAP__self.C_CurrencyExchangeRateType)">
+                <Annotation Term="SAP__core.OperationAvailable">
+                    <Null/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.ActivationAction(SAP__self.C_CurrencyExchangeRateType)">
+                <Annotation Term="SAP__core.OperationAvailable">
+                    <Null/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.PreparationAction(SAP__self.C_CurrencyExchangeRateType)">
+                <Annotation Term="SAP__core.OperationAvailable">
+                    <Null/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.ValidationFunction(SAP__self.C_CurrencyExchangeRateType)">
+                <Annotation Term="SAP__core.OperationAvailable">
+                    <Null/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType">
+                <Annotation Term="SAP__common.Label" String="Currency Exchange Rate"/>
+                <Annotation Term="SAP__common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>ExchangeRateEffectiveDateFoEd</PropertyPath>
+                        <PropertyPath>TargetCurrencyForEdit</PropertyPath>
+                        <PropertyPath>SourceCurrencyForEdit</PropertyPath>
+                        <PropertyPath>ExchangeRateTypeForEdit</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.Facets">
+                    <Collection>
+                        <Record Type="SAP__UI.CollectionFacet">
+                            <PropertyValue Property="Label" String="Exchange Rate Details"/>
+                            <PropertyValue Property="ID" String="ExchangeRateDetFAC"/>
+                            <PropertyValue Property="Facets">
+                                <Collection/>
+                            </PropertyValue>
+                        </Record>
+                        <Record Type="SAP__UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Change Log"/>
+                            <PropertyValue Property="ID" String="ExchangeRateLogFAC"/>
+                            <PropertyValue Property="Target" String="UI.FACET$2$">
+                                <Annotation Term="SAP__core.Messages">
+                                    <Collection>
+                                        <Record>
+                                            <PropertyValue Property="code" String="SY-530"/>
+                                            <PropertyValue Property="message" String="An exception was raised"/>
+                                            <PropertyValue Property="severity" String="error"/>
+                                        </Record>
+                                    </Collection>
+                                </Annotation>
+                            </PropertyValue>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Exchange Rate"/>
+                        <PropertyValue Property="TypeNamePlural" String="Exchange Rates"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="SAP__UI.DataField">
+                                <PropertyValue Property="Label" String="Exchange Rate"/>
+                                <PropertyValue Property="Value" Path="CurrencyPair"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.Identification">
+                    <Collection>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Copy"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zjv_rap_test.v0001.COPY"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Annotation Term="SAP__UI.Criticality" Path="Status"/>
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ExchangeRateTypeForEdit"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ExchangeRateEffectiveDateFoEd"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="CurrencyPair"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="StatisticsExchangeRate"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Copy"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zjv_rap_test.v0001.COPY"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.PresentationVariant">
+                    <Record>
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="SAP__common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="ExchangeRateEffectiveDateFoEd"/>
+                                    <PropertyValue Property="Descending" Bool="true"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>ExchangeRateTypeForEdit</PropertyPath>
+                        <PropertyPath>ExchangeRateEffectiveDateFoEd</PropertyPath>
+                        <PropertyPath>CurrencyPair</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Messages" Path="SAP__Messages"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/DraftEntityType">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Entity ID"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/CreatedByUser">
+                <Annotation Term="SAP__common.Text" Path="CreatedByUserDescription"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Draft Created By"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/LastChangedByUser">
+                <Annotation Term="SAP__common.Text" Path="LastChangedByUserDescription"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Draft Last Changed By"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/DraftAccessType">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Access Type"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/InProcessByUser">
+                <Annotation Term="SAP__common.Text" Path="InProcessByUserDescription"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Draft In Process By"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/DraftIsKeptByUser">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Is Kept By User"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/DraftIsCreatedByMe">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Created By Me"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/DraftIsLastChangedByMe">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Last Changed By Me"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/DraftIsProcessedByMe">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft In Process By Me"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType">
+                <Annotation Term="SAP__common.Label" String="Draft Administration Data"/>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/I_DraftAdministrativeData">
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="true"/>
+                        <PropertyValue Property="UnsupportedExpressions" EnumMember="SAP__capabilities.SearchExpressions/AND SAP__capabilities.SearchExpressions/OR SAP__capabilities.SearchExpressions/NOT SAP__capabilities.SearchExpressions/group SAP__capabilities.SearchExpressions/phrase"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="DraftEntityType"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="CreatedByUser"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="LastChangedByUser"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="DraftAccessType"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="InProcessByUser"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="DraftIsKeptByUser"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="DraftIsCreatedByMe"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="DraftIsLastChangedByMe"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="DraftIsProcessedByMe"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container">
+                <Annotation Term="SAP__aggregation.ApplySupported">
+                    <Record>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Rollup" EnumMember="None"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/SourceCurrency">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="From Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/TargetCurrency">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="To Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/ExchangeRateEffectiveDate">
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/ExchangeRate">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Exchange Rate"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/NumberOfIncompleteFields">
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/Status">
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/DraftUUID">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft (Technical ID)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/ProcessingStartDateTime">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft In Process Since"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/EnqueueStartDateTime">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Locked Since"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/CreatedByUserDescription">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Created By (Description)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/LastChangedByUserDescription">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft Last Changed By (Description)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/InProcessByUserDescription">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Draft In Process By (Description)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/NumberOfSourceCurrencyUnits">
+                <Annotation Term="SAP__common.Label" String="Ratio (from)"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Ratio for the &quot;from&quot; currency units"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/NumberOfTargetCurrencyUnits">
+                <Annotation Term="SAP__common.Label" String="Ratio (to)"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Ratio for the &quot;to&quot; currency units"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CurrencyExchangeRateType/EffectiveExchangeRate">
+                <Annotation Term="SAP__common.Label" String="Effective Exch. Rate"/>
+                <Annotation Term="SAP__common.Heading" String="Effective Exchange Rate"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Effective Exchange Rate"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/CreationDateTime">
+                <Annotation Term="SAP__common.Label" String="Draft Created On"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_DraftAdministrativeDataType/LastChangeDateTime">
+                <Annotation Term="SAP__common.Label" String="Draft Last Changed On"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

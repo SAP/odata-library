@@ -1,0 +1,1116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="../../catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='ER9CLNT500')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="../../catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='ER9CLNT500')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="../../catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='ER9CLNT500')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="../../../sap/fco_manage_activity_type_srv/$metadata">
+        <edmx:Include Namespace="FCO_MANAGE_ACTIVITY_TYPE_SRV" Alias="SAP"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="fco_manage_activity_typ_anno_mdl.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/HasDraftEntity">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/DraftUUID">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/ParentDraftUUID">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/DraftEntityCreationDateTime">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/DraftEntityLastChangeDateTime">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/HasActiveEntity">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/IsActiveEntity">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/Language">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/ControllingArea">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/CostCtrActivityType">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/ValidityEndDate">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/ValidityStartDate">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/LanguageISOCode">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/LanguageName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/UxFcCostCtrActivityTypeDesc">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/CostCtrActyTypeTxtSearchTerm">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/Delete_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/Preparation_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/Validation_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/LanguageForEdit_fc">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType/LanguageForEdit">
+                <Annotation Term="Common.Text" Path="LanguageName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTextTPType">
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="Label" String="Languages"/>
+                            <PropertyValue Property="ID" String="ActivityTypeTexts"/>
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="ID" String="Main"/>
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Main1"/>
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="LanguageForEdit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeDesc"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="Main1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeDesc"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="LanguageForEdit"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Language"/>
+                        <PropertyValue Property="TypeNamePlural" String="Languages"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Label" String="Languages"/>
+                                <PropertyValue Property="Value" Path="LanguageForEdit"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="LanguageForEdit"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Delete"/>
+                            <PropertyValue Property="Action" String="FCO_MANAGE_ACTIVITY_TYPE_SRV.FCO_MANAGE_ACTIVITY_TYPE_SRV_Entities/C_CostCenterActivityTypeTextTPDelete"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="LanguageForEdit"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeDesc"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="LanguageForEdit"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeDesc"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.PresentationVariant">
+                    <Record>
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="CostCtrActivityType"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="ValidityEndDate"/>
+                                    <PropertyValue Property="Descending" Bool="true"/>
+                                </Record>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="LanguageISOCode"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ControllingAreaName">
+                <Annotation Term="UI.HiddenFilter"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/HasDraftEntity">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/DraftUUID">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/DraftEntityCreationDateTime">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/DraftEntityLastChangeDateTime">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/HasActiveEntity">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/IsActiveEntity">
+                <Annotation Term="UI.HiddenFilter"/>
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/to_EnteredByUser">
+                <Annotation Term="UI.HiddenFilter"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ControllingArea">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActivityType">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ValidityEndDate">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/FullName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ActyTypeDfltIndicatorIsHidden">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ChartOfAccounts">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActivityTypeCatName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActyTypeQtyUnitName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActyTypeOutpQtyUnitName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/PriceAllocationMethodName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ActualPrcAllocationMethodName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ActlPostgCostCtrActyTypeCatLbl">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostElementName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ChangeDocObject">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/Activation_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/Copy_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/Edit_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/Preparation_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/Validation_ac">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/AllocationCostElement_fc">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ControllingAreaForEdit_fc">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActivityTypeForEdit_fc">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActivityTypeForEdit">
+                <Annotation Term="Common.SemanticObject" String="ActivityType"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/EnteredByUser">
+                <Annotation Term="Common.SemanticObject" String="Employee"/>
+                <Annotation Term="Common.Text" Path="FullName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/AllocationCostElement">
+                <Annotation Term="Common.SemanticObject" String="GLAccount"/>
+                <Annotation Term="Common.Text" Path="CostElementName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActivityTypeQtyUnit">
+                <Annotation Term="Common.Text" Path="CostCtrActyTypeQtyUnitName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActivityTypeCategory">
+                <Annotation Term="Common.Text" Path="CostCtrActivityTypeCatName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/PriceAllocationMethod">
+                <Annotation Term="Common.Text" Path="PriceAllocationMethodName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ActlPostgCostCenterActyTypeCat">
+                <Annotation Term="Common.Text" Path="ActlPostgCostCtrActyTypeCatLbl">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/ActualPriceAllocationMethod">
+                <Annotation Term="Common.Text" Path="ActualPrcAllocationMethodName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType/CostCtrActivityTypeOutpQtyUnit">
+                <Annotation Term="Common.Text" Path="CostCtrActyTypeOutpQtyUnitName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCenterActivityTypeTPType">
+                <Annotation Term="UI.FilterFacets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="General Information"/>
+                            <PropertyValue Property="ID" String="FilterGeneralInformation"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FilterGeneralInformation1"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Allocation"/>
+                            <PropertyValue Property="ID" String="FilterAllocation"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FilterAllocation1"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Indicators"/>
+                            <PropertyValue Property="ID" String="FilterIndicators"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FilterIndicators1"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Output"/>
+                            <PropertyValue Property="ID" String="FilterOutput"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FilterOutput1"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.HeaderFacets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="ActTypeHFFG2"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#ActTypeHFFG2"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="Label" String="General Information"/>
+                            <PropertyValue Property="ID" String="GICOLLFAC1"/>
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="ID" String="GeneralInfo"/>
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#GeneralInfo1"/>
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="Label" String="Allocation"/>
+                            <PropertyValue Property="ID" String="ALCOLFAC"/>
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.CollectionFacet">
+                                        <PropertyValue Property="Label" String="Default Values"/>
+                                        <PropertyValue Property="ID" String="DefValue"/>
+                                        <PropertyValue Property="Facets">
+                                            <Collection>
+                                                <Record Type="UI.ReferenceFacet">
+                                                    <PropertyValue Property="ID" String="DefValueFR"/>
+                                                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#DefValueFR1"/>
+                                                </Record>
+                                            </Collection>
+                                        </PropertyValue>
+                                    </Record>
+                                    <Record Type="UI.CollectionFacet">
+                                        <PropertyValue Property="Label" String="Default Indicators"/>
+                                        <PropertyValue Property="ID" String="Setup"/>
+                                        <PropertyValue Property="Facets">
+                                            <Collection>
+                                                <Record Type="UI.ReferenceFacet">
+                                                    <PropertyValue Property="ID" String="SetupFR"/>
+                                                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#SetupFR1"/>
+                                                    <Annotation Term="UI.Hidden" Path="ActyTypeDfltIndicatorIsHidden"/>
+                                                </Record>
+                                            </Collection>
+                                        </PropertyValue>
+                                        <Annotation Term="UI.Hidden" Path="ActyTypeDfltIndicatorIsHidden"/>
+                                    </Record>
+                                    <Record Type="UI.CollectionFacet">
+                                        <PropertyValue Property="Label" String="Default Variance Values for Actual Allocation"/>
+                                        <PropertyValue Property="ID" String="VaVaforAcAl"/>
+                                        <PropertyValue Property="Facets">
+                                            <Collection>
+                                                <Record Type="UI.ReferenceFacet">
+                                                    <PropertyValue Property="ID" String="VaVaforAcAlFR"/>
+                                                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#VaVaforAcAlFR1"/>
+                                                </Record>
+                                            </Collection>
+                                        </PropertyValue>
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="Label" String="Indicators"/>
+                            <PropertyValue Property="ID" String="IndicatCol"/>
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="ID" String="IndicatFR"/>
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#IndicatFR1"/>
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="Label" String="Output"/>
+                            <PropertyValue Property="ID" String="OutputCol"/>
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="ID" String="OutputFR"/>
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#OutputFR1"/>
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Translation"/>
+                            <PropertyValue Property="ID" String="TRLFACET"/>
+                            <PropertyValue Property="Target" AnnotationPath="to_CostCenterActivityTypeTextTP/@UI.LineItem"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Change Log"/>
+                            <PropertyValue Property="ID" String="CHDFACET"/>
+                            <PropertyValue Property="Target" AnnotationPath="to_CostCtrActyTypeChgDocument/@UI.LineItem"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="ActTypeHFFG2">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeQtyUnit"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="DefValueFR1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeCategory"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="AllocationCostElement"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PriceAllocationMethod"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Default Values"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="FilterAllocation1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeCategory"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="AllocationCostElement"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PriceAllocationMethod"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActualQuantityIsSetManually"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PlanQuantityIsSetManually"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PeriodPriceIsAverage"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="FixedCostIsPredistributed"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActlPostgCostCenterActyTypeCat"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActualPriceAllocationMethod"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Allocation"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="FilterGeneralInformation1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PriceAllocationMethod"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ControllingAreaForEdit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeForEdit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeDesc"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ValidityStartDate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ValidityEndDateForEdit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeQtyUnit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeValidCat"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CreationDate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="EnteredByUser"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Allocation"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="FilterIndicators1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActivityTypeIsBlocked"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Indicators"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="FilterOutput1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeOutpQtyUnit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="OutputQuantityFactor"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Output"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="GeneralInfo1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ControllingAreaForEdit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeForEdit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeDesc"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ValidityStartDate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ValidityEndDateForEdit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeQtyUnit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeValidCat"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CreationDate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="EnteredByUser"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="General Information"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="IndicatFR1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActivityTypeIsBlocked"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Indicators"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="OutputFR1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="CostCtrActivityTypeOutpQtyUnit"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="OutputQuantityFactor"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Output"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="SetupFR1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActualQuantityIsSetManually"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PlanQuantityIsSetManually"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PeriodPriceIsAverage"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="FixedCostIsPredistributed"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Default Indicators"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="VaVaforAcAlFR1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActlPostgCostCenterActyTypeCat"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ActualPriceAllocationMethod"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Variance Values for Actual Allocation"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Activity Type"/>
+                        <PropertyValue Property="TypeNamePlural" String="Activity Types"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Label" String="Activity Type"/>
+                                <PropertyValue Property="Value" Path="CostCtrActivityTypeForEdit"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Copy"/>
+                            <PropertyValue Property="Action" String="FCO_MANAGE_ACTIVITY_TYPE_SRV.FCO_MANAGE_ACTIVITY_TYPE_SRV_Entities/C_CostCenterActivityTypeTPCopy"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeForEdit"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeName"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeCategory"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CostCtrActivityTypeQtyUnit"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="AllocationCostElement"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ActivityTypeIsBlocked"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="EnteredByUser"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.PresentationVariant">
+                    <Record>
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="CostCtrActivityTypeForEdit"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="ValidityEndDateForEdit"/>
+                                    <PropertyValue Property="Descending" Bool="true"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>ControllingAreaForEdit</PropertyPath>
+                        <PropertyPath>CostCtrActivityTypeForEdit</PropertyPath>
+                        <PropertyPath>CostCtrActivityTypeQtyUnit</PropertyPath>
+                        <PropertyPath>AllocationCostElement</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="ActivityType"/>
+                <Annotation Term="Communication.Contact">
+                    <Record>
+                        <PropertyValue Property="fn" Path="FullName"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocObject">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocObjectClass">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocument">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/DatabaseTable">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocTableKey">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocDatabaseTableField">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocItemChangeTypeText">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/DatabaseTableFieldName">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ObjectDatabaseTable">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocumentSAPClient">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocumentControllingArea">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocumentActivityType">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/CreatedByUser">
+                <Annotation Term="Common.SemanticObject" String="User"/>
+                <Annotation Term="Common.SemanticObjectMapping">
+                    <Collection>
+                        <Record>
+                            <PropertyValue Property="LocalProperty" PropertyPath="CreatedByUser"/>
+                            <PropertyValue Property="SemanticObjectProperty" String="ContactCardID"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType/ChangeDocItemChangeType">
+                <Annotation Term="Common.Text" Path="ChangeDocItemChangeTypeText">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeChgDocumentType">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Change Document"/>
+                        <PropertyValue Property="TypeNamePlural" String="Change Documents"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="DatabaseTableFieldText"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ChangeDocNewFieldValue"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ChangeDocPreviousFieldValue"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CreatedByUser"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CreationDate"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="CreationTime"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.PresentationVariant">
+                    <Record>
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="CreationDate"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="CreationTime"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="DatabaseTableFieldText"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="RequestAtLeast">
+                            <Collection>
+                                <PropertyPath>DatabaseTableFieldText</PropertyPath>
+                                <PropertyPath>CreationTime</PropertyPath>
+                                <PropertyPath>CreationDate</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Communication.Contact">
+                    <Record>
+                        <PropertyValue Property="fn" Path="FullName"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeCrtedByUserVHType/EmailAddress">
+                <Annotation Term="Communication.IsEmailAddress"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeCrtedByUserVHType/EnteredByUser">
+                <Annotation Term="Common.SemanticObject" String="Employee"/>
+                <Annotation Term="Common.Text" Path="FullName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeCrtedByUserVHType/PhoneNumber">
+                <Annotation Term="Communication.IsPhoneNumber"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeCrtedByUserVHType/MobilePhoneNumber">
+                <Annotation Term="Communication.IsPhoneNumber"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeCrtedByUserVHType">
+                <Annotation Term="UI.FieldGroup" Qualifier="FilterGeneralInformation1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="EnteredByUser"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="GeneralInfo1">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="EnteredByUser"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="EnteredByUser"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>EnteredByUser</PropertyPath>
+                        <PropertyPath>FirstName</PropertyPath>
+                        <PropertyPath>LastName</PropertyPath>
+                        <PropertyPath>FullName</PropertyPath>
+                        <PropertyPath>Department</PropertyPath>
+                        <PropertyPath>EmailAddress</PropertyPath>
+                        <PropertyPath>PhoneNumber</PropertyPath>
+                        <PropertyPath>MobilePhoneNumber</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="Communication.Contact">
+                    <Record>
+                        <PropertyValue Property="fn" Path="FullName"/>
+                        <PropertyValue Property="org" Path="Department"/>
+                        <PropertyValue Property="n">
+                            <Record>
+                                <PropertyValue Property="given" Path="FirstName"/>
+                                <PropertyValue Property="surname" Path="LastName"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="tel">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.PhoneType/cell"/>
+                                    <PropertyValue Property="uri" Path="MobilePhoneNumber"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.PhoneType/work"/>
+                                    <PropertyValue Property="uri" Path="PhoneNumber"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="email">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/work"/>
+                                    <PropertyValue Property="address" Path="EmailAddress"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeUnitOfMsrVHType/UnitOfMeasure">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.C_CostCtrActyTypeUnitOfMsrVHType/UnitOfMeasure_E">
+                <Annotation Term="Common.Text" Path="UnitOfMeasureLongName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextLast"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/DraftUUID">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/DraftEntityType">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/DraftAccessType">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/ProcessingStartDateTime">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/DraftIsKeptByUser">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/EnqueueStartDateTime">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/DraftIsCreatedByMe">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/DraftIsLastChangedByMe">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/DraftIsProcessedByMe">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/CreatedByUserDescription">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/LastChangedByUserDescription">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_DraftAdministrativeDataType/InProcessByUserDescription">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/EmailAddress">
+                <Annotation Term="Communication.IsEmailAddress"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/ContactCardRole">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/ContactCardType">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/ContactCardNavLinkSemanticObj">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/ContactCardNavLinkQueryPart">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/PhoneNumber">
+                <Annotation Term="Communication.IsPhoneNumber"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/MobilePhoneNumber">
+                <Annotation Term="Communication.IsPhoneNumber"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType/FaxNumber">
+                <Annotation Term="Communication.IsPhoneNumber"/>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.I_UserContactCardType">
+                <Annotation Term="Communication.Contact">
+                    <Record>
+                        <PropertyValue Property="fn" Path="FullName"/>
+                        <PropertyValue Property="org" Path="Department"/>
+                        <PropertyValue Property="role" Path="FunctionalTitleName"/>
+                        <PropertyValue Property="n">
+                            <Record>
+                                <PropertyValue Property="given" Path="FirstName"/>
+                                <PropertyValue Property="surname" Path="LastName"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="tel">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.PhoneType/fax"/>
+                                    <PropertyValue Property="uri" Path="FaxNumber"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.PhoneType/cell"/>
+                                    <PropertyValue Property="uri" Path="MobilePhoneNumber"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.PhoneType/work"/>
+                                    <PropertyValue Property="uri" Path="PhoneNumber"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="email">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/work"/>
+                                    <PropertyValue Property="address" Path="EmailAddress"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FCO_MANAGE_ACTIVITY_TYPE_SRV.FCO_MANAGE_ACTIVITY_TYPE_SRV_Entities">
+                <Annotation Term="UI.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

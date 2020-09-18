@@ -1,0 +1,150 @@
+# Create entity
+
+Use EntitySet.post to create new entity. The entity is created from
+object passed as parameter of the EntitySet.post method.
+
+
+```javascript
+    let service = new Service();
+	return service.CorrespondenceOutputSet
+		.post({
+			"Event": "SAP08",
+			"CorrespondenceTypeId": "SAP08",
+			"VariantId": "SAP08",
+			"CompanyCode": "M101",
+			"CustomerNumber": "BRQ002",
+			"AccountType": "D",
+			"Date1": "datetime'2038-01-19T03:14:07'",
+			"Email": {
+				"To": "nobody@sap.com",
+				"Subject": "SAP08 OM-OC arbitrary test",
+				"MailTemplateId": "FIN_OPI_LIST_EMAIL_TEMPLATE"
+			}
+	}).then((res) => {
+		console.log("Newly created entity ", res);
+	});
+```
+
+## Navigation property
+
+Use Association.post to create a new entry referenced by already initialized EntitySet
+
+```javascript
+	var service = new Service();
+	service.C_AllocationCycleTP.key({
+		"AllocationType": "ACDOC_CC",
+		"AllocationCycle": "0L14011902",
+		"AllocationCycleStartDate": "\/Date(1547424000000)\/",
+		"DraftUUID": "42f2e9af-c507-1ed9-8bbb-f206cf2596a5",
+		"IsActiveEntity": false
+	}).to_Segment.post({
+		"SegmentName": "003",
+		"SegmentNameDescription": "",
+		"AllocationType": "ACDOC_CC",
+		"AllocationCycle": "0L14011902",
+		"AllocationCycleStartDate": "\/Date(1547424000000)\/"
+	}).then(segment => {
+		console.log("Newly created entity ", segment);
+	});
+```
+
+# Update entity
+
+Use EntitySet.merge to update properties of an entity. The object
+passed as parameter of the EntitySet.merge method should contain
+entries of the entity's key properties and entries of properties,
+which are supposed to be updated.
+
+```javascript
+    let service  = new Service();
+	return service .C_PaymentRequest
+		.merge({
+			"PaymentRequest": "861",
+			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+			"IsActiveEntity": false,
+			"Supplier": "100060"
+		}).then((res) => {
+		console.log("Updated draft entity ", res);
+	});
+```
+
+Merge could be callaed with two parameter. First parameter contains
+key and second parameter contains object with properties for changes.
+It is useful for chaining.
+
+```javascript
+    let service  = new Service();
+	return service.init.then(() => {
+			return service.C_PaymentRequest.get({
+				"PaymentRequest": "861",
+				"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96"
+			});
+		}).then((paymentRequest) => {
+			return service.merge(paymentRequest, {
+				"Supplier": "100060"
+			});
+		}).then((res) => {
+			console.log("Updated draft entity ", res);
+		});
+```
+
+# Update entity (entire resource)
+
+Use EntitySet.put to update an entity by replacing its content.
+The entity content is replaced by a new content from object
+passed as parameter of the EntitySet.put method.
+
+```javascript
+    let service  = new Service();
+	return service .C_PaymentRequest
+		.put({
+			"PaymentRequest": "861",
+			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+			"IsActiveEntity": false,
+			"PaymentRequestType": "FI-AP-PR",
+			"Supplier": "100060",
+			"PayeeName": "eileen vendor 10",
+			"PayeeCityName": "Shanghai",
+			"PayeeStreet": "111 test111",
+			"PayeePostalCode": "201203",
+			"PayeeCountry": "CN",
+			"SupplierBankType": "01",
+			...
+		}).then((res) => {
+		console.log("Updated draft entity ", res);
+	});
+```
+
+# Delete entity
+
+Use EntitySet.delete to delete an entity. The entity is deleted according
+to the object, which contains key properties, passed as parameter of the
+EntitySet.delete method.
+
+```javascript
+    let service  = new Service();
+	service .C_PaymentRequest
+		.delete({
+			"PaymentRequest": "861",
+			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+			"IsActiveEntity": false
+		}).then((res) => {
+			console.log("Deleted draft entity ", res);
+		});
+```
+
+You can pass additional headers for the delete method also
+
+```javascript
+    let service  = new Service();
+	service .C_PaymentRequest
+		.key({
+			"PaymentRequest": "861",
+			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+			"IsActiveEntity": false
+		})
+		.header("Accept-Language", "cs,de;q=0.9"),
+		.delete().then((res) => {
+			console.log("Deleted draft entity ", res);
+		});
+```

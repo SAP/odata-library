@@ -244,6 +244,7 @@ describe("NavigationProperty", function () {
       });
       request = navigationProperty.defaultRequest;
       sinon.stub(request, "header");
+      sinon.stub(request, "payload");
       request._headers = {};
       innerNavigationProperty.name = "NAVIGATION";
       innerSource.getSingleResourcePath = sinon
@@ -252,7 +253,9 @@ describe("NavigationProperty", function () {
       innerAgent.batchManager = {};
     });
     it("Successfully creates entity and return parsed data", function () {
+      request._payload = "BODY_PROPERTIES";
       return navigationProperty.post(body).then((res) => {
+        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert.ok(request.header.calledWith("x-csrf-token", "TOKEN"));
         assert.ok(
           request.header.calledWith("Content-type", "application/json")
@@ -270,10 +273,12 @@ describe("NavigationProperty", function () {
       });
     });
     it("Successfully creates entity and return raw data", function () {
+      request._payload = "BODY_PROPERTIES";
       return navigationProperty
         .raw(true)
         .post(body)
         .then((res) => {
+          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
           assert.deepEqual(res, {
             body: {
               d: "RESPONSE",

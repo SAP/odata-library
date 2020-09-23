@@ -13,7 +13,6 @@ const defaultType = {
 const validProps = ["Property_1", "Property_2", "$Property_1", "$Property_2"];
 
 /* eslint-disable max-statements */
-/* eslint-disable camelcase */
 describe("QueryableResource", function () {
   let QueryableResource;
   let entitySet;
@@ -342,13 +341,16 @@ describe("QueryableResource", function () {
       });
       request = entitySet.defaultRequest;
       sinon.stub(request, "header");
+      sinon.stub(request, "payload");
       request._headers = {};
       request._isRaw = false;
       innerEntitySetModel.name = "ENTITY_SET_NAME";
       innerAgent.batchManager = {};
     });
     it("Successfully creates entity and return parsed data", function () {
+      request._payload = "BODY_PROPERTIES";
       return entitySet.post(body).then((res) => {
+        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert.ok(request.header.calledWith("x-csrf-token", "TOKEN"));
         assert.ok(
           request.header.calledWith("Content-type", "application/json")
@@ -411,12 +413,14 @@ describe("QueryableResource", function () {
         defaultChangeSet: "DEFAULT_CHANGESET",
       };
       sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
+      request._payload = "BODY_PROPERTIES";
 
       assert.ok(entitySet.post(body), "PROMISE");
 
       cb = entitySet._handleBatchCall.getCall(0).args[0];
       cb();
 
+      assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
       assert.ok(
         post.calledWithExactly(
           "/ENTITY_SET_NAME?",
@@ -453,6 +457,7 @@ describe("QueryableResource", function () {
 
       req = entitySet.defaultRequest;
       sinon.stub(req, "header");
+      sinon.stub(req, "payload");
       req._headers = {};
       req._isRaw = false;
       innerEntitySetModel.name = "ENTITY_SET_NAME";
@@ -468,8 +473,10 @@ describe("QueryableResource", function () {
           ok: true,
         })
       );
+      req._payload = "BODY_PROPERTIES";
 
       return entitySet.put(body).then((res) => {
+        assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
         assert.strictEqual(res, true);
         assert(req.header.calledWith("x-csrf-token", "TOKEN"));
         assert(req.header.calledWith("Content-type", "application/json"));
@@ -492,8 +499,10 @@ describe("QueryableResource", function () {
 
       innerAgent.put = sinon.stub().returns(Promise.resolve(resp));
       entitySet.raw();
+      req._payload = "BODY_PROPERTIES";
 
       return entitySet.put(body).then((res) => {
+        assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
         assert.strictEqual(res, resp);
         assert(req.header.calledWith("x-csrf-token", "TOKEN"));
         assert(req.header.calledWith("Content-type", "application/json"));
@@ -527,12 +536,14 @@ describe("QueryableResource", function () {
         defaultChangeSet: "DEFAULT_CHANGESET",
       };
       sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
+      req._payload = "BODY_PROPERTIES";
 
       assert.ok(entitySet.put(body), "PROMISE");
 
       cb = entitySet._handleBatchCall.getCall(0).args[0];
       cb();
 
+      assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
       assert.ok(
         put.calledWithExactly(
           "/ENTITY_SET_NAME(KEY_PREDICATE)",
@@ -573,6 +584,7 @@ describe("QueryableResource", function () {
       );
       request = entitySet.defaultRequest;
       sinon.stub(request, "header");
+      sinon.stub(request, "payload");
       request._headers = {};
       request._isRaw = false;
       innerEntitySetModel.name = "ENTITY_SET_NAME";
@@ -593,7 +605,9 @@ describe("QueryableResource", function () {
           },
         })
       );
+      request._payload = "BODY_PROPERTIES";
       return entitySet.merge(body).then((res) => {
+        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert(request.header.calledWith("x-csrf-token", "TOKEN"));
         assert(request.header.calledWith("Content-type", "application/json"));
         assert(request.header.calledWith("Accept", "application/json"));
@@ -615,8 +629,10 @@ describe("QueryableResource", function () {
         newData
       );
       entitySet.raw();
+      request._payload = "BODY_PROPERTIES";
 
       return entitySet.merge(body).then((res) => {
+        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert(request.header.calledWith("x-csrf-token", "TOKEN"));
         assert(request.header.calledWith("Content-type", "application/json"));
         assert(request.header.calledWith("Accept", "application/json"));
@@ -642,7 +658,9 @@ describe("QueryableResource", function () {
       innerAgent.merge = sinon
         .stub()
         .returns(Promise.reject(new Error("ERROR")));
+      request._payload = "BODY_PROPERTIES";
       return entitySet.merge(body).catch((err) => {
+        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert(err instanceof Error);
         assert(request.header.calledWith("x-csrf-token", "TOKEN"));
         assert(request.header.calledWith("Content-type", "application/json"));
@@ -681,8 +699,10 @@ describe("QueryableResource", function () {
       let entityKey = {
         keyParameter: "keyValue",
       };
+      request._payload = "BODY_PROPERTIES";
       return entitySet.merge(entityKey, newData).then((res) => {
         assert(entitySet.reset.called);
+        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert.strictEqual(res, true);
         assert.deepEqual(innerAgent.merge.getCall(0).args, [
           "/ENTITY_SET_NAME(keyParameter='keyValue')",
@@ -698,7 +718,10 @@ describe("QueryableResource", function () {
       };
       // extend attributes to be updated of entity key
       newData = _.assign(newData, entityKey);
+      request._payload = "BODY_PROPERTIES";
+
       return entitySet.merge(entityKey, newData).then((res) => {
+        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert(entitySet.reset.called);
         assert.strictEqual(res, true);
         assert.deepEqual(innerAgent.merge.getCall(0).args, [
@@ -725,6 +748,7 @@ describe("QueryableResource", function () {
         },
         defaultChangeSet: "DEFAULT_CHANGESET",
       };
+      request._payload = "BODY_PROPERTIES";
       sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
 
       assert.ok(entitySet.merge(body), "PROMISE");
@@ -741,6 +765,8 @@ describe("QueryableResource", function () {
         )
       );
       assert.ok(request.header.calledWithExactly("Accept", "application/json"));
+      assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
+      assert.ok(entitySet.bodyProperties.calledWithExactly(newData));
       assert.strictEqual(
         entitySet._handleBatchCall.getCall(0).args[1],
         innerAgent.batchManager.defaultBatch

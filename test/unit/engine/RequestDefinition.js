@@ -228,4 +228,43 @@ describe("RequestDefinition", function () {
       assert.strictEqual(request._path, "/path?QUERY");
     });
   });
+
+  describe("._isList", function () {
+    it("request definition for single navigation property", function () {
+      request._resource.isMultiple = sinon.stub().returns(false);
+      assert.strictEqual(request._isList, false);
+    });
+    it("request definition for one entity", function () {
+      request._keyValue = "KEY_VALUE";
+      assert.strictEqual(request._isList, false);
+    });
+    it("request definition for entity create/update", function () {
+      request._payload = "PAYLOAD";
+      assert.strictEqual(request._isList, false);
+    });
+    it("request definition for entity set", function () {
+      assert.strictEqual(request._isList, true);
+    });
+    it("request definition for entity set", function () {
+      request._payload = "PAYLOAD";
+      request._resource.isParameterized = true;
+      assert.strictEqual(request._isList, true);
+    });
+  });
+
+  describe(".payload()", function () {
+    it("pass valid payload", function () {
+      request.payload({
+        key: "VALUE",
+      });
+      assert.deepEqual(request._payload, {
+        key: "VALUE",
+      });
+    });
+    it("pass invalid payload", function () {
+      assert.throws(() => {
+        request.payload("VALUE");
+      });
+    });
+  });
 });

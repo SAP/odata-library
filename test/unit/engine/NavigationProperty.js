@@ -77,6 +77,29 @@ describe("NavigationProperty", function () {
         navigationProperty._defaults
       );
     });
+
+    it("v4 collection type target", function () {
+      let elementType = {};
+      navigationProperty = new NavigationProperty(
+        innerSource,
+        {
+          isCollection: true,
+          getTarget: sinon.stub().returns({
+            entitySet: {},
+            entityType: {
+              elementType: elementType,
+            },
+          }),
+        },
+        {
+          model: {
+            getSchema: sinon.stub(),
+          },
+        }
+      );
+
+      assert.strictEqual(navigationProperty.entityTypeModel, elementType);
+    });
   });
 
   describe(".get()", function () {

@@ -31,10 +31,6 @@ service.init.then(()=> {
 * [How to use async/await](doc/EXAMPLES.md) to avoid promises
 * Validate OData [model](doc/MODEL.md)
 
-## Chat
-
-If you have any question join us on [the slack channel](https://sap-s4hana-cloudux.slack.com/messages/CFDSF4WB1).
-
 ## Contact Us
 
 ```

@@ -1666,4 +1666,34 @@ describe("QueryableResource", function () {
       assert.ok(entitySet._unwrapNestedProperties.calledWithExactly("BODY"));
     });
   });
+
+  it(".parseCount()", function () {
+    assert.strictEqual(
+      entitySet.parseCount({
+        body: "10",
+      }),
+      10
+    );
+    assert.strictEqual(
+      entitySet.parseCount({
+        body: 10,
+      }),
+      10
+    );
+    assert.strictEqual(
+      entitySet.parseCount({
+        body: {},
+        res: {
+          text: "10",
+        },
+      }),
+      10
+    );
+    assert.strictEqual(
+      entitySet.parseCount({
+        body: {},
+      }),
+      NaN
+    );
+  });
 });

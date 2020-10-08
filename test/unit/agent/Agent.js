@@ -727,7 +727,7 @@ describe("Agent", function () {
   describe(".tryAuthenticator", function () {
     it("Succeed on first authenticator", function (done) {
       sinon.stub(agent.logger, "debug");
-      authenticatorNone.authenticatorName = "AUTHENTICATOR";
+      authenticatorSamlSap.authenticatorName = "AUTHENTICATOR";
       agent.tryAuthenticator(1, "URL", Promise.resolve("RESPONSE"), function (
         response
       ) {
@@ -739,7 +739,7 @@ describe("Agent", function () {
     it("Succeed on next authenticator", function (done) {
       sinon.stub(agent.logger, "warn");
       sinon.stub(agent.logger, "debug");
-      authenticatorNone.authenticatorName = "FIRST_AUTHENTICATOR";
+      authenticatorSamlSap.authenticatorName = "FIRST_AUTHENTICATOR";
       authenticatorBasic.returns(Promise.resolve("RESPONSE"));
       authenticatorBasic.authenticatorName = "SECOND_AUTHENTICATOR";
 
@@ -773,7 +773,7 @@ describe("Agent", function () {
           unsupported: true,
         })
       );
-      authenticatorSamlSap.returns(
+      authenticatorNone.returns(
         Promise.reject({
           message: "ERROR MESSAGE",
           unsupported: true,
@@ -800,6 +800,7 @@ describe("Agent", function () {
     it("Stops if rejection is fatal", function (done) {
       sinon.stub(agent.logger, "warn");
       sinon.stub(agent.logger, "debug");
+      sinon.stub(agent, "fatalAuthenticateError").returns("FATAL_ERROR");
 
       agent.tryAuthenticator(
         1,
@@ -807,57 +808,7 @@ describe("Agent", function () {
         Promise.reject("Internet is down!"),
         null,
         function (error) {
-          assert.equal(
-            error.message,
-            "Authenticator None: fatal error: Internet is down!"
-          );
-          done();
-        }
-      );
-    });
-    it("Stops if HTTP Forbidden was received", function (done) {
-      sinon.stub(agent.logger, "warn");
-      sinon.stub(agent.logger, "debug");
-
-      agent.tryAuthenticator(
-        1,
-        "URL",
-        Promise.reject({
-          response: {
-            forbidden: true,
-            res: {
-              text: "NACK",
-            },
-          },
-        }),
-        null,
-        function (error) {
-          assert.equal(error.message, "Authenticator None: forbidden: NACK");
-          done();
-        }
-      );
-    });
-    it("Stops if HTTP Server Error was received", function (done) {
-      sinon.stub(agent.logger, "warn");
-      sinon.stub(agent.logger, "debug");
-
-      agent.tryAuthenticator(
-        1,
-        "URL",
-        Promise.reject({
-          response: {
-            serverError: true,
-            res: {
-              text: "CRASH",
-            },
-          },
-        }),
-        null,
-        function (error) {
-          assert.equal(
-            error.message,
-            "Authenticator None: server error: CRASH"
-          );
+          assert.equal(error, "FATAL_ERROR");
           done();
         }
       );

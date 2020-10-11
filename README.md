@@ -6,13 +6,16 @@ A NodeJS library to access OData services provided by the Netweaver server.
 
 
 ```shell
-$ npm  install odata-library
+$ npm  install @sap_oss/odata-library
+
 ```
 
 ## Getting Started
 
 ```javascript
-var service = new Service("https://username:password@localhost/path/to/service/");
+const Service = require("@sap_oss/odata-library").Service;
+
+let service = new Service("https://username:password@localhost/path/to/service/");
 
 service.init.then(()=> {
     return service.Entity_Set_Name.get(1);
@@ -35,6 +38,7 @@ service.init.then(()=> {
 
 ```
 Jakub Vaclavik <jakub.vaclavik@sap.com>
+Michal Nezerka <michal.nezerka@sap.com>
 Norbert Volf <norbert.volf@sap.com>
 ```
 

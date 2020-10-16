@@ -207,6 +207,9 @@ describe("RequestDefinition", function () {
 
   describe(".calculatePath()", function () {
     it("stream path", function () {
+      sinon.stub(request, "_isList").get(function () {
+        return false;
+      });
       request._resource.entityTypeModel.hasStream = true;
       request.calculatePath();
       assert.strictEqual(request._path, "/path/$value");
@@ -215,6 +218,7 @@ describe("RequestDefinition", function () {
       sinon.stub(request, "_isList").get(function () {
         return true;
       });
+      request._resource.entityTypeModel.hasStream = true;
       sinon.stub(request._resource, "urlQuery").returns("QUERY");
       request.calculatePath();
       assert.strictEqual(request._path, "/path?QUERY");

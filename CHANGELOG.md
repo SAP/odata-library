@@ -1,5 +1,11 @@
 # Changelog
 
+# 0.9.7
+
+  * 74a2306 - [FIX] Change request type recognition - Norbert Volf
+
+# 0.9.4
+
   * da4b8fd - [FEATURE] Allow to modify (merge) key properties - Michal Nežerka
   * c38acdc - [FEATURE] Go thru navigation properties recursively - Norbert Volf
 

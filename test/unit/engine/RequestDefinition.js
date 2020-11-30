@@ -87,6 +87,7 @@ describe("RequestDefinition", function () {
 
   describe(".key()", function () {
     it("Raises error for invalid key", function () {
+      sinon.stub(request, "registerAssociations");
       assert.throws(() => {
         request.key(null);
       }, /not plain object/);
@@ -98,6 +99,7 @@ describe("RequestDefinition", function () {
       }, /not plain object/);
     });
     it("Set valid key to parameters", function () {
+      sinon.stub(request, "registerAssociations");
       request.key({
         KEY1: "VALUE1",
         KEY2: "VALUE2",
@@ -107,8 +109,10 @@ describe("RequestDefinition", function () {
         KEY1: "VALUE1",
         KEY2: "VALUE2",
       });
+      assert.ok(request.registerAssociations.calledOnce);
     });
     it("Raises error for missing value in key", function () {
+      sinon.stub(request, "registerAssociations");
       assert.throws(() => {
         request.key({
           KEY2: "VALUE2",
@@ -140,6 +144,15 @@ describe("RequestDefinition", function () {
   });
 
   describe(".registerAssociations()", function () {
+    beforeEach(function () {
+      sinon.stub(request, "populateActions");
+      entitySet.entitySetModel = {
+        actions: "ACTIONS",
+      };
+    });
+    afterEach(function () {
+      assert.ok(request.populateActions.calledWithExactly("ACTIONS"));
+    });
     it("creates association properties", function () {
       entitySet.entityTypeModel.navigationProperties = [
         {
@@ -269,6 +282,82 @@ describe("RequestDefinition", function () {
       assert.throws(() => {
         request.payload("VALUE");
       });
+    });
+  });
+
+  describe(".populateActions()", function () {
+    it("Empty or missing actions", function () {
+      request.populateActions();
+      request.populateActions(null);
+      request.populateActions([]);
+      assert.deepEqual(request.actions, {});
+    });
+    it("Actions without schema alias", function () {
+      let actions = [
+        {
+          name: "Confirm",
+        },
+      ];
+      entitySet.metadata = {
+        model: {
+          getSchema: sinon.stub().returns({}),
+        },
+      };
+      entitySet.urlQuery = sinon.stub().returns("URL_QUERY");
+      entitySet.callAction = sinon.stub();
+
+      request.populateActions(actions);
+      assert.ok(_.isFunction(request.Confirm));
+      assert.ok(_.isFunction(request.actions.Confirm));
+      request.Confirm();
+      assert.strictEqual(request._path, "/path/Confirm?URL_QUERY");
+      assert.ok(entitySet.callAction.calledWithExactly(request));
+    });
+    it("Actions with schema alias", function () {
+      let actions = [
+        {
+          name: "Confirm",
+        },
+      ];
+      entitySet.metadata = {
+        model: {
+          getSchema: sinon.stub().returns({
+            alias: "ALIAS",
+          }),
+        },
+      };
+      entitySet.urlQuery = sinon.stub().returns("URL_QUERY");
+      entitySet.callAction = sinon.stub();
+
+      request.populateActions(actions);
+      assert.ok(_.isFunction(request.Confirm));
+      assert.ok(_.isFunction(request.actions.Confirm));
+      request.Confirm();
+      assert.strictEqual(request._path, "/path/ALIAS.Confirm?URL_QUERY");
+      assert.ok(entitySet.callAction.calledWithExactly(request));
+    });
+    it("Action name is used for other service property name", function () {
+      let actions = [
+        {
+          name: "Confirm",
+        },
+      ];
+      entitySet.metadata = {
+        model: {
+          getSchema: sinon.stub().returns({
+            alias: "ALIAS",
+          }),
+        },
+      };
+      entitySet.urlQuery = sinon.stub().returns("URL_QUERY");
+      entitySet.callAction = sinon.stub();
+      request.Confirm = {};
+      request.populateActions(actions);
+      assert.deepEqual(request.Confirm, {});
+      assert.ok(_.isFunction(request.actions.Confirm));
+      request.actions.Confirm();
+      assert.strictEqual(request._path, "/path/ALIAS.Confirm?URL_QUERY");
+      assert.ok(entitySet.callAction.calledWithExactly(request));
     });
   });
 });

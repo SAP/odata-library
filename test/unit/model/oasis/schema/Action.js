@@ -57,6 +57,32 @@ describe("Action", function () {
       assert.ok(_.isArray(fn.parameters));
     });
 
+    it("entityTypePath", function () {
+      let action = new Action({
+        $: {
+          Name: "ACTION1",
+          IsBound: "true",
+          EntitySetPath: "PATH",
+        },
+        Parameter: [
+          {
+            $: { Name: "Parameter1" },
+          },
+          {
+            $: { Name: "PATH", Type: "ENTTY_TYPE_PATH" },
+          },
+        ],
+        ReturnType: [
+          {
+            $: {
+              Type: "type",
+            },
+          },
+        ],
+      });
+      assert.strictEqual(action.entityTypePath, "ENTTY_TYPE_PATH");
+    });
+
     it("throws error on missing name or multiple return type", function () {
       assert.throws(
         () =>

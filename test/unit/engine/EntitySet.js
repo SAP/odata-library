@@ -34,6 +34,7 @@ describe("EntitySet", function () {
       getLegacyApiObject: () => {},
       name: "entitySetName",
     };
+    entitySet = new EntitySet(innerAgent, innerMetadata, innerEntitySetModel);
   });
 
   describe("#constructor()", function () {
@@ -137,6 +138,50 @@ describe("EntitySet", function () {
 
       entitySet.key({});
       assert.deepEqual(entitySet.navigationProperties, {});
+    });
+  });
+
+  describe(".callAction", function () {
+    it("use standard request to call action", function () {
+      let request = {
+        _path: "PATH",
+        _headers: "HEADERS",
+      };
+
+      innerAgent.batchManager = {};
+      innerAgent.post = sinon.stub();
+      sinon.stub(entitySet, "_handleAgentCall");
+
+      entitySet.callAction(request);
+      entitySet._handleAgentCall.getCall(0).args[0]();
+
+      assert.ok(
+        innerAgent.post.calledWith("PATH", "HEADERS", undefined, false)
+      );
+    });
+    it("use batch to call action", function () {
+      let request = {
+        _path: "PATH",
+        _headers: "HEADERS",
+        header: sinon.stub(),
+      };
+      let defaultBatch = {
+        post: sinon.stub(),
+      };
+
+      innerAgent.batchManager = {
+        defaultBatch: defaultBatch,
+        defaultChangeSet: "DEFAULT_CHANGE_SET",
+      };
+      sinon.stub(entitySet, "_handleBatchCall");
+
+      entitySet.callAction(request);
+      entitySet._handleBatchCall.getCall(0).args[0]();
+
+      assert.ok(
+        defaultBatch.post.calledWith("PATH", "HEADERS", "DEFAULT_CHANGE_SET")
+      );
+      assert.ok(request.header.calledWith("Accept", "application/json"));
     });
   });
 });

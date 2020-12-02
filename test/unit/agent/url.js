@@ -82,4 +82,29 @@ describe("url", function () {
       url.appendSearch();
     });
   });
+
+  it(".absolutizePath()", function () {
+    assert.strictEqual(
+      url.absolutizePath("foo"),
+      "/foo",
+      "Add slash to the begining"
+    );
+    assert.strictEqual(
+      url.absolutizePath("/foo/bar"),
+      "/foo/bar",
+      "Do not change absolutized path"
+    );
+    assert.strictEqual(
+      url.absolutizePath("//foo/bar"),
+      "/foo/bar",
+      "Remove duplicated slash"
+    );
+    [null, 1, undefined, NaN, {}].forEach((testVar) => {
+      assert.strictEqual(
+        url.absolutizePath(testVar),
+        testVar,
+        `Do not touch character "${JSON.stringify(testVar)}"`
+      );
+    });
+  });
 });

@@ -27,13 +27,27 @@ const sampleSchema = {
 describe("EntitySet (oasis)", function () {
   describe("#constructor()", function () {
     it("initializes basic properties", function () {
-      let set = new EntitySet(sampleSetMD, sampleSchema);
+      let set;
+      sampleSchema.actions = [
+        {
+          entityTypePath: "entityType1",
+        },
+        {
+          entityTypePath: "entityType2",
+        },
+      ];
+      set = new EntitySet(sampleSetMD, sampleSchema);
       assert.equal(set.raw, sampleSetMD);
       assert.equal(set.name, "name");
       assert.equal(set.entityType, entityType);
       assert.ok(set.includeInServiceDocument, entityType);
       assert.ok(_.isArray(set.navigationPropertyBindings));
       assert.equal(set.navigationPropertyBindings.length, 1);
+      assert.deepEqual(set.actions, [
+        {
+          entityTypePath: "entityType1",
+        },
+      ]);
     });
   });
 

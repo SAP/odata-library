@@ -98,6 +98,7 @@ describe("QueryableResource", function () {
     beforeEach(() => {
       entitySet.reset();
       sinon.stub(entitySet.defaultRequest, "setQueryParameter");
+      /* eslint-disable camelcase */
       innerEntityTypeModel.properties = {
         Property_1: {
           name: "Property_1",
@@ -108,6 +109,7 @@ describe("QueryableResource", function () {
           type: defaultType,
         },
       };
+      /* eslint-enable camelcase */
     });
     it("Invalid property raises error", function () {
       assert.throws(() => {
@@ -146,6 +148,7 @@ describe("QueryableResource", function () {
         ["$select", "Property_1,Property_2"]
       );
     });
+    /* eslint-disable camelcase */
     it("Correctli encode property names", function () {
       innerEntityTypeModel.properties = {
         $Property_1: {
@@ -155,6 +158,7 @@ describe("QueryableResource", function () {
           Name: "$Property_2",
         },
       };
+      /* eslint-enable camelcase */
       entitySet.select(["$Property_1", "$Property_2"]);
       assert.deepEqual(
         entitySet.defaultRequest.setQueryParameter.getCall(0).args,
@@ -1435,10 +1439,12 @@ describe("QueryableResource", function () {
         },
         response
       );
+      /* eslint-disable camelcase */
       nestedNavProperties = {
         C: "D",
         to_Property: navProperty,
       };
+      /* eslint-enable camelcase */
       nestedNavProperty = {
         results: [nestedNavProperties],
       };
@@ -1475,6 +1481,7 @@ describe("QueryableResource", function () {
         )
       );
 
+      /* eslint-disable camelcase */
       assert.deepEqual(
         entitySet._unwrapNestedProperties(responseWithNestedNavProp),
         _.merge(
@@ -1489,9 +1496,11 @@ describe("QueryableResource", function () {
           response
         )
       );
+      /* eslint-enable camelcase */
     });
 
     it("Check unwrapping in array response", function () {
+      /* eslint-disable camelcase */
       assert.deepEqual(
         [entitySet._unwrapNestedProperties(responseWithNestedNavProp)],
         [
@@ -1508,6 +1517,7 @@ describe("QueryableResource", function () {
           ),
         ]
       );
+      /* eslint-enable camelcase */
     });
   });
 

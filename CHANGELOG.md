@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.9.8
+
+  * 3147731 - [FEATURE] Bound action implementation - Norbert Volf
+
 # 0.9.7
 
   * 74a2306 - [FIX] Change request type recognition - Norbert Volf

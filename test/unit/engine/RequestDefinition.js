@@ -247,6 +247,10 @@ describe("RequestDefinition", function () {
   });
 
   describe("._isList", function () {
+    it("request definition for invalid single navigation property definition", function () {
+      request._resource.isMultiple = true;
+      assert.strictEqual(request._isList, true);
+    });
     it("request definition for single navigation property", function () {
       request._resource.isMultiple = sinon.stub().returns(false);
       assert.strictEqual(request._isList, false);

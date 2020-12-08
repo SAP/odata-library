@@ -86,7 +86,33 @@ describe("agent/batch/Batch", function () {
           "Content-Type: application/http",
           "Content-Transfer-Encoding: binary\n",
           "POST path/to/resource HTTP/1.1",
+          "Content-Length: 4",
           "x-csrf-token: X-CSRF-TOKEN",
+          "Header1: header-value1",
+          "Header2: header-value2",
+          "",
+          "BODY",
+        ].join("\n")
+      );
+    });
+
+    it("Payload for requests with body but without csrf token", function () {
+      request = new Request(
+        "POST",
+        "path/to/resource",
+        {
+          Header1: "header-value1",
+          Header2: "header-value2",
+        },
+        "BODY"
+      );
+      sinon.stub(request, "body").returns(["BODY"]);
+      assert.equal(
+        request.payload(),
+        [
+          "Content-Type: application/http",
+          "Content-Transfer-Encoding: binary\n",
+          "POST path/to/resource HTTP/1.1",
           "Content-Length: 4",
           "Header1: header-value1",
           "Header2: header-value2",

@@ -308,6 +308,43 @@ describe("FunctionImport", function () {
         );
       });
     });
+    it("Success send request and receive response content without csrf token", function () {
+      innerAgent.fetchToken = sinon.stub().returns(Promise.resolve(null));
+      innerAgent.post = sinon.stub().returns(
+        Promise.resolve({
+          body: {
+            d: "RESPONSE_CONTENT",
+          },
+        })
+      );
+      functionImport.defaultRequest._headers = "HEADERS";
+      functionImport.meta.name = "FUNCTION_IMPORT_NAME";
+
+      return functionImport.post().then((res) => {
+        assert.equal(res, "RESPONSE_CONTENT");
+        assert.ok(
+          functionImport.header
+            .getCall(0)
+            .calledWith("Content-type", "application/json")
+        );
+        assert.ok(
+          functionImport.header
+            .getCall(1)
+            .calledWith("Accept", "application/json")
+        );
+        assert.ok(functionImport.header.calledTwice);
+        assert.ok(functionImport.reset.called);
+        assert.ok(
+          innerAgent.post.calledWith(
+            "/FUNCTION_IMPORT_NAME?QUERY",
+            "HEADERS",
+            undefined,
+            "DEFAULT_BATCH",
+            "DEFAULT_CHANGESET"
+          )
+        );
+      });
+    });
   });
 
   describe(".get()", function () {

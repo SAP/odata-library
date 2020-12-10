@@ -1607,6 +1607,17 @@ describe("QueryableResource", function () {
         header: sinon.stub(),
       };
     });
+
+    it("Headers without csrf token", function () {
+      request._resource.entityTypeModel.hasStream = false;
+      entitySet.determineRequestHeaders(request, null);
+      assert.ok(request.header.calledOnce);
+      assert.deepEqual(request.header.getCall(0).args, [
+        "Accept",
+        "application/json",
+      ]);
+    });
+
     it("Headers for standard OData request", function () {
       request._resource.entityTypeModel.hasStream = false;
       entitySet.determineRequestHeaders(request, "TOKEN");
@@ -1672,7 +1683,9 @@ describe("QueryableResource", function () {
         entitySet.determineResponseResult(request, response),
         "RESULT"
       );
-      assert.ok(innerAgent.getResultPath.calledWithExactly("IS_LIST"));
+      assert.ok(
+        innerAgent.getResultPath.calledWithExactly("IS_LIST", response)
+      );
       assert.ok(entitySet._unwrapNestedProperties.calledWithExactly("BODY"));
     });
   });

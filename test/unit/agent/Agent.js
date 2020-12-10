@@ -371,6 +371,39 @@ describe("Agent", function () {
         assert.ok(agent.batchManager.remove.calledWithExactly(batchObject));
       });
     });
+    it("Correctly handled batch request without csrf token", function () {
+      let batchObject = {
+        payload: sinon.stub().returns("PAYLOAD"),
+        process: sinon.stub().returns(Promise.resolve("REQUEST_RESPONSES")),
+        boundary: sinon.stub().returns("BOUNDARY"),
+        resolve: sinon.stub(),
+      };
+      let promiseBatch = Promise.resolve("BATCH_RESPONSE");
+      promiseBatch.request = {};
+
+      sinon.stub(agent, "fetchToken").returns(Promise.resolve(null));
+      sinon.stub(agent, "sendRequest").returns(promiseBatch);
+      sinon
+        .stub(agent, "normalizeBatchResponse")
+        .returns("NORMALIZED_BATCH_RESPONSE");
+      agent.batchManager.remove = sinon.stub().returns();
+
+      return agent.batch(batchObject, "RAW").then(() => {
+        assert.ok(batchObject.payload.calledWithExactly(null));
+        assert.ok(
+          agent.sendRequest.calledWithExactly(
+            "POST",
+            "/$batch",
+            {
+              "Content-Type": "multipart/mixed;boundary=BOUNDARY",
+              Accept: "multipart/mixed",
+            },
+            "PAYLOAD",
+            true
+          )
+        );
+      });
+    });
     it("Fetch token fails", function () {
       let batchObject = {
         reject: sinon.stub(),
@@ -947,6 +980,61 @@ describe("Agent", function () {
         ),
         [[], {}]
       );
+    });
+  });
+
+  describe(".getResultPath", function () {
+    it("SAP list result path v1", function () {
+      let result = {
+        body: {
+          d: {
+            results: "RESULTS",
+          },
+        },
+      };
+      assert.strictEqual(agent.getResultPath(true, result), "body.d.results");
+    });
+    it("SAP object result path v1", function () {
+      let result = {
+        body: {
+          d: {
+            results: "RESULTS",
+          },
+        },
+      };
+      assert.strictEqual(agent.getResultPath(false, result), "body.d");
+    });
+    it("MS list result path v1", function () {
+      let result = {
+        body: {
+          d: "RESULTS",
+        },
+      };
+      assert.strictEqual(agent.getResultPath(true, result), "body.d");
+    });
+    it("List result path v4", function () {
+      let result = {
+        body: {
+          value: "RESULTS",
+        },
+      };
+      agent = new Agent({
+        url: "URL",
+      });
+      agent.setServiceVersion("4.0");
+      assert.strictEqual(agent.getResultPath(true, result), "body.value");
+    });
+    it("Object result path v4", function () {
+      let result = {
+        body: {
+          value: "RESULTS",
+        },
+      };
+      agent = new Agent({
+        url: "URL",
+      });
+      agent.setServiceVersion("4.0");
+      assert.strictEqual(agent.getResultPath(false, result), "body");
     });
   });
 });

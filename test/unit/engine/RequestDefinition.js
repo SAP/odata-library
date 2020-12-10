@@ -219,7 +219,21 @@ describe("RequestDefinition", function () {
   });
 
   describe(".calculatePath()", function () {
-    it("stream path", function () {
+    it("entity stream path", function () {
+      sinon.stub(request, "_isList").get(function () {
+        return false;
+      });
+      sinon.stub(request, "_isEntity").get(function () {
+        return true;
+      });
+      request._resource.getSingleResourcePath = sinon
+        .stub()
+        .returns("SINGLE_PATH");
+      request._resource.entityTypeModel.hasStream = true;
+      request.calculatePath();
+      assert.strictEqual(request._path, "/SINGLE_PATH/$value");
+    });
+    it("list stream path", function () {
       sinon.stub(request, "_isList").get(function () {
         return false;
       });
@@ -270,6 +284,28 @@ describe("RequestDefinition", function () {
       request._payload = "PAYLOAD";
       request._resource.isParameterized = true;
       assert.strictEqual(request._isList, true);
+    });
+  });
+
+  describe("_isEntity", function () {
+    it("request definition for invalid single navigation property definition", function () {
+      request._resource.isMultiple = true;
+      assert.strictEqual(request._isEntity, false);
+    });
+    it("request definition for single navigation property", function () {
+      request._resource.isMultiple = sinon.stub().returns(false);
+      assert.strictEqual(request._isEntity, true);
+    });
+    it("request definition for one entity", function () {
+      request._keyValue = "KEY_VALUE";
+      assert.strictEqual(request._isEntity, true);
+    });
+    it("request definition for entity create/update", function () {
+      request._payload = "PAYLOAD";
+      assert.strictEqual(request._isEntity, true);
+    });
+    it("request definition for entity set", function () {
+      assert.strictEqual(request._isEntity, false);
     });
   });
 

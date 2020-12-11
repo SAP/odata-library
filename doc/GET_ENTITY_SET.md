@@ -230,6 +230,11 @@ The navigation property which provide binary data has to be marked as *HasStream
 in metadata. Response is `Buffer`which contains received binary data.
 
 
+### Read stream by navigation property
+
+Common use of navigation property with relation 1:1 is producing
+stream.
+
 ```javascript
     service.Items.key({
             ApplObjectType: "PARAGON",
@@ -239,5 +244,30 @@ in metadata. Response is `Buffer`which contains received binary data.
     })
     .then((dataBuffer) => {
         parsePdf(dataBuffer);
+    });
+```
+
+### Read stream from by single entity
+
+Read stream entity with entity definiton. The example
+
+
+```javascript
+service.C_AllocationCycleTP.filter("IsActiveEntity eq true")
+    .top(1)
+    .get()
+    .then((result) => {
+     return service.AllocExcelTemplateSet.key({
+	     cycle: [
+	    	 result[0].AllocationType,
+	    	 result[0].AllocationCycle,
+	    	 new Date(parseInt(result[0].AllocationCycleStartDate.match(/\/Date\((\d+)\)\//)[1], 10))
+	    		 .toISOString()
+	    		 .replace(/(-|T.*)/g, "")
+	     ].join(",")
+     }).get();
+    })
+    .then((result) => {
+         assert.ok(result instanceof Buffer);
     });
 ```

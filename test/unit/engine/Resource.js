@@ -143,6 +143,12 @@ describe("Resource", function () {
   });
 
   describe(".parameters()", function () {
+    it("Returns itself for chaining", function () {
+      let request = resource.defaultRequest;
+      sinon.stub(request, "parameters");
+      const reference = resource.parameters({});
+      assert.ok(reference === resource);
+    });
     it("sets parameters", function () {
       let request = resource.defaultRequest;
       sinon.stub(request, "parameters");
@@ -162,6 +168,10 @@ describe("Resource", function () {
   });
 
   describe(".setQueryParameter()", function () {
+    it("Returns itself for chaining", function () {
+      const reference = resource.setQueryParameter("ARG1", "VAL1");
+      assert.ok(reference === resource);
+    });
     it("Set different types of values", function () {
       resource.setQueryParameter("$top", 100);
       assert.strictEqual(resource.getQueryParameter("$top"), 100);
@@ -180,13 +190,15 @@ describe("Resource", function () {
   });
 
   describe(".queryParameter()", function () {
+    it("Returns itself for chaining", function () {
+      const reference = resource.queryParameter("ARG1", "VAL1");
+      assert.ok(reference === resource);
+    });
     it("Pass all parameters to the setQueryParameter method", function () {
-      sinon.stub(resource, "setQueryParameter");
-      resource.queryParameter("ARG1", "ARG2");
-      assert.deepEqual(resource.setQueryParameter.getCall(0).args, [
-        "ARG1",
-        "ARG2",
-      ]);
+      resource.queryParameter("ARG1", "VAL1").queryParameter("ARG2", "VAL2");
+
+      assert.strictEqual(resource.getQueryParameter("ARG1"), "VAL1");
+      assert.strictEqual(resource.getQueryParameter("ARG2"), "VAL2");
     });
   });
 

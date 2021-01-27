@@ -81,6 +81,12 @@ describe("QueryableResource", function () {
         entitySet.search(100);
       }, /pattern/);
     });
+    it("Returns itself for chaining", function () {
+      sinon.stub(entitySet.defaultRequest, "setQueryParameter");
+      innerEntitySetModel.sap.searchable = true;
+      const reference = entitySet.search("PATTERN");
+      assert.ok(reference === entitySet);
+    });
     it("Run search on searchable EntitySet with invalid pattern", function () {
       sinon.stub(entitySet.defaultRequest, "setQueryParameter");
       innerEntitySetModel.sap.searchable = true;
@@ -127,7 +133,11 @@ describe("QueryableResource", function () {
         entitySet.select("Blud");
       });
     });
-    it("Pass one property nameso select clause", function () {
+    it("Returns itself for chaining", function () {
+      const reference = entitySet.select("Property_1");
+      assert.ok(reference === entitySet);
+    });
+    it("Pass one property name to select clause", function () {
       entitySet.select("Property_1");
       assert.deepEqual(
         entitySet.defaultRequest.setQueryParameter.getCall(0).args,
@@ -200,6 +210,10 @@ describe("QueryableResource", function () {
         entitySet.expand("unexistingNavProperty");
       });
     });
+    it("Returns itself for chaining", function () {
+      const reference = entitySet.expand("navProperty");
+      assert.ok(reference === entitySet);
+    });
     it("Pass one navigation property name to expand clause", function () {
       entitySet.expand("navProperty");
       assert.deepEqual(
@@ -242,6 +256,12 @@ describe("QueryableResource", function () {
         entitySet.top("BLUD");
       }, /top value/);
     });
+    it("Returns itself for chaining", function () {
+      sinon.stub(entitySet.defaultRequest, "setQueryParameter");
+      innerEntitySetModel.sap.pageable = true;
+      const reference = entitySet.top(100);
+      assert.ok(reference === entitySet);
+    });
     it("Valid top clause set $top parameter", function () {
       sinon.stub(entitySet.defaultRequest, "setQueryParameter");
       innerEntitySetModel.sap.pageable = true;
@@ -271,6 +291,12 @@ describe("QueryableResource", function () {
         entitySet.skip(-1);
       }, /positive/);
     });
+    it("Returns itself for chaining", function () {
+      sinon.stub(entitySet.defaultRequest, "setQueryParameter");
+      innerEntitySetModel.sap.pageable = true;
+      const reference = entitySet.skip(0);
+      assert.ok(reference === entitySet);
+    });
     it("Zero is valid skip parameter.", function () {
       sinon.stub(entitySet.defaultRequest, "setQueryParameter");
       innerEntitySetModel.sap.pageable = true;
@@ -292,6 +318,11 @@ describe("QueryableResource", function () {
   });
 
   describe(".filter()", function () {
+    it("Returns itself for chaining", function () {
+      sinon.stub(entitySet.defaultRequest, "setQueryParameter");
+      const reference = entitySet.filter("FILTER_DEFINITION");
+      assert.ok(reference === entitySet);
+    });
     it("Valid filter clause set $filter parameter", function () {
       sinon.stub(entitySet.defaultRequest, "setQueryParameter");
       entitySet.filter("FILTER_DEFINITION");
@@ -303,6 +334,11 @@ describe("QueryableResource", function () {
   });
 
   describe(".orderby()", function () {
+    it("Returns itself for chaining", function () {
+      sinon.stub(entitySet.defaultRequest, "setQueryParameter");
+      const reference = entitySet.orderby("Property_1", "Property_2 desc");
+      assert.ok(reference === entitySet);
+    });
     it("Valid sort clause set $orderby parameter", function () {
       sinon.stub(entitySet.defaultRequest, "setQueryParameter");
       entitySet.orderby("Property_1", "Property_2 desc");
@@ -314,9 +350,15 @@ describe("QueryableResource", function () {
   });
 
   describe(".key()", function () {
+    it("Returns itself for chaining", function () {
+      sinon.stub(entitySet.defaultRequest, "key");
+      const reference = entitySet.key("A");
+      assert.ok(reference === entitySet);
+    });
     it("Uses request key", function () {
-      sinon.stub(entitySet.defaultRequest, "key").withArgs("A").returns("X");
-      assert.strictEqual(entitySet.key("A"), "X");
+      sinon.stub(entitySet.defaultRequest, "key");
+      entitySet.key("A");
+      assert.ok(entitySet.defaultRequest.key.calledWithExactly("A"));
     });
   });
 
@@ -895,6 +937,10 @@ describe("QueryableResource", function () {
   });
 
   describe(".raw()", function () {
+    it("Returns itself for chaining", function () {
+      const reference = entitySet.raw();
+      assert.ok(reference === entitySet);
+    });
     it("Enable raw response", function () {
       let parameters = entitySet.defaultRequest;
       assert.strictEqual(parameters._isRaw, false);

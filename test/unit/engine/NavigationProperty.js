@@ -348,6 +348,14 @@ describe("NavigationProperty", function () {
   });
 
   describe(".key()", function () {
+    it("Returns itself for chaining", function () {
+      sinon.stub(navigationProperty, "isMultiple").returns(false);
+      sinon.stub(navigationProperty.defaultRequest, "registerAssociations");
+
+      const reference = navigationProperty.key("PARAMS");
+
+      assert.ok(reference === navigationProperty);
+    });
     it("Is multiple association", function () {
       sinon.stub(navigationProperty, "isMultiple").returns(true);
       sinon.stub(Parent.prototype, "key");

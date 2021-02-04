@@ -84,7 +84,7 @@ function createSchema(type) {
   };
 }
 
-describe("EntityType (nw)", function () {
+describe("EntityType (oasis)", function () {
   let type;
   beforeEach(function () {
     type = new EntityType(sampleEntityTypeMD);

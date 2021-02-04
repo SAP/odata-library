@@ -57,7 +57,7 @@ function taskWatch(done) {
       usePolling: true,
       interval: 500,
     },
-    series(taskLocalPrettify, taskLocalUnit, taskLocalLint)
+    series(taskLocalUnit, taskLocalLint)
   );
   done();
 }
@@ -106,6 +106,7 @@ function taskFuncCI() {
 
 exports.local = series(taskLocalPrettify, taskLocalLint, taskLocalUnit);
 exports.validate = series(taskPrettifyCI, taskLocalLint, taskLocalUnit);
+exports.prettier = series(taskLocalPrettify);
 exports.watch = taskWatch;
 exports.default = series(
   taskPrettifyCI,

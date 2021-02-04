@@ -5,6 +5,7 @@ const sinon = require("sinon");
 const _ = require("lodash");
 const NavigationProperty = require("../../../lib/engine/NavigationProperty");
 const Parent = require("../../../lib/engine/QueryableResource");
+const sandbox = sinon.createSandbox();
 
 describe("NavigationProperty", function () {
   let navigationProperty;
@@ -61,6 +62,10 @@ describe("NavigationProperty", function () {
         },
       }
     );
+  });
+
+  afterEach(function () {
+    sandbox.restore();
   });
 
   describe("#constructor()", function () {
@@ -407,5 +412,15 @@ describe("NavigationProperty", function () {
         navigationPropertyMD
       ) instanceof NavigationProperty
     );
+  });
+
+  it(".reset()", function () {
+    navigationProperty._requestDefinition = "REQUEST_DEFINITION";
+    innerSource.reset = sinon.stub();
+    sandbox.spy(Parent.prototype, "reset");
+    navigationProperty.reset();
+    assert.strictEqual(navigationProperty._requestDefinition, undefined);
+    assert.ok(innerSource.reset.called);
+    assert.ok(Parent.prototype.reset.called);
   });
 });

@@ -47,24 +47,28 @@ const schema = {
 };
 
 describe("Function", function () {
+  let functionImportType;
+  beforeEach(() => {
+    functionImportType = new FunctionDef(sampleMD);
+  });
   describe("#constructor()", function () {
     it("initializes properties", function () {
-      let fn = new FunctionDef(sampleMD);
-      assert.equal(fn.raw, sampleMD);
-      assert.equal(fn.name, "Function1");
-      assert.ok(fn.isBound);
-      assert.ok(fn.isComposable);
-      assert.equal(fn.entitySetPath, "path");
-      assert.ok(_.isArray(fn.parameters));
+      functionImportType = new FunctionDef(sampleMD);
+      assert.equal(functionImportType.raw, sampleMD);
+      assert.equal(functionImportType.name, "Function1");
+      assert.ok(functionImportType.isBound);
+      assert.ok(functionImportType.isComposable);
+      assert.equal(functionImportType.entitySetPath, "path");
+      assert.ok(_.isArray(functionImportType.parameters));
     });
 
     it("uses properties' defaults", function () {
-      let fn = new FunctionDef(sampleMinimalMD);
-      assert.equal(fn.raw, sampleMinimalMD);
-      assert.equal(fn.name, "Function1");
-      assert.ok(!fn.isBound);
-      assert.ok(!fn.isComposable);
-      assert.ok(_.isArray(fn.parameters));
+      functionImportType = new FunctionDef(sampleMinimalMD);
+      assert.equal(functionImportType.raw, sampleMinimalMD);
+      assert.equal(functionImportType.name, "Function1");
+      assert.ok(!functionImportType.isBound);
+      assert.ok(!functionImportType.isComposable);
+      assert.ok(_.isArray(functionImportType.parameters));
     });
 
     it("throws error on missing name or return type", function () {
@@ -94,10 +98,16 @@ describe("Function", function () {
 
   describe(".initSchemaDependentProperties()", function () {
     it("initializes return type and parameters", function () {
-      let fn = new FunctionDef(sampleMD);
-      fn.initSchemaDependentProperties(schema);
-      assert.equal(fn.returnType.type, type);
-      assert.equal(fn.parameters[0].type, type);
+      functionImportType.initSchemaDependentProperties(schema);
+      assert.equal(functionImportType.returnType.type, type);
+      assert.equal(functionImportType.parameters[0].type, type);
     });
+  });
+
+  it(".resolveModelPath()", function () {
+    assert.strictEqual(
+      functionImportType.resolveModelPath(),
+      functionImportType
+    );
   });
 });

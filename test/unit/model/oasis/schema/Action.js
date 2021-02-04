@@ -39,22 +39,25 @@ const schema = {
 };
 
 describe("Action", function () {
+  let actionType;
+  beforeEach(() => {
+    actionType = new Action(sampleMD);
+  });
   describe("#constructor()", function () {
     it("initializes properties", function () {
-      let fn = new Action(sampleMD);
-      assert.equal(fn.raw, sampleMD);
-      assert.equal(fn.name, "Action1");
-      assert.ok(fn.isBound);
-      assert.equal(fn.entitySetPath, "path");
-      assert.ok(_.isArray(fn.parameters));
+      assert.equal(actionType.raw, sampleMD);
+      assert.equal(actionType.name, "Action1");
+      assert.ok(actionType.isBound);
+      assert.equal(actionType.entitySetPath, "path");
+      assert.ok(_.isArray(actionType.parameters));
     });
 
     it("uses properties' defaults", function () {
-      let fn = new Action(sampleMinimalMD);
-      assert.equal(fn.raw, sampleMinimalMD);
-      assert.equal(fn.name, "Action1");
-      assert.ok(!fn.isBound);
-      assert.ok(_.isArray(fn.parameters));
+      actionType = new Action(sampleMinimalMD);
+      assert.equal(actionType.raw, sampleMinimalMD);
+      assert.equal(actionType.name, "Action1");
+      assert.ok(!actionType.isBound);
+      assert.ok(_.isArray(actionType.parameters));
     });
 
     it("entityTypePath", function () {
@@ -115,13 +118,16 @@ describe("Action", function () {
 
   describe(".initSchemaDependentProperties()", function () {
     it("initializes return type and parameters", function () {
-      let fn = new Action(sampleMD);
-      fn.initSchemaDependentProperties(schema);
-      assert.equal(fn.returnType.type, type);
-      assert.equal(fn.parameters[0].type, type);
+      actionType.initSchemaDependentProperties(schema);
+      assert.equal(actionType.returnType.type, type);
+      assert.equal(actionType.parameters[0].type, type);
 
-      fn = new Action(sampleMinimalMD);
-      fn.initSchemaDependentProperties(schema);
+      actionType = new Action(sampleMinimalMD);
+      actionType.initSchemaDependentProperties(schema);
     });
+  });
+
+  it(".resolveModelPath()", function () {
+    assert.strictEqual(actionType.resolveModelPath(), actionType);
   });
 });

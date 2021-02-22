@@ -2,6 +2,16 @@
 
 # 0.9.8
 
+  * 202907a - [FIX] Resolve OData types for procedure imports - Norbert Volf
+  * 91179a9 - [FEATURE] Use base type to define EntityType key - Norbert Volf
+  * 1d518c2 - [FIX] NavProp resets EntitySet request too - Norbert Volf
+  * ccf6f0e - [FIX] Return correct context for chaining - Michal Kozubik
+  * 27e90e2 - [FEATURE] Read stream by single entity - Norbert Volf
+  * 53d1f46 - [FEATURE] Support services without CSRF token implementation - Norbert Volf
+  * ef67a88 - [FIX] Corretly determine 1:1 navigation property - Norbert Volf
+
+# 0.9.8
+
   * 3147731 - [FEATURE] Bound action implementation - Norbert Volf
 
 # 0.9.7

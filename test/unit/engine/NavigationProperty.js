@@ -353,20 +353,17 @@ describe("NavigationProperty", function () {
   });
 
   describe(".key()", function () {
-    it("Returns itself for chaining", function () {
-      sinon.stub(navigationProperty, "isMultiple").returns(false);
-      sinon.stub(navigationProperty.defaultRequest, "registerAssociations");
-
-      const reference = navigationProperty.key("PARAMS");
-
-      assert.ok(reference === navigationProperty);
-    });
     it("Is multiple association", function () {
       sinon.stub(navigationProperty, "isMultiple").returns(true);
-      sinon.stub(Parent.prototype, "key");
+      sinon
+        .stub(Parent.prototype, "key")
+        .returns(navigationProperty.defaultRequest);
       sinon.stub(navigationProperty.defaultRequest, "registerAssociations");
 
-      navigationProperty.key("PARAMS");
+      assert.strictEqual(
+        navigationProperty.key("PARAMS"),
+        navigationProperty.defaultRequest
+      );
 
       assert.ok(Parent.prototype.key.calledWith("PARAMS"));
       assert.ok(!navigationProperty.defaultRequest.registerAssociations.called);
@@ -377,9 +374,14 @@ describe("NavigationProperty", function () {
     it("Is single association", function () {
       sinon.stub(navigationProperty, "isMultiple").returns(false);
       sinon.stub(Parent.prototype, "key");
-      sinon.stub(navigationProperty.defaultRequest, "registerAssociations");
+      sinon
+        .stub(navigationProperty.defaultRequest, "registerAssociations")
+        .returns(navigationProperty.defaultRequest);
 
-      navigationProperty.key("PARAMS");
+      assert.strictEqual(
+        navigationProperty.key("PARAMS"),
+        navigationProperty.defaultRequest
+      );
 
       assert.ok(!Parent.prototype.key.called);
       assert.ok(navigationProperty.defaultRequest.registerAssociations.called);

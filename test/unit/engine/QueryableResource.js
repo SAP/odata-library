@@ -350,14 +350,11 @@ describe("QueryableResource", function () {
   });
 
   describe(".key()", function () {
-    it("Returns itself for chaining", function () {
-      sinon.stub(entitySet.defaultRequest, "key");
-      const reference = entitySet.key("A");
-      assert.ok(reference === entitySet);
-    });
     it("Uses request key", function () {
-      sinon.stub(entitySet.defaultRequest, "key");
-      entitySet.key("A");
+      sinon
+        .stub(entitySet.defaultRequest, "key")
+        .returns(entitySet.defaultRequest);
+      assert.strictEqual(entitySet.key("A"), entitySet.defaultRequest);
       assert.ok(entitySet.defaultRequest.key.calledWithExactly("A"));
     });
   });

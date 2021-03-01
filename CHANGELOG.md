@@ -1,6 +1,10 @@
 # Changelog
 
-# 0.9.8
+# 0.9.10
+
+  * 92f86d4 - fix regression with NavigationProperty handling - Norbert Volf
+
+# 0.9.9
 
   * 202907a - [FIX] Resolve OData types for procedure imports - Norbert Volf
   * 91179a9 - [FEATURE] Use base type to define EntityType key - Norbert Volf

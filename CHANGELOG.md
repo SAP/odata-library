@@ -3,6 +3,8 @@
 # 0.9.10
 
   * 92f86d4 - fix regression with NavigationProperty handling - Norbert Volf
+  * 7729fe0 - [FEATURE] Batch support for FunctionImport - Norbert Volf
+  * 24ab5bf - [FIX] Key has to return request instance - Norbert Volf
 
 # 0.9.9
 

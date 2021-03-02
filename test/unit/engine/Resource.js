@@ -237,4 +237,37 @@ describe("Resource", function () {
       "PARAM1=VALUE1&PARAM2=VALUE2&PARAM3=DEFAULT_VALUE3"
     );
   });
+
+  describe("._handleBatchCall()", function () {
+    it("Create request in existing batch", function () {
+      let callback = sinon.stub().returns({
+        promise: "PROMISE",
+      });
+      innerAgent.batchManager = {
+        has: sinon.stub().returns(true),
+      };
+      sinon.stub(resource, "reset");
+
+      assert.strictEqual(
+        resource._handleBatchCall(callback, "BATCH_OBJECT"),
+        "PROMISE"
+      );
+      assert.ok(resource.reset.called);
+      assert.ok(innerAgent.batchManager.has.calledWith("BATCH_OBJECT"));
+    });
+    it("Failed on unmanaged batch", function () {
+      let callback = sinon.stub().returns({
+        promise: "PROMISE",
+      });
+      innerAgent.batchManager = {
+        has: sinon.stub().returns(false),
+      };
+
+      return resource
+        ._handleBatchCall(callback, "BATCH_OBJECT")
+        .catch((err) => {
+          assert.ok(err instanceof Error);
+        });
+    });
+  });
 });

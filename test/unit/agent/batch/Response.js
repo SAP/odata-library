@@ -260,7 +260,7 @@ describe("agent/batch/Response", function () {
       response.handlerParserFinished(null, "CONTENT");
       return response.promise.catch((err) => {
         assert.equal(response.body, "CONTENT");
-        assert.ok(err.message.match(/Status code 400/));
+        assert.ok(err.message.match(/^400/));
       });
     });
     it("Response is correct", function () {
@@ -345,7 +345,13 @@ describe("agent/batch/Response", function () {
     it("reject response for status code greather than or equal to 400", function () {
       response.finishProcessResponse(400);
       return response.promise.catch((error) => {
-        assert.ok(error.message.match(/^Invalid/));
+        assert.ok(error.message.match(/^400/));
+      });
+    });
+    it("reject response for status code greather than or equal to 400 with additional message", function () {
+      response.finishProcessResponse(400, "MESSAGE");
+      return response.promise.catch((error) => {
+        assert.ok(error.message.match(/MESSAGE/));
       });
     });
   });

@@ -1564,39 +1564,6 @@ describe("QueryableResource", function () {
     });
   });
 
-  describe("._handleBatchCall()", function () {
-    it("Create request in existing batch", function () {
-      let callback = sinon.stub().returns({
-        promise: "PROMISE",
-      });
-      innerAgent.batchManager = {
-        has: sinon.stub().returns(true),
-      };
-      sinon.stub(entitySet, "reset");
-
-      assert.strictEqual(
-        entitySet._handleBatchCall(callback, "BATCH_OBJECT"),
-        "PROMISE"
-      );
-      assert.ok(entitySet.reset.called);
-      assert.ok(innerAgent.batchManager.has.calledWith("BATCH_OBJECT"));
-    });
-    it("Failed on unmanaged batch", function () {
-      let callback = sinon.stub().returns({
-        promise: "PROMISE",
-      });
-      innerAgent.batchManager = {
-        has: sinon.stub().returns(false),
-      };
-
-      return entitySet
-        ._handleBatchCall(callback, "BATCH_OBJECT")
-        .catch((err) => {
-          assert.ok(err instanceof Error);
-        });
-    });
-  });
-
   describe("._handleAgentCall()", function () {
     it("Failed on token fetching", function () {
       let call = sinon.stub();

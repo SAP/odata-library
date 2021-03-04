@@ -488,13 +488,13 @@ describe("FunctionImport", function () {
         assert.ok(
           defaultBatch.get.calledWith("/FUNCTION_IMPORT_NAME?QUERY", "HEADERS")
         );
+        assert.ok(
+          functionImport.header
+            .getCall(0)
+            .calledWith("Accept", "application/json")
+        );
         return promise.then((res) => {
           assert.equal(res, "RESPONSE_CONTENT");
-          assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("Accept", "application/json")
-          );
           assert.ok(functionImport.reset.called);
         });
       });
@@ -509,6 +509,11 @@ describe("FunctionImport", function () {
         assert.ok(
           defaultBatch.get.calledWith("/FUNCTION_IMPORT_NAME?QUERY", "HEADERS")
         );
+        assert.ok(
+          functionImport.header
+            .getCall(0)
+            .calledWith("Accept", "application/json")
+        );
 
         return promise.then((res) => {
           assert.deepEqual(res, {
@@ -516,11 +521,6 @@ describe("FunctionImport", function () {
               d: "RESPONSE_CONTENT",
             },
           });
-          assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("Accept", "application/json")
-          );
           assert.ok(functionImport.reset.called);
         });
       });
@@ -530,13 +530,13 @@ describe("FunctionImport", function () {
         };
         let promise = functionImport.get().then((res) => {
           assert.deepEqual(res, [{}, {}, {}]);
-          assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("Accept", "application/json")
-          );
           assert.ok(functionImport.reset.called);
         });
+        assert.ok(
+          functionImport.header
+            .getCall(0)
+            .calledWith("Accept", "application/json")
+        );
         functionImport._handleBatchCall.getCall(0).args[0]();
         assert.ok(
           functionImport._handleBatchCall.getCall(0).args[1],
@@ -566,6 +566,11 @@ describe("FunctionImport", function () {
             );
             assert.ok(functionImport.reset.called);
           });
+        assert.ok(
+          functionImport.header
+            .getCall(0)
+            .calledWith("Accept", "application/json")
+        );
 
         return promise;
       });
@@ -589,13 +594,14 @@ describe("FunctionImport", function () {
         innerAgent.batchManager = {};
       });
       it("Success send request and receive response content", function () {
-        return functionImport.get().then((res) => {
+        let promise = functionImport.get();
+        assert.deepEqual(functionImport.header.args, [
+          ["Content-type", "application/json"],
+          ["Accept", "application/json"],
+        ]);
+
+        return promise.then((res) => {
           assert.equal(res, "RESPONSE_CONTENT");
-          assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("Accept", "application/json")
-          );
           assert.ok(functionImport.reset.called);
           assert.ok(
             innerAgent.get.calledWith("/FUNCTION_IMPORT_NAME?QUERY", "HEADERS")
@@ -604,17 +610,18 @@ describe("FunctionImport", function () {
       });
       it("Success send request and receive raw response content", function () {
         functionImport.defaultRequest._isRaw = true;
-        return functionImport.get().then((res) => {
+        let promise = functionImport.get();
+
+        assert.deepEqual(functionImport.header.args, [
+          ["Content-type", "application/json"],
+          ["Accept", "application/json"],
+        ]);
+        return promise.then((res) => {
           assert.deepEqual(res, {
             body: {
               d: "RESPONSE_CONTENT",
             },
           });
-          assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("Accept", "application/json")
-          );
           assert.ok(functionImport.reset.called);
           assert.ok(
             innerAgent.get.calledWith("/FUNCTION_IMPORT_NAME?QUERY", "HEADERS")
@@ -625,13 +632,13 @@ describe("FunctionImport", function () {
         response.body.d = {
           results: [{}, {}, {}],
         };
-        return functionImport.get().then((res) => {
+        let promise = functionImport.get();
+        assert.deepEqual(functionImport.header.args, [
+          ["Content-type", "application/json"],
+          ["Accept", "application/json"],
+        ]);
+        return promise.then((res) => {
           assert.deepEqual(res, [{}, {}, {}]);
-          assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("Accept", "application/json")
-          );
           assert.ok(functionImport.reset.called);
           assert.ok(
             innerAgent.get.calledWith("/FUNCTION_IMPORT_NAME?QUERY", "HEADERS")
@@ -640,13 +647,13 @@ describe("FunctionImport", function () {
       });
       it("Invalid response", function () {
         innerAgent.get.returns(Promise.reject(new Error("ERROR")));
-        return functionImport.get().catch((err) => {
+        let promise = functionImport.get();
+        assert.deepEqual(functionImport.header.args, [
+          ["Content-type", "application/json"],
+          ["Accept", "application/json"],
+        ]);
+        return promise.catch((err) => {
           assert(_.isError(err));
-          assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("Accept", "application/json")
-          );
           assert.ok(functionImport.reset.called);
         });
       });

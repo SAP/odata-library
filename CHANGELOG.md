@@ -1,8 +1,12 @@
 # Changelog
 
+# 0.9.11
+
+  * a01c938 - [FIX] Set headers before request definition - Norbert Volf
+
 # 0.9.10
 
-  * 92f86d4 - fix regression with NavigationProperty handling - Norbert Volf
+  * 92f86d4 - [FIX] Fix regression with NavigationProperty handling - Norbert Volf
   * 7729fe0 - [FEATURE] Batch support for FunctionImport - Norbert Volf
   * 24ab5bf - [FIX] Key has to return request instance - Norbert Volf
 

@@ -1,71 +1,72 @@
 "use strict";
 
-const assert = require("assert");
-
-const EntityTypeExtender = require("../../../../../../lib/model/nw/extensions/sap/EntityTypeExtender");
-
-function getEntityType() {
-  return {
-    annotations: [
-      {
-        term: "UI.SelectionFields",
-        collection: ["Prop1"],
-      },
-      {
-        term: "UI.LineItem",
-        collection: [
-          {
-            type: "x",
-          },
-        ],
-      },
-    ],
-    extensions: [],
-    getProperty: (x) => ({
-      name: x,
-    }),
-    navigationProperties: [
-      {
-        extensions: [],
-        raw: {},
-      },
-    ],
-    properties: [
-      {
-        raw: {
-          $: {},
-        },
-        annotations: [],
-        extensions: [],
-      },
-      {
-        raw: {
-          $: {
-            "sap:label": "label",
-            "sap:filterable": "false",
-            "sap:sortable": "false",
-          },
-        },
-        annotations: [
-          {
-            term: "Common.ValueList",
-          },
-        ],
-        extensions: [],
-      },
-    ],
-    raw: {},
-  };
-}
-
-function sampleEntityType() {
-  let entityType = getEntityType();
-  EntityTypeExtender.process(entityType, {}, {});
-  return entityType;
-}
+const assert = require("assert").strict;
+const sinon = require("sinon");
+const proxyquire = require("proxyquire");
 
 describe("EntityTypeExtender", function () {
   describe("process()", function () {
+    const EntityTypeExtender = require("../../../../../../lib/model/nw/extensions/sap/EntityTypeExtender");
+    function getEntityType() {
+      return {
+        annotations: [
+          {
+            term: "UI.SelectionFields",
+            collection: ["Prop1"],
+          },
+          {
+            term: "UI.LineItem",
+            collection: [
+              {
+                type: "x",
+              },
+            ],
+          },
+        ],
+        extensions: [],
+        getProperty: (x) => ({
+          name: x,
+        }),
+        navigationProperties: [
+          {
+            extensions: [],
+            raw: {},
+          },
+        ],
+        properties: [
+          {
+            raw: {
+              $: {},
+            },
+            annotations: [],
+            extensions: [],
+          },
+          {
+            raw: {
+              $: {
+                "sap:label": "label",
+                "sap:filterable": "false",
+                "sap:sortable": "false",
+              },
+            },
+            annotations: [
+              {
+                term: "Common.ValueList",
+              },
+            ],
+            extensions: [],
+          },
+        ],
+        raw: {},
+      };
+    }
+
+    function sampleEntityType() {
+      let entityType = getEntityType();
+      EntityTypeExtender.process(entityType, {}, {});
+      return entityType;
+    }
+
     it("applies sap schema extensions to entity type", function () {
       let entityType = sampleEntityType();
       assert.equal(entityType.sap.ui.selectionFields.length, 1);
@@ -112,6 +113,57 @@ describe("EntityTypeExtender", function () {
 
       EntityTypeExtender.process(entityType, {}, {});
       assert.strictEqual(entityType.sap.common.sideEffects.length, 1);
+    });
+  });
+
+  describe("_.createEntityTypeCommonExtension()", function () {
+    let EntityTypeExtender;
+    let SideEffectsType;
+    beforeEach(function () {
+      SideEffectsType = sinon.stub();
+      EntityTypeExtender = proxyquire(
+        "../../../../../../lib/model/nw/extensions/sap/EntityTypeExtender",
+        {
+          "./common/SideEffectsType": SideEffectsType,
+        }
+      );
+    });
+
+    it("missing side effects", function () {
+      let entityType = {
+        annotations: [{}],
+      };
+      assert.deepEqual(
+        EntityTypeExtender._.createEntityTypeCommonExtension(
+          entityType,
+          "SCHEMA"
+        ),
+        {
+          sideEffects: [],
+        }
+      );
+    });
+    it("found side effects", function () {
+      let entityType = {
+        annotations: [
+          {
+            term: "Common.SideEffects",
+          },
+        ],
+      };
+      let commonExtension = EntityTypeExtender._.createEntityTypeCommonExtension(
+        entityType,
+        "SCHEMA"
+      );
+
+      assert.ok(commonExtension.sideEffects[0] instanceof SideEffectsType);
+      assert.ok(
+        SideEffectsType.calledWith(
+          entityType.annotations[0],
+          entityType,
+          "SCHEMA"
+        )
+      );
     });
   });
 });

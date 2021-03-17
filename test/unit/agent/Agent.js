@@ -496,6 +496,14 @@ describe("Agent", function () {
     );
   });
 
+  it(".patch()", function () {
+    sinon.stub(agent, "sendRequest").returns("PROMISE");
+    assert.equal(agent.patch("INPUT_PATH", "HEADERS", "PAYLOAD"), "PROMISE");
+    assert.ok(
+      agent.sendRequest.calledWith("PATCH", "INPUT_PATH", "HEADERS", "PAYLOAD")
+    );
+  });
+
   it(".get()", function () {
     sinon.stub(agent, "sendRequest").returns("PROMISE");
     assert.equal(agent.get("INPUT_PATH", "HEADERS", "ARG1", "ARG2"), "PROMISE");

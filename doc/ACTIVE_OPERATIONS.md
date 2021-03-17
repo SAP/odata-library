@@ -50,15 +50,23 @@ Use Association.post to create a new entry referenced by already initialized Ent
 
 # Update entity
 
-Use EntitySet.merge to update properties of an entity. The object
-passed as parameter of the EntitySet.merge method should contain
+OData protocol versions 1.0 and 2.0 define "MERGE" HTTP method to update
+existing entity. Newer versions of OData protocol define "PATCH"
+HTTP method to update existing entity. EntitySet supports both HTTP
+methods. The EntitySet does not check current version of the OData
+protocol version. You can try use *patch* for OData 2.0 also. You
+are limited by server implementation only. EntitySet.patch and
+EntitySet.merge are synonyms.
+
+Use merge or patch to update properties of an entity. The object
+passed as parameter of the merge or patch method should contains
 entries of the entity's key properties and entries of properties,
 which are supposed to be updated.
 
 ```javascript
     let service  = new Service();
 	return service .C_PaymentRequest
-		.merge({
+		.patch({
 			"PaymentRequest": "861",
 			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
 			"IsActiveEntity": false,
@@ -68,9 +76,9 @@ which are supposed to be updated.
 	});
 ```
 
-Merge could be callaed with two parameter. First parameter contains
-key and second parameter contains object with properties for changes.
-It is useful for chaining.
+merge and patch could be called with two parameter also. First parameter
+contains key and second parameter contains object with properties
+to change.  It is useful for chaining.
 
 ```javascript
     let service  = new Service();
@@ -88,9 +96,9 @@ It is useful for chaining.
 		});
 ```
 
-# Update entity (entire resource)
+# Replace entity (entire resource)
 
-Use EntitySet.put to update an entity by replacing its content.
+Use EntitySet.put to replace an entity by replacing its content.
 The entity content is replaced by a new content from object
 passed as parameter of the EntitySet.put method.
 

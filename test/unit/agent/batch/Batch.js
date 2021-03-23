@@ -235,6 +235,29 @@ describe("agent/batch/Batch", function () {
     });
   });
 
+  it(".patch", function () {
+    sinon.stub(batch, "addRequestWithPayload").returns("REQUEST");
+    batch.patch(
+      "INPUT_URL",
+      {
+        NAME: "VALUE",
+      },
+      "PAYLOAD",
+      "CHANGE_SET"
+    );
+    assert.ok(
+      batch.addRequestWithPayload.calledWith(
+        "PATCH",
+        "INPUT_URL",
+        {
+          NAME: "VALUE",
+        },
+        "PAYLOAD",
+        "CHANGE_SET"
+      )
+    );
+  });
+
   it(".delete", function () {
     sinon.stub(batch, "addRequest");
     batch.delete("INPUT_URL", "HEADERS", "CHANGE_SET");
@@ -244,6 +267,39 @@ describe("agent/batch/Batch", function () {
         "INPUT_URL",
         "HEADERS",
         undefined,
+        "CHANGE_SET"
+      )
+    );
+  });
+
+  it(".addRequestWithPayload", function () {
+    sinon.stub(batch, "addRequest").returns("REQUEST");
+    assert.strictEqual(
+      batch.addRequestWithPayload(
+        "HTTP_METHOD",
+        "INPUT_URL",
+        {
+          KEY: "VALUE",
+        },
+        "PAYLOAD",
+        "CHANGE_SET"
+      ),
+      "REQUEST"
+    );
+    assert.ok(
+      batch.addRequest.calledWithExactly(
+        "HTTP_METHOD",
+        "INPUT_URL",
+        {
+          "sap-contextid-accept": "header",
+          Accept: "application/json",
+          DataServiceVersion: "2.0",
+          MaxDataServiceVersion: "2.0",
+          "Content-Type": "application/json",
+          "sap-message-scope": "BusinessObject",
+          KEY: "VALUE",
+        },
+        "PAYLOAD",
         "CHANGE_SET"
       )
     );

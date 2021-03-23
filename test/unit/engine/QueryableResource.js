@@ -603,7 +603,7 @@ describe("QueryableResource", function () {
     });
   });
 
-  describe(".merge()", function () {
+  describe(".processUpdateCall()", function () {
     let newData;
     let request;
     beforeEach(() => {
@@ -649,7 +649,7 @@ describe("QueryableResource", function () {
         })
       );
       request._payload = "BODY_PROPERTIES";
-      return entitySet.merge(body).then((res) => {
+      return entitySet.processUpdateCall("merge", body).then((res) => {
         assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert(request.header.calledWith("x-csrf-token", "TOKEN"));
         assert(request.header.calledWith("Content-type", "application/json"));
@@ -674,7 +674,7 @@ describe("QueryableResource", function () {
       entitySet.raw();
       request._payload = "BODY_PROPERTIES";
 
-      return entitySet.merge(body).then((res) => {
+      return entitySet.processUpdateCall("merge", body).then((res) => {
         assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert(request.header.calledWith("x-csrf-token", "TOKEN"));
         assert(request.header.calledWith("Content-type", "application/json"));
@@ -702,7 +702,7 @@ describe("QueryableResource", function () {
         .stub()
         .returns(Promise.reject(new Error("ERROR")));
       request._payload = "BODY_PROPERTIES";
-      return entitySet.merge(body).catch((err) => {
+      return entitySet.processUpdateCall("merge", body).catch((err) => {
         assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
         assert(err instanceof Error);
         assert(request.header.calledWith("x-csrf-token", "TOKEN"));
@@ -815,6 +815,22 @@ describe("QueryableResource", function () {
         innerAgent.batchManager.defaultBatch
       );
     });
+  });
+
+  it(".merge()", function () {
+    sinon.stub(entitySet, "processUpdateCall").returns("PROMISE");
+    assert.strictEqual(entitySet.merge("ARG_1", "ARG_2"), "PROMISE");
+    assert.ok(
+      entitySet.processUpdateCall.calledWith("merge", "ARG_1", "ARG_2")
+    );
+  });
+
+  it(".patch()", function () {
+    sinon.stub(entitySet, "processUpdateCall").returns("PROMISE");
+    assert.strictEqual(entitySet.patch("ARG_1", "ARG_2"), "PROMISE");
+    assert.ok(
+      entitySet.processUpdateCall.calledWith("patch", "ARG_1", "ARG_2")
+    );
   });
 
   describe(".delete()", function () {

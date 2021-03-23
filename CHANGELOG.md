@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.9.12
+
+  * f5edbb3 - [FEATURE] PUT method for OData 3.0 and newer - Norbert Volf
+  * 58bb17b - [FIX] Parse PropertyPath with Navigation Property - Norbert Volf
+
 # 0.9.11
 
   * a01c938 - [FIX] Set headers before request definition - Norbert Volf

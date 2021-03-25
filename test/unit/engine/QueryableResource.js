@@ -1093,7 +1093,9 @@ describe("QueryableResource", function () {
         assert(
           innerAgent.get.calledWithExactly(
             "/ENTITY_SET_NAME/$count",
-            request._headers
+            request._headers,
+            undefined,
+            true
           )
         );
       });
@@ -1108,7 +1110,9 @@ describe("QueryableResource", function () {
         assert(
           innerAgent.get.calledWithExactly(
             "/ENTITY_SET_NAME/$count",
-            request._headers
+            request._headers,
+            undefined,
+            true
           )
         );
       });
@@ -1132,7 +1136,9 @@ describe("QueryableResource", function () {
         assert(
           innerAgent.get.calledWithExactly(
             "/ENTITY_SET_NAME/$count",
-            request._headers
+            request._headers,
+            undefined,
+            true
           )
         );
       });
@@ -1145,7 +1151,9 @@ describe("QueryableResource", function () {
         assert(
           innerAgent.get.calledWithExactly(
             "/ENTITY_SET_NAME/$count",
-            request._headers
+            request._headers,
+            undefined,
+            true
           )
         );
       });

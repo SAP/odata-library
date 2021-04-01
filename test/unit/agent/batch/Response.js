@@ -251,25 +251,31 @@ describe("agent/batch/Response", function () {
   describe(".handlerParserFinished", function () {
     it("Parsed with error", function () {
       response.handlerParserFinished("ERROR");
-      return response.promise.catch((err) => {
-        assert.strictEqual(err, "ERROR");
-      });
+      return response.promise
+        .then((result) => {
+          assert.strictEqual(result, "ERROR");
+        })
+        .catch(() => assert.ok(false));
     });
     it("Response inside batch returns error code", function () {
       response.statusCode = 400;
       response.handlerParserFinished(null, "CONTENT");
-      return response.promise.catch((err) => {
-        assert.equal(response.body, "CONTENT");
-        assert.ok(err.message.match(/^400/));
-      });
+      return response.promise
+        .then((result) => {
+          assert.equal(response.body, "CONTENT");
+          assert.ok(result.message.match(/^400/));
+        })
+        .catch(() => assert.ok(false));
     });
     it("Response is correct", function () {
       response.statusCode = 200;
       response.handlerParserFinished(null, "CONTENT");
-      return response.promise.then((res) => {
-        assert.equal(res.body, "CONTENT");
-        assert.strictEqual(response, res);
-      });
+      return response.promise
+        .then((res) => {
+          assert.equal(res.body, "CONTENT");
+          assert.strictEqual(response, res);
+        })
+        .catch(() => assert.ok(false));
     });
   });
 
@@ -338,21 +344,21 @@ describe("agent/batch/Response", function () {
   describe(".finishProcessResponse", function () {
     it("correclty resolve for status code less than 400", function () {
       response.finishProcessResponse(200);
-      return response.promise.then((result) => {
-        assert.strictEqual(result, response);
-      });
+      return response.promise.then((result) =>
+        assert.strictEqual(result, response)
+      );
     });
     it("reject response for status code greather than or equal to 400", function () {
       response.finishProcessResponse(400);
-      return response.promise.catch((error) => {
-        assert.ok(error.message.match(/^400/));
-      });
+      return response.promise
+        .then((error) => assert.ok(error.message.match(/^400/)))
+        .catch(() => assert.ok(false));
     });
     it("reject response for status code greather than or equal to 400 with additional message", function () {
       response.finishProcessResponse(400, "MESSAGE");
-      return response.promise.catch((error) => {
-        assert.ok(error.message.match(/MESSAGE/));
-      });
+      return response.promise
+        .then((error) => assert.ok(error.message.match(/MESSAGE/)))
+        .catch(() => assert.ok(false));
     });
   });
 });

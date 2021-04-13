@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.9.13
+
+  * bf7fe93 - [FEATURE] Resolves batch responses with errors - Norbert Volf
+  * f295309 - [FIX] Buffer count request - Norbert Volf
+
 # 0.9.12
 
   * fe1573b - [FEATURE] PATCH method for OData 3.0 and newer - Norbert Volf

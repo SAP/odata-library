@@ -33,11 +33,27 @@ describe("url", function () {
       "https://example.com/"
     );
     assert.equal(
+      url.base("https://jmeno:heslo@example.com/path/to/service"),
+      "https://example.com/path/to/service"
+    );
+    assert.equal(
       url.base("https://jmeno@example.com/"),
       "https://example.com/"
     );
+    assert.equal(
+      url.base("https://jmeno@example.com/path/to/service"),
+      "https://example.com/path/to/service"
+    );
     assert.equal(url.base("https://example.com/"), "https://example.com/");
     assert.equal(url.base("http://example.com/"), "http://example.com/");
+    assert.equal(
+      url.base("https://example.com/path/to/service"),
+      "https://example.com/path/to/service"
+    );
+    assert.equal(
+      url.base("http://example.com/path/to/service/"),
+      "http://example.com/path/to/service/"
+    );
     assert.throws(function () {
       url.username("blbost/");
     });

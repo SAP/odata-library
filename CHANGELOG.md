@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.9.14
+
+  * c70e5e0 - [FIX] Remove additional slash from base url - Norbert Volf
+
 # 0.9.13
 
   * bf7fe93 - [FEATURE] Resolves batch responses with errors - Norbert Volf

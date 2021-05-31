@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.10.0
+
+  * d3a7aef - [FIX] Finish request definition inside tick - Norbert Volf
+
 # 0.9.14
 
   * c70e5e0 - [FIX] Remove additional slash from base url - Norbert Volf

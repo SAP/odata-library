@@ -1087,7 +1087,7 @@ describe("QueryableResource", function () {
       innerEntitySetModel.sap.countable = true;
     });
     it("Successfully count of EntitySet", function () {
-      return entitySet.count().then((res) => {
+      let promise = entitySet.count().then((res) => {
         assert(entitySet.reset.called);
         assert.strictEqual(res, 5);
         assert(
@@ -1099,11 +1099,12 @@ describe("QueryableResource", function () {
           )
         );
       });
+      assert(entitySet.reset.called);
+      return promise;
     });
     it("Successfully raw count of EntitySet ", function () {
       entitySet.raw();
-      return entitySet.count().then((res) => {
-        assert(entitySet.reset.called);
+      let promise = entitySet.count().then((res) => {
         assert.deepEqual(res, {
           body: "5",
         });
@@ -1116,23 +1117,27 @@ describe("QueryableResource", function () {
           )
         );
       });
+      assert(entitySet.reset.called);
+      return promise;
     });
     it("Reject on not counteable entity set", function () {
       innerEntitySetModel.sap.countable = false;
-      return entitySet.count().catch((err) => {
+      let promise = entitySet.count().catch((err) => {
         assert.ok(err.message.match(/not countable/));
         assert.ok(innerAgent.get.notCalled);
       });
+      assert(entitySet.reset.called);
+      return promise;
     });
     it("Reject invalid response (response is not number)", function () {
+      let promise;
       innerAgent.get.returns(
         Promise.resolve({
           body: "",
         })
       );
-      return entitySet.count().catch((err) => {
+      promise = entitySet.count().catch((err) => {
         assert.ok(err.message.match(/invalid count/));
-        assert(entitySet.reset.called);
         assert(
           innerAgent.get.calledWithExactly(
             "/ENTITY_SET_NAME/$count",
@@ -1142,6 +1147,8 @@ describe("QueryableResource", function () {
           )
         );
       });
+      assert(entitySet.reset.called);
+      return promise;
     });
     it("Reject by HTTP error", function () {
       innerAgent.get.returns(Promise.reject(new Error("ERROR")));
@@ -1590,43 +1597,49 @@ describe("QueryableResource", function () {
 
   describe("._handleAgentCall()", function () {
     it("Failed on token fetching", function () {
+      let promise;
       let call = sinon.stub();
       innerAgent.fetchToken = sinon.stub().returns(Promise.reject("ERROR"));
       sinon.stub(entitySet, "reset");
-      return entitySet._handleAgentCall(call).catch((err) => {
+      promise = entitySet._handleAgentCall(call).catch((err) => {
         assert.strictEqual(err, "ERROR");
-        assert(entitySet.reset.called);
       });
+      assert(entitySet.reset.called);
+      return promise;
     });
     it("Failed on request call", function () {
+      let promise;
       let call = sinon.stub().returns(Promise.reject("ERROR"));
       innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
       sinon.stub(entitySet, "reset");
       sinon.stub(entitySet, "determineRequestHeaders");
-      return entitySet._handleAgentCall(call, "REQUEST").catch((err) => {
+      promise = entitySet._handleAgentCall(call, "REQUEST").catch((err) => {
         assert(
           entitySet.determineRequestHeaders.calledWith("REQUEST", "TOKEN")
         );
         assert.strictEqual(err, "ERROR");
-        assert(entitySet.reset.called);
       });
+      assert(entitySet.reset.called);
+      return promise;
     });
     it("Successfully reeive data", function () {
+      let promise;
       let call = sinon.stub().returns(Promise.resolve("RESPONSE"));
       innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
       sinon.stub(entitySet, "reset");
       sinon.stub(entitySet, "determineRequestHeaders");
       sinon.stub(entitySet, "determineResponseResult").returns("RESULT");
-      return entitySet._handleAgentCall(call, "REQUEST").then((result) => {
+      promise = entitySet._handleAgentCall(call, "REQUEST").then((result) => {
         assert(
           entitySet.determineRequestHeaders.calledWith("REQUEST", "TOKEN")
         );
         assert(
           entitySet.determineResponseResult.calledWith("REQUEST", "RESPONSE")
         );
-        assert(entitySet.reset.called);
         assert.strictEqual(result, "RESULT");
       });
+      assert(entitySet.reset.called);
+      return promise;
     });
   });
 

@@ -157,6 +157,7 @@ describe("FunctionImport", function () {
             "DEFAULT_CHANGESET"
           )
         );
+        assert.ok(functionImport.reset.called);
         return promise.then((res) => {
           assert.equal(res, "RESPONSE_CONTENT");
           assert.ok(
@@ -165,7 +166,6 @@ describe("FunctionImport", function () {
               .calledWith("Accept", "application/json")
           );
           assert.ok(functionImport.header.calledOnce);
-          assert.ok(functionImport.reset.called);
         });
       });
       it("Success send request and receive raw response", function () {
@@ -493,9 +493,9 @@ describe("FunctionImport", function () {
             .getCall(0)
             .calledWith("Accept", "application/json")
         );
+        assert.ok(functionImport.reset.called);
         return promise.then((res) => {
           assert.equal(res, "RESPONSE_CONTENT");
-          assert.ok(functionImport.reset.called);
         });
       });
       it("Success send request and receive raw response content", function () {
@@ -515,13 +515,13 @@ describe("FunctionImport", function () {
             .calledWith("Accept", "application/json")
         );
 
+        assert.ok(functionImport.reset.called);
         return promise.then((res) => {
           assert.deepEqual(res, {
             body: {
               d: "RESPONSE_CONTENT",
             },
           });
-          assert.ok(functionImport.reset.called);
         });
       });
       it("Success send request and receive response content", function () {
@@ -530,8 +530,8 @@ describe("FunctionImport", function () {
         };
         let promise = functionImport.get().then((res) => {
           assert.deepEqual(res, [{}, {}, {}]);
-          assert.ok(functionImport.reset.called);
         });
+        assert.ok(functionImport.reset.called);
         assert.ok(
           functionImport.header
             .getCall(0)
@@ -564,8 +564,8 @@ describe("FunctionImport", function () {
                 .getCall(0)
                 .calledWith("Accept", "application/json")
             );
-            assert.ok(functionImport.reset.called);
           });
+        assert.ok(functionImport.reset.called);
         assert.ok(
           functionImport.header
             .getCall(0)
@@ -724,15 +724,17 @@ describe("FunctionImport", function () {
         message: "Invalid oData response from backend",
       }
     );
-    functionImport.defaultRequest._isRaw = true;
     assert.deepEqual(
-      functionImport.normalizeResponse({
-        body: {
-          d: {
-            results: "VALUE",
+      functionImport.normalizeResponse(
+        {
+          body: {
+            d: {
+              results: "VALUE",
+            },
           },
         },
-      }),
+        true
+      ),
       {
         body: {
           d: {

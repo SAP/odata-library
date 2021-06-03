@@ -65,6 +65,42 @@ describe("Agent", function () {
     });
   });
 
+  describe(".logResponse", function () {
+    let response = {
+      request: {
+        header: "HEADER",
+        cookies: "COOKIES",
+      },
+      header: "HEADER",
+      body: "BODY",
+      statusCode: 200,
+    };
+
+    beforeEach(function () {
+      sinon.stub(agent.logger, "info");
+      sinon.stub(agent.logger, "debug");
+      sinon.stub(agent.logger, "error");
+    });
+
+    it("Response without error", function () {
+      agent.logResponse(response);
+      assert.ok(agent.logger.info.calledOnce);
+      assert.strictEqual(agent.logger.debug.callCount, 4);
+      assert.ok(agent.logger.error.notCalled);
+    });
+
+    it("Error response", function () {
+      response.error = {
+        message: "ERROR_MESSAGE",
+        stack: "ERROR_STACK",
+      };
+      agent.logResponse(response);
+      assert.ok(agent.logger.info.calledOnce);
+      assert.strictEqual(agent.logger.debug.callCount, 4);
+      assert.ok(agent.logger.error.calledTwice);
+    });
+  });
+
   describe(".metadataSearch()", function () {
     it("Ignore undefined", function () {
       assert.strictEqual(agent.metadataSearch(), "");
@@ -200,6 +236,7 @@ describe("Agent", function () {
       return agent.createMetadataRequest("metadataUrl").then(() => {
         assert.ok(innerAgent.get.calledWith("metadataUrl"));
         assert.ok(innerAgent.get().buffer.calledWith(true));
+        assert.ok(agent.logResponse.called);
         assert.ok(agent.logRequest.calledWithExactly("metadataUrl", "GET"));
       });
     });
@@ -208,10 +245,19 @@ describe("Agent", function () {
       sinon.stub(agent, "logRequest");
       sinon.stub(Agent, "formatResponseError").returns("FORMATTED_ERROR");
       innerAgent.get = sinon.stub().returns({
-        buffer: sinon.stub().returns(Promise.reject("ERROR")),
+        buffer: sinon.stub().returns(
+          Promise.reject({
+            response: "ERROR",
+          })
+        ),
       });
       return agent.createMetadataRequest("metadataUrl").catch((err) => {
-        assert.ok(Agent.formatResponseError.calledWith("ERROR"));
+        assert.ok(
+          Agent.formatResponseError.calledWith({
+            response: "ERROR",
+          })
+        );
+        assert.ok(agent.logResponse.calledWithExactly("ERROR"));
         assert.equal(err, "FORMATTED_ERROR");
         Agent.formatResponseError.restore();
       });
@@ -769,13 +815,18 @@ describe("Agent", function () {
     it("Succeed on first authenticator", function (done) {
       sinon.stub(agent.logger, "debug");
       authenticatorSamlSap.authenticatorName = "AUTHENTICATOR";
-      agent.tryAuthenticator(1, "URL", Promise.resolve("RESPONSE"), function (
-        response
-      ) {
-        assert.equal(response, "RESPONSE");
-        assert.ok(agent.logger.debug.getCall(0).args[0].match(/AUTHENTICATOR/));
-        done();
-      });
+      agent.tryAuthenticator(
+        1,
+        "URL",
+        Promise.resolve("RESPONSE"),
+        function (response) {
+          assert.equal(response, "RESPONSE");
+          assert.ok(
+            agent.logger.debug.getCall(0).args[0].match(/AUTHENTICATOR/)
+          );
+          done();
+        }
+      );
     });
     it("Succeed on next authenticator", function (done) {
       sinon.stub(agent.logger, "warn");

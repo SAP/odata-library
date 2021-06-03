@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.10.1
+
+  * 36ac07e - [FIX] Keep request instance after reset - Norbert Volf
+
 # 0.10.0
 
   * d3a7aef - [FIX] Finish request definition inside tick - Norbert Volf

@@ -2,6 +2,8 @@
 
 # 0.10.1
 
+  * d1c3629 - [FIX] Remove additional question mark from post requests - Michal Kopulety
+  * 1840b78 - [FEATURE] Log errors - Michal Kopulety
   * 36ac07e - [FIX] Keep request instance after reset - Norbert Volf
 
 # 0.10.0

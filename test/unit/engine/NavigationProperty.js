@@ -293,7 +293,7 @@ describe("NavigationProperty", function () {
         assert.deepEqual(res, "RESPONSE");
         assert.ok(
           innerAgent.post.calledWith(
-            "/PARENT(PREDICATE)/NAVIGATION?",
+            "/PARENT(PREDICATE)/NAVIGATION",
             request._headers,
             "BODY_PROPERTIES"
           )

@@ -404,7 +404,7 @@ describe("QueryableResource", function () {
         assert.deepEqual(res, "RESPONSE");
         assert.ok(
           innerAgent.post.calledWith(
-            "/ENTITY_SET_NAME?",
+            "/ENTITY_SET_NAME",
             request._headers,
             "BODY_PROPERTIES"
           )
@@ -467,7 +467,7 @@ describe("QueryableResource", function () {
       assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
       assert.ok(
         post.calledWithExactly(
-          "/ENTITY_SET_NAME?",
+          "/ENTITY_SET_NAME",
           request._headers,
           "BODY_PROPERTIES",
           "DEFAULT_CHANGESET"

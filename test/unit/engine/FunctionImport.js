@@ -251,11 +251,19 @@ describe("FunctionImport", function () {
     });
 
     describe("direct call", function () {
+      let request;
+
       beforeEach(() => {
         sinon.stub(functionImport, "queryFromParameters").returns("QUERY");
-        sinon.stub(functionImport, "header");
         sinon.stub(functionImport, "reset");
         innerAgent.batchManager = {};
+        request = {
+          header: sinon.stub(),
+          _headers: "HEADERS",
+        };
+        Object.defineProperty(functionImport, "defaultRequest", {
+          get: sinon.stub().returns(request),
+        });
       });
       it("Success send request and receive response content", function () {
         innerAgent.fetchToken = sinon
@@ -274,19 +282,15 @@ describe("FunctionImport", function () {
         return functionImport.post().then((res) => {
           assert.equal(res, "RESPONSE_CONTENT");
           assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("x-csrf-token", "CSRF_TOKEN")
+            request.header.getCall(0).calledWith("x-csrf-token", "CSRF_TOKEN")
           );
           assert.ok(
-            functionImport.header
+            request.header
               .getCall(1)
               .calledWith("Content-type", "application/json")
           );
           assert.ok(
-            functionImport.header
-              .getCall(2)
-              .calledWith("Accept", "application/json")
+            request.header.getCall(2).calledWith("Accept", "application/json")
           );
           assert.ok(functionImport.reset.called);
           assert.ok(
@@ -305,25 +309,20 @@ describe("FunctionImport", function () {
             },
           })
         );
-        functionImport.defaultRequest._headers = "HEADERS";
-        functionImport.defaultRequest._isRaw = true;
+        request._isRaw = true;
         functionImport.meta.name = "FUNCTION_IMPORT_NAME";
 
         return functionImport.post().then((res) => {
           assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("x-csrf-token", "CSRF_TOKEN")
+            request.header.getCall(0).calledWith("x-csrf-token", "CSRF_TOKEN")
           );
           assert.ok(
-            functionImport.header
+            request.header
               .getCall(1)
               .calledWith("Content-type", "application/json")
           );
           assert.ok(
-            functionImport.header
-              .getCall(2)
-              .calledWith("Accept", "application/json")
+            request.header.getCall(2).calledWith("Accept", "application/json")
           );
           assert.ok(functionImport.reset.called);
           assert.ok(
@@ -352,25 +351,20 @@ describe("FunctionImport", function () {
         innerAgent.post = sinon
           .stub()
           .returns(Promise.reject(new Error("ERROR")));
-        functionImport.defaultRequest._headers = "HEADERS";
         functionImport.meta.name = "FUNCTION_IMPORT_NAME";
 
         return functionImport.post().catch((err) => {
           assert.ok(err.message, "ERROR");
           assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("x-csrf-token", "CSRF_TOKEN")
+            request.header.getCall(0).calledWith("x-csrf-token", "CSRF_TOKEN")
           );
           assert.ok(
-            functionImport.header
+            request.header
               .getCall(1)
               .calledWith("Content-type", "application/json")
           );
           assert.ok(
-            functionImport.header
-              .getCall(2)
-              .calledWith("Accept", "application/json")
+            request.header.getCall(2).calledWith("Accept", "application/json")
           );
           assert.ok(functionImport.reset.called);
           assert.ok(
@@ -391,25 +385,20 @@ describe("FunctionImport", function () {
             },
           })
         );
-        functionImport.defaultRequest._headers = "HEADERS";
         functionImport.meta.name = "FUNCTION_IMPORT_NAME";
 
         return functionImport.post().then((res) => {
           assert.deepEqual(res, [{}, {}, {}]);
           assert.ok(
-            functionImport.header
-              .getCall(0)
-              .calledWith("x-csrf-token", "CSRF_TOKEN")
+            request.header.getCall(0).calledWith("x-csrf-token", "CSRF_TOKEN")
           );
           assert.ok(
-            functionImport.header
+            request.header
               .getCall(1)
               .calledWith("Content-type", "application/json")
           );
           assert.ok(
-            functionImport.header
-              .getCall(2)
-              .calledWith("Accept", "application/json")
+            request.header.getCall(2).calledWith("Accept", "application/json")
           );
           assert.ok(functionImport.reset.called);
           assert.ok(
@@ -426,22 +415,19 @@ describe("FunctionImport", function () {
             },
           })
         );
-        functionImport.defaultRequest._headers = "HEADERS";
         functionImport.meta.name = "FUNCTION_IMPORT_NAME";
 
         return functionImport.post().then((res) => {
           assert.equal(res, "RESPONSE_CONTENT");
           assert.ok(
-            functionImport.header
+            request.header
               .getCall(0)
               .calledWith("Content-type", "application/json")
           );
           assert.ok(
-            functionImport.header
-              .getCall(1)
-              .calledWith("Accept", "application/json")
+            request.header.getCall(1).calledWith("Accept", "application/json")
           );
-          assert.ok(functionImport.header.calledTwice);
+          assert.ok(request.header.calledTwice);
           assert.ok(functionImport.reset.called);
           assert.ok(
             innerAgent.post.calledWith("/FUNCTION_IMPORT_NAME?QUERY", "HEADERS")
@@ -577,6 +563,8 @@ describe("FunctionImport", function () {
     });
 
     describe("use direct calls", function () {
+      let promise;
+      let request;
       beforeEach(() => {
         response = {
           body: {
@@ -584,18 +572,23 @@ describe("FunctionImport", function () {
           },
         };
         sinon.stub(functionImport, "queryFromParameters").returns("QUERY");
-        sinon.stub(functionImport, "header");
         sinon.stub(functionImport, "reset");
         sinon.stub(functionImport, "_handleBatchCall");
-        functionImport.defaultRequest._headers = "HEADERS";
         functionImport.meta.name = "FUNCTION_IMPORT_NAME";
         innerAgent.get = sinon.stub().returns(Promise.resolve(response));
         innerAgent.getResultPath = sinon.stub().returns("body.d.results");
         innerAgent.batchManager = {};
+        request = {
+          header: sinon.stub(),
+          _headers: "HEADERS",
+        };
+        Object.defineProperty(functionImport, "defaultRequest", {
+          get: sinon.stub().returns(request),
+        });
       });
       it("Success send request and receive response content", function () {
-        let promise = functionImport.get();
-        assert.deepEqual(functionImport.header.args, [
+        promise = functionImport.get();
+        assert.deepEqual(request.header.args, [
           ["Content-type", "application/json"],
           ["Accept", "application/json"],
         ]);
@@ -610,9 +603,9 @@ describe("FunctionImport", function () {
       });
       it("Success send request and receive raw response content", function () {
         functionImport.defaultRequest._isRaw = true;
-        let promise = functionImport.get();
+        promise = functionImport.get();
 
-        assert.deepEqual(functionImport.header.args, [
+        assert.deepEqual(request.header.args, [
           ["Content-type", "application/json"],
           ["Accept", "application/json"],
         ]);
@@ -632,8 +625,8 @@ describe("FunctionImport", function () {
         response.body.d = {
           results: [{}, {}, {}],
         };
-        let promise = functionImport.get();
-        assert.deepEqual(functionImport.header.args, [
+        promise = functionImport.get();
+        assert.deepEqual(request.header.args, [
           ["Content-type", "application/json"],
           ["Accept", "application/json"],
         ]);
@@ -647,8 +640,10 @@ describe("FunctionImport", function () {
       });
       it("Invalid response", function () {
         innerAgent.get.returns(Promise.reject(new Error("ERROR")));
-        let promise = functionImport.get();
-        assert.deepEqual(functionImport.header.args, [
+
+        promise = functionImport.get();
+
+        assert.deepEqual(request.header.args, [
           ["Content-type", "application/json"],
           ["Accept", "application/json"],
         ]);

@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.10.2
+
+  * 04ea773 - [FIX] Use local request object for FunctionImport - Norbert Volf
+
 # 0.10.1
 
   * 982a94f - [FIX] Remove additional question mark from post requests - Michal Kopulety

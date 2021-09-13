@@ -385,6 +385,7 @@ describe("QueryableResource", function () {
       });
       request = entitySet.defaultRequest;
       sinon.stub(request, "header");
+      sinon.stub(entitySet, "header");
       sinon.stub(request, "payload");
       request._headers = {};
       request._isRaw = false;
@@ -402,6 +403,7 @@ describe("QueryableResource", function () {
         assert.ok(request.header.calledWith("Accept", "application/json"));
         assert.ok(entitySet.reset.calledBefore(innerAgent.post));
         assert.deepEqual(res, "RESPONSE");
+        assert.ok(entitySet.header.notCalled);
         assert.ok(
           innerAgent.post.calledWith(
             "/ENTITY_SET_NAME",
@@ -492,6 +494,7 @@ describe("QueryableResource", function () {
       sinon.stub(entitySet, "keyProperties").returns("KEY_PROPERTIES");
       sinon.stub(entitySet, "keyPredicate").returns("KEY_PREDICATE");
       sinon.stub(entitySet, "bodyProperties").returns("BODY_PROPERTIES");
+      sinon.stub(entitySet, "header");
       innerEntityTypeModel.key = [
         {
           name: "keyParameter",
@@ -534,6 +537,7 @@ describe("QueryableResource", function () {
             "BODY_PROPERTIES"
           )
         );
+        assert.ok(entitySet.header.notCalled);
       });
     });
 
@@ -619,6 +623,7 @@ describe("QueryableResource", function () {
       };
       sinon.stub(entitySet, "bodyProperties").returns("BODY_PROPERTIES");
       sinon.stub(entitySet, "reset");
+      sinon.stub(entitySet, "header");
       innerEntityTypeModel.key = [
         {
           name: "keyParameter",
@@ -671,6 +676,7 @@ describe("QueryableResource", function () {
         ]);
         assert(entitySet.bodyProperties.calledWith(newData));
         assert.deepEqual(res, response);
+        assert.ok(entitySet.header.notCalled);
       });
     });
     it("Successfully updates an entry entity, with response in raw format", function () {
@@ -861,6 +867,7 @@ describe("QueryableResource", function () {
       innerAgent.delete = sinon.stub().returns(Promise.resolve(response));
       request = entitySet.defaultRequest;
       sinon.stub(request, "header");
+      sinon.stub(entitySet, "header");
       request._headers = {};
       request._isRaw = false;
       innerEntitySetModel.name = "ENTITY_SET_NAME";
@@ -891,6 +898,7 @@ describe("QueryableResource", function () {
             request._headers
           )
         );
+        assert.ok(entitySet.header.notCalled);
       });
     });
     it("Successfully deletes an entry entity in raw format", function () {

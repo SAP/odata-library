@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.10.4
+
+- df051b9 - [FIX] Correctly reject Unauthorized on SAML request - Norbert Volf
+
 # 0.10.3
 
 - eaaa1bf - [FIX] Set header for correct requests - Norbert Volf

@@ -100,7 +100,8 @@ describe("lib/agent/authentification/samlSap", function () {
   });
 
   it("Request to endpoint is rejected", function () {
-    let get = sinon.stub().returns(Promise.reject("ERROR"));
+    let responseError = new Error();
+    let get = sinon.stub().returns(Promise.reject(responseError));
 
     return authenticator(
       "SETTINGS",
@@ -109,13 +110,15 @@ describe("lib/agent/authentification/samlSap", function () {
       },
       "ENDPOINT_URL"
     ).catch((error) => {
-      assert.equal(error, "ERROR");
-      assert.ok(!error.unsupported);
+      assert.equal(error, responseError);
+      assert.equal(error.unsupported, false);
     });
   });
 
-  it("Request to endpoint is rejected", function () {
-    let get = sinon.stub().returns(Promise.reject("ERROR"));
+  it("Request to endpoint is rejected as unauthorized", function () {
+    let responseError = new Error();
+    let get = sinon.stub().returns(Promise.reject(responseError));
+    responseError.status = 401;
 
     return authenticator(
       "SETTINGS",
@@ -124,7 +127,8 @@ describe("lib/agent/authentification/samlSap", function () {
       },
       "ENDPOINT_URL"
     ).catch((error) => {
-      assert.equal(error, "ERROR");
+      assert.equal(error, responseError);
+      assert.equal(error.unsupported, true);
     });
   });
 

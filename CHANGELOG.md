@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.10.5
+
+- 11412e6 - [FIX] Correctly create entity with complex type - Norbert Volf
+
 # 0.10.4
 
 - df051b9 - [FIX] Correctly reject Unauthorized on SAML request - Norbert Volf

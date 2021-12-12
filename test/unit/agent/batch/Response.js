@@ -153,6 +153,7 @@ describe("agent/batch/Response", function () {
         };
       };
       sinon.spy(HTTPParser.prototype, "execute");
+      sinon.spy(response, "processHeaderInfo");
       HTTPParser.prototype.finish = sinon.spy();
       sinon.stub(response, "parseDivideResponse").returns({
         rawHTTPResponse: ["HTTP_RESPONSE_ROW_1", "HTTP_RESPONSE_ROW_2"],
@@ -161,6 +162,7 @@ describe("agent/batch/Response", function () {
 
       parser = response.process("RAW_RESPONSE");
 
+      assert.ok(response.processHeaderInfo.called);
       assert.ok(response.parseDivideResponse.calledWith("RAW_RESPONSE"));
       assert.deepEqual(response.rawHTTPResponse, [
         "HTTP_RESPONSE_ROW_1",
@@ -301,28 +303,12 @@ describe("agent/batch/Response", function () {
   });
 
   it(".handlerHeadersComplete", function () {
+    sinon.stub(response, "processHeaderInfo");
     sinon.stub(response, "useBodyParser");
     sinon.stub(response, "getBodyParser").returns("BODY_PARSER");
-    response.handlerHeadersComplete({
-      headers: [
-        "HEADER_KEY_1",
-        "HEADER_VALUE_1",
-        "HEADER_KEY_2",
-        "HEADER_VALUE_2",
-      ],
-    });
-    assert.deepEqual(response.rawHeaders, [
-      "HEADER_KEY_1",
-      "HEADER_VALUE_1",
-      "HEADER_KEY_2",
-      "HEADER_VALUE_2",
-    ]);
-    assert.deepEqual(response.headers, {
-      HEADER_KEY_1: "HEADER_VALUE_1",
-      HEADER_KEY_2: "HEADER_VALUE_2",
-    });
-    assert.ok(response.useBodyParser.calledWith("BODY_PARSER"));
-    assert.ok(response.getBodyParser.called);
+    response.handlerHeadersComplete("HEADERS_INFO");
+    assert.ok(response.processHeaderInfo.calledWithExactly("HEADERS_INFO"));
+    assert.ok(response.useBodyParser.calledWithExactly("BODY_PARSER"));
   });
 
   it(".handlerBody", function () {
@@ -359,6 +345,27 @@ describe("agent/batch/Response", function () {
       return response.promise
         .then((error) => assert.ok(error.message.match(/MESSAGE/)))
         .catch(() => assert.ok(false));
+    });
+  });
+
+  it(".processHeaderInfo", function () {
+    response.handlerHeadersComplete({
+      headers: [
+        "HEADER_KEY_1",
+        "HEADER_VALUE_1",
+        "HEADER_KEY_2",
+        "HEADER_VALUE_2",
+      ],
+    });
+    assert.deepEqual(response.rawHeaders, [
+      "HEADER_KEY_1",
+      "HEADER_VALUE_1",
+      "HEADER_KEY_2",
+      "HEADER_VALUE_2",
+    ]);
+    assert.deepEqual(response.headers, {
+      HEADER_KEY_1: "HEADER_VALUE_1",
+      HEADER_KEY_2: "HEADER_VALUE_2",
     });
   });
 });

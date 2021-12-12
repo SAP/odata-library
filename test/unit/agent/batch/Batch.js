@@ -1,6 +1,6 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const ChangeSet = require("../../../../lib/agent/batch/ChangeSet");
@@ -119,19 +119,29 @@ describe("agent/batch/Batch", function () {
   });
 
   describe(".process", function () {
-    it("Process correct batch response", function () {
-      let batchResponse = {
-        body: [
-          "--batch_AAAA-BBBB-CCCC",
-          "BATCH_RESPONSE_1_ROW_1",
-          "BATCH_RESPONSE_1_ROW_2",
-          "--batch_AAAA-BBBB-CCCC",
-          "BATCH_RESPONSE_2_ROW_1",
-          "BATCH_RESPONSE_2_ROW_2",
-          "--batch_AAAA-BBBB-CCCC--",
-        ].join("\n"),
-        boundary: "batch_AAAA-BBBB-CCCC",
+    let batchResponse;
+    beforeEach(function () {
+      batchResponse = {
+        text: sinon
+          .stub()
+          .returns(
+            Promise.resolve(
+              [
+                "--batch_AAAA-BBBB-CCCC",
+                "BATCH_RESPONSE_1_ROW_1",
+                "BATCH_RESPONSE_1_ROW_2",
+                "--batch_AAAA-BBBB-CCCC",
+                "BATCH_RESPONSE_2_ROW_1",
+                "BATCH_RESPONSE_2_ROW_2",
+                "--batch_AAAA-BBBB-CCCC--",
+              ].join("\n")
+            )
+          ),
       };
+      sinon.stub(batch, "boundaryFromResponse");
+    });
+    it("Process correct batch response", function () {
+      batch.boundaryFromResponse.returns("batch_AAAA-BBBB-CCCC");
       batch.requests.push({
         process: sinon.stub().returns(Promise.resolve("BATCH_RESPONSE_1")),
       });
@@ -159,17 +169,6 @@ describe("agent/batch/Batch", function () {
       });
     });
     it("Process invalid batch response", function () {
-      let batchResponse = {
-        body: [
-          "--batch_AAAA-BBBB-CCCC",
-          "BATCH_RESPONSE_1_ROW_1",
-          "BATCH_RESPONSE_1_ROW_2",
-          "--batch_AAAA-BBBB-CCCC",
-          "BATCH_RESPONSE_2_ROW_1",
-          "BATCH_RESPONSE_2_ROW_2",
-          "--batch_AAAA-BBBB-CCCC--",
-        ].join("\n"),
-      };
       return batch.process(batchResponse).catch((err) => {
         assert.ok(err.message.match(/Boundary/));
       });
@@ -303,5 +302,28 @@ describe("agent/batch/Batch", function () {
         "CHANGE_SET"
       )
     );
+  });
+
+  describe("boundaryFromResponse", function () {
+    let batchResponse;
+
+    beforeEach(function () {
+      batchResponse = {
+        headers: {
+          get: sinon.stub(),
+        },
+      };
+    });
+
+    it("invalid content type header", function () {
+      assert.equal(batch.boundaryFromResponse(batchResponse), undefined);
+      assert.ok(batchResponse.headers.get.calledWithExactly("content-type"));
+    });
+
+    it("invalid content type header", function () {
+      batchResponse.headers.get.returns("multipart/mixed; boundary=BOUNDARY");
+      assert.equal(batch.boundaryFromResponse(batchResponse), "BOUNDARY");
+      assert.ok(batchResponse.headers.get.calledWithExactly("content-type"));
+    });
   });
 });

@@ -32,4 +32,4 @@ let missingLabelsEntityTypes = service.defaultSchema
 
 ## Model specification
 
-Model implements OData CSDL protocol (combination of [MS](https://docs.microsoft.com/en-us/openspecs/windows_protocols/mc-csdl/f7d95765-3b64-4c77-b144-9d28862b0403) and [OASIS](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/cs01/odata-csdl-xml-v4.01-cs01.html) specifications). Also SAP extensions for [annotations](https://wiki.scn.sap.com/wiki/display/EmTech/SAP+Annotations+for+OData+Version+2.0) and [vocabularies](https://github.wdf.sap.corp/odata/vocabularies) are partially implemented.
+Model implements OData CSDL protocol (combination of [MS](https://docs.microsoft.com/en-us/openspecs/windows_protocols/mc-csdl/f7d95765-3b64-4c77-b144-9d28862b0403) and [OASIS](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/cs01/odata-csdl-xml-v4.01-cs01.html) specifications). Also SAP extensions for [annotations](https://wiki.scn.sap.com/wiki/display/EmTech/SAP+Annotations+for+OData+Version+2.0) and [vocabularies](https://github.com/SAP/odata-vocabularies) are partially implemented.

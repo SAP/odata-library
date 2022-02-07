@@ -173,7 +173,6 @@ describe("lib/engine/Agent", function () {
         })
       );
       sinon.stub(agent.logger, "info");
-      sandbox.stub(log, "formatResponseError").returns("FORMATTED_ERROR");
       sandbox
         .stub(xml2js, "parseString")
         .yieldsRight(null, "METADATA_DOM_OBJECT");
@@ -192,9 +191,8 @@ describe("lib/engine/Agent", function () {
     it("HTTP request rejected", function () {
       agent.fetch.returns(Promise.reject("ERROR"));
       return agent.createMetadataRequest("METADATA_URL").catch((err) => {
-        assert.equal(err, "FORMATTED_ERROR");
+        assert.equal(err, "ERROR");
         assert.ok(agent.fetch.calledWithExactly("METADATA_URL"));
-        assert.ok(log.formatResponseError.calledWithExactly("ERROR"));
       });
     });
     it("metadata XML parsed with errors", function () {
@@ -224,7 +222,6 @@ describe("lib/engine/Agent", function () {
     beforeEach(() => {
       sinon.stub(agent, "fetchToken").returns(Promise.resolve("X_CSRF_TOKEN"));
       sinon.stub(agent, "fetch").returns(Promise.resolve("RESPONSE"));
-      sandbox.stub(log, "formatResponseError").returns("FORMATTED_ERROR");
       sandbox.stub(agentUrl, "normalize").returns("SERVICE_URL");
     });
     it("does not use csrf token", function () {
@@ -1002,17 +999,77 @@ describe("lib/engine/Agent", function () {
     });
   });
 
-  it(".processResponse", function () {
-    let response = {};
-    sandbox.stub(log, "logResponse");
-    agent.processResponse("COUNTER", "requestUrl", "OPTS", response);
-    log.logResponse.calledWithExactly(
-      agent.logger,
-      "COUNTER",
-      "requestUrl",
-      "OPTS"
-    );
-    assert.deepEqual(response, { requestCounter: "COUNTER" });
+  describe(".processResponse", function () {
+    let response;
+    beforeEach(function () {
+      response = {
+        status: 400,
+        text: sinon.stub().returns(Promise.resolve("ERROR_DESCRIPTION")),
+        statusText: "STATUS_TEXT",
+      };
+    });
+    it("correct responsed", function () {
+      response.status = 200;
+      sandbox.stub(log, "logResponse");
+      return agent
+        .processResponse("COUNTER", "requestUrl", "OPTS", response)
+        .then((result) => {
+          assert.deepEqual(
+            result,
+            _.assign(
+              {
+                requestCounter: "COUNTER",
+              },
+              response
+            )
+          );
+          assert.ok(
+            log.logResponse.calledWithExactly(
+              agent.logger,
+              "COUNTER",
+              "requestUrl",
+              "OPTS"
+            )
+          );
+        });
+    });
+    it("response with error status code", function () {
+      sandbox.stub(log, "logResponse");
+      return agent
+        .processResponse("COUNTER", "requestUrl", "OPTS", response)
+        .catch((err) => {
+          assert.equal(err.name, "STATUS_TEXT");
+          assert.equal(err.message, "ERROR_DESCRIPTION");
+          assert.equal(err.status, 400);
+          assert.ok(
+            log.logResponse.calledWithExactly(
+              agent.logger,
+              "COUNTER",
+              "requestUrl",
+              "OPTS"
+            )
+          );
+        });
+    });
+    it("error response without body content", function () {
+      sandbox.stub(log, "logResponse");
+      response.text.returns(Promise.resolve(undefined));
+      return agent
+        .processResponse("COUNTER", "requestUrl", "OPTS", response)
+        .catch((err) => {
+          assert.equal(err.name, "STATUS_TEXT");
+          assert.equal(err.message, "STATUS_TEXT");
+          assert.equal(err.status, 400);
+          assert.ok(
+            log.logResponse.calledWithExactly(
+              agent.logger,
+              "COUNTER",
+              "requestUrl",
+              "OPTS"
+            )
+          );
+        });
+    });
   });
 
   describe(".redirect", function () {

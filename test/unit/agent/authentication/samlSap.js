@@ -139,8 +139,7 @@ describe("lib/agent/authentification/samlSap", function () {
         "content-type": "text/html",
         "sap-server": "true",
       },
-      body:
-        '<html><head></head><body><form><input name="SAMLRequest"/></form></body></html>',
+      body: '<html><head></head><body><form><input name="SAMLRequest"/></form></body></html>',
     };
     _.each(
       [
@@ -172,8 +171,7 @@ describe("lib/agent/authentification/samlSap", function () {
         },
         {
           response: _.merge({}, responseTemplate, {
-            body:
-              '<html><head></head><body><form><input name="SAMLResponse"/></form></body></html>',
+            body: '<html><head></head><body><form><input name="SAMLResponse"/></form></body></html>',
           }),
           result: false,
         },
@@ -378,8 +376,7 @@ describe("lib/agent/authentification/samlSap", function () {
             "content-type": "application/xml",
           },
           res: {
-            text:
-              '<error><message lang="en">MESSAGE_1</message><message lang="cz">MESSAGE_2</message></error>',
+            text: '<error><message lang="en">MESSAGE_1</message><message lang="cz">MESSAGE_2</message></error>',
           },
         },
       });
@@ -520,8 +517,7 @@ describe("lib/agent/authentification/samlSap", function () {
       sinon.stub(authenticator, "nextRequestUrl").returns("URL");
       assert.strictEqual(
         authenticator.submitRedirectToLoginFormAction("SETTINGS", localAgent, {
-          body:
-            '<form><input name="SAMLRequest" value="Value 1"/><input name="username"/></form>',
+          body: '<form><input name="SAMLRequest" value="Value 1"/><input name="username"/></form>',
         }),
         null
       );
@@ -544,8 +540,7 @@ describe("lib/agent/authentification/samlSap", function () {
         "SETTINGS",
         localAgent,
         {
-          body:
-            '<form><input name="SAMLRequest" value="Value 1"/><input name="secret" value"secret"/></form>',
+          body: '<form><input name="SAMLRequest" value="Value 1"/><input name="secret" value"secret"/></form>',
         }
       );
       assert.ok(postAction.send.calledWith("SAMLRequest=Value%201"));
@@ -625,8 +620,7 @@ describe("lib/agent/authentification/samlSap", function () {
         "SETTINGS",
         localAgent,
         {
-          body:
-            '<form><input name="SAMLResponse" value="Value 1"/><input name="foo"/><input name="secret" value="secret"/></form>',
+          body: '<form><input name="SAMLResponse" value="Value 1"/><input name="foo"/><input name="secret" value="secret"/></form>',
         }
       );
       assert.ok(postAction.send.calledWith("SAMLResponse=Value%201"));

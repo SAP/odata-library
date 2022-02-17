@@ -151,10 +151,11 @@ describe("EntityTypeExtender", function () {
           },
         ],
       };
-      let commonExtension = EntityTypeExtender._.createEntityTypeCommonExtension(
-        entityType,
-        "SCHEMA"
-      );
+      let commonExtension =
+        EntityTypeExtender._.createEntityTypeCommonExtension(
+          entityType,
+          "SCHEMA"
+        );
 
       assert.ok(commonExtension.sideEffects[0] instanceof SideEffectsType);
       assert.ok(

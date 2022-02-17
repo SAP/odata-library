@@ -815,13 +815,18 @@ describe("Agent", function () {
     it("Succeed on first authenticator", function (done) {
       sinon.stub(agent.logger, "debug");
       authenticatorSamlSap.authenticatorName = "AUTHENTICATOR";
-      agent.tryAuthenticator(1, "URL", Promise.resolve("RESPONSE"), function (
-        response
-      ) {
-        assert.equal(response, "RESPONSE");
-        assert.ok(agent.logger.debug.getCall(0).args[0].match(/AUTHENTICATOR/));
-        done();
-      });
+      agent.tryAuthenticator(
+        1,
+        "URL",
+        Promise.resolve("RESPONSE"),
+        function (response) {
+          assert.equal(response, "RESPONSE");
+          assert.ok(
+            agent.logger.debug.getCall(0).args[0].match(/AUTHENTICATOR/)
+          );
+          done();
+        }
+      );
     });
     it("Succeed on next authenticator", function (done) {
       sinon.stub(agent.logger, "warn");

@@ -79,8 +79,8 @@ describe("SideEffectsType", function () {
           .getCall(3)
           .calledWith(sideEffects, "TargetProperties")
       );
-      transformer = SideEffectsType._.definePropertyCollection.getCall(3)
-        .args[2];
+      transformer =
+        SideEffectsType._.definePropertyCollection.getCall(3).args[2];
 
       entityType.getProperty = sinon.stub().returns("PROPERTY");
       entityType.getNavigationProperty = sinon

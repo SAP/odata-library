@@ -4,7 +4,7 @@ const assert = require("assert");
 const sinon = require("sinon");
 const Collection = require("../../../../../lib/model/oasis/annotations/Collection");
 const builder = {
-  scalarExpressions: ["A", "B"],
+  scalarExpressions: ["A", "B", "Int", "String"],
   buildAnnotation: (x) => x,
   buildCollection: (x) => x,
   buildRecord: (x) => x,
@@ -71,6 +71,16 @@ describe("Collection", function () {
       };
 
       assert.throws(() => new Collection(md, builder));
+    });
+
+    it("do not throw error on conditional", function () {
+      let md = {
+        String: ["s"],
+        If: [{}],
+      };
+
+      let collection = new Collection(md, builder);
+      assert.equal(collection.length, 1);
     });
   });
 });

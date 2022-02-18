@@ -165,8 +165,8 @@ describe("Service", function () {
     service.agent = {
       batch: sinon.stub().returns("PROMISE"),
     };
-    assert.equal(service.sendBatch("BATCH"), "PROMISE");
-    assert.ok(service.agent.batch.calledWith("BATCH"));
+    assert.equal(service.sendBatch("BATCH", "RAW"), "PROMISE");
+    assert.ok(service.agent.batch.calledWith("BATCH", "RAW"));
   });
 
   describe(".createChangeSet()", function () {

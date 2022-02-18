@@ -1,6 +1,6 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const _ = require("lodash");
@@ -22,9 +22,7 @@ describe("QueryableResource", function () {
   let innerEntityTypeModel;
 
   beforeEach(function () {
-    innerAgent = {
-      fetchToken: async () => "token",
-    };
+    innerAgent = {};
     innerMetadata = {};
     innerEntityTypeModel = {
       getLegacyApiObject: () => {},
@@ -61,11 +59,15 @@ describe("QueryableResource", function () {
 
   describe("#constructor()", function () {
     it("Properties are initialized", function () {
+      const defaultKeys = ["_headers", "_isRaw", "_query"];
       assert.deepEqual(entitySet.agent, innerAgent);
       assert.deepEqual(entitySet.entitySetModel, innerEntitySetModel);
       assert.deepEqual(entitySet.entityTypeModel, innerEntityTypeModel);
       assert.ok(entitySet.reset instanceof Function);
-      assert.deepEqual(entitySet.defaultRequest, entitySet._defaults);
+      assert.deepEqual(
+        _.pick(entitySet.defaultRequest, defaultKeys),
+        _.pick(entitySet._defaults, defaultKeys)
+      );
     });
   });
 
@@ -367,85 +369,43 @@ describe("QueryableResource", function () {
         keyParameter: "keyValue",
         parameter: "value",
       };
-      sinon.stub(entitySet, "reset");
-      sinon.spy(entitySet, "_handleAgentCall");
+      sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
       sinon.stub(entitySet, "bodyProperties").returns("BODY_PROPERTIES");
-      innerEntityTypeModel.key = [
-        {
-          name: "keyParameter",
-          type: defaultType,
-        },
-      ];
-      innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
-      innerAgent.getResultPath = sinon.stub().returns("body.d");
-      innerAgent.post = sinon.stub().returns({
-        body: {
-          d: "RESPONSE",
-        },
-      });
+      sinon.stub(entitySet, "getListResourcePath").returns("ENTITY_SET_NAME");
+      innerAgent.post = sinon.stub().returns();
       request = entitySet.defaultRequest;
       sinon.stub(request, "header");
-      sinon.stub(entitySet, "header");
       sinon.stub(request, "payload");
       request._headers = {};
-      request._isRaw = false;
-      innerEntitySetModel.name = "ENTITY_SET_NAME";
       innerAgent.batchManager = {};
     });
     it("Successfully creates entity and return parsed data", function () {
       request._payload = "BODY_PROPERTIES";
-      return entitySet.post(body).then((res) => {
-        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert.ok(request.header.calledWith("x-csrf-token", "TOKEN"));
-        assert.ok(
-          request.header.calledWith("Content-type", "application/json")
-        );
-        assert.ok(request.header.calledWith("Accept", "application/json"));
-        assert.ok(entitySet.reset.calledBefore(innerAgent.post));
-        assert.deepEqual(res, "RESPONSE");
-        assert.ok(entitySet.header.notCalled);
-        assert.ok(
-          innerAgent.post.calledWith(
-            "/ENTITY_SET_NAME",
-            request._headers,
-            "BODY_PROPERTIES"
-          )
-        );
-      });
-    });
-    it("Successfully creates entity and return raw data", function () {
       return entitySet
-        .raw(true)
         .post(body)
-        .then((res) => {
-          assert.deepEqual(res, {
-            body: {
-              d: "RESPONSE",
-            },
-          });
-        });
-    });
-    it("Failed to load CSRF toknen", function () {
-      innerAgent.fetchToken = sinon
-        .stub()
-        .returns(Promise.reject(new Error("ERROR")));
-      return entitySet
-        .raw(true)
-        .post(body)
-        .catch((err) => {
-          assert.ok(request.header.notCalled);
-          assert.equal(err.message, "ERROR");
+        .then(() => {
+          return entitySet._handleAgentCall.getCall(0).args[0](request);
+        })
+        .then(() => {
+          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
+          assert.ok(
+            request.header.calledWith("Content-Type", "application/json")
+          );
+          assert.ok(
+            innerAgent.post.calledWith(
+              "/ENTITY_SET_NAME",
+              request._headers,
+              JSON.stringify("BODY_PROPERTIES")
+            )
+          );
         });
     });
     it("Failed to create entity", function () {
-      innerAgent.post = sinon
-        .stub()
-        .returns(Promise.reject(new Error("ERROR")));
+      entitySet._handleAgentCall.returns(Promise.reject(new Error("ERROR")));
       return entitySet
         .raw(true)
         .post(body)
         .catch((err) => {
-          assert.ok(request.header.called);
           assert.equal(err.message, "ERROR");
         });
     });
@@ -467,14 +427,6 @@ describe("QueryableResource", function () {
       cb();
 
       assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-      assert.ok(
-        post.calledWithExactly(
-          "/ENTITY_SET_NAME",
-          request._headers,
-          "BODY_PROPERTIES",
-          "DEFAULT_CHANGESET"
-        )
-      );
       assert.ok(request.header.calledWithExactly("Accept", "application/json"));
       assert.strictEqual(
         entitySet._handleBatchCall.getCall(0).args[1],
@@ -490,11 +442,11 @@ describe("QueryableResource", function () {
     };
     let req;
     this.beforeEach(() => {
-      sinon.stub(entitySet, "reset");
       sinon.stub(entitySet, "keyProperties").returns("KEY_PROPERTIES");
       sinon.stub(entitySet, "keyPredicate").returns("KEY_PREDICATE");
       sinon.stub(entitySet, "bodyProperties").returns("BODY_PROPERTIES");
       sinon.stub(entitySet, "header");
+      sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
       innerEntityTypeModel.key = [
         {
           name: "keyParameter",
@@ -508,41 +460,32 @@ describe("QueryableResource", function () {
       req._headers = {};
       req._isRaw = false;
       innerEntitySetModel.name = "ENTITY_SET_NAME";
-
-      innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
-      innerAgent.getResultPath = sinon.stub().returns("body.d");
       innerAgent.batchManager = {};
     });
 
     it("Successfully updates an entry by overwriting data", function () {
-      let promise;
-      innerAgent.put = sinon.stub().returns(
-        Promise.resolve({
-          ok: true,
-        })
-      );
+      innerAgent.put = sinon.stub().returns(Promise.resolve());
       req._payload = "BODY_PROPERTIES";
-      promise = entitySet.put(body);
-      assert(entitySet.reset.called);
-      return promise.then((res) => {
-        assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert.strictEqual(res, true);
-        assert(req.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(req.header.calledWith("Content-type", "application/json"));
-        assert(req.header.calledWith("Accept", "application/json"));
-        assert(
-          innerAgent.put.calledWith(
-            "/ENTITY_SET_NAME(KEY_PREDICATE)",
-            req._headers,
-            "BODY_PROPERTIES"
-          )
-        );
-        assert.ok(entitySet.header.notCalled);
-      });
+      return entitySet
+        .put(body)
+        .then(() => {
+          assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
+          return entitySet._handleAgentCall.getCall(0).args[0](req);
+        })
+        .then(() => {
+          assert(req.header.calledWith("Content-Type", "application/json"));
+          assert(
+            innerAgent.put.calledWith(
+              "/ENTITY_SET_NAME(KEY_PREDICATE)",
+              req._headers,
+              JSON.stringify("BODY_PROPERTIES")
+            )
+          );
+          assert.ok(entitySet.header.notCalled);
+        });
     });
 
     it("Successfully updates in raw mode", function () {
-      let promise;
       let resp = {
         ok: true,
       };
@@ -551,30 +494,28 @@ describe("QueryableResource", function () {
       entitySet.raw();
       req._payload = "BODY_PROPERTIES";
 
-      promise = entitySet.put(body);
-
-      assert(entitySet.reset.called);
-      return promise.then((res) => {
-        assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert.strictEqual(res, resp);
-        assert(req.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(req.header.calledWith("Content-type", "application/json"));
-        assert(req.header.calledWith("Accept", "application/json"));
-        assert(
-          innerAgent.put.calledWith(
-            "/ENTITY_SET_NAME(KEY_PREDICATE)",
-            req._headers,
-            "BODY_PROPERTIES"
-          )
-        );
-      });
+      return entitySet
+        .put(body)
+        .then(() => {
+          assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
+          return entitySet._handleAgentCall.getCall(0).args[0](req);
+        })
+        .then(() => {
+          assert(req.header.calledWith("Content-Type", "application/json"));
+          assert(
+            innerAgent.put.calledWith(
+              "/ENTITY_SET_NAME(KEY_PREDICATE)",
+              req._headers,
+              JSON.stringify("BODY_PROPERTIES")
+            )
+          );
+        });
     });
 
     it("handes invalid response", function () {
       let promise;
-      innerAgent.put = sinon.stub().returns(Promise.reject(new Error("ERROR")));
+      entitySet._handleAgentCall.returns(Promise.reject(new Error("ERROR")));
       promise = entitySet.put(body);
-      assert(entitySet.reset.called);
       return promise.catch((err) => {
         assert(err instanceof Error);
       });
@@ -630,7 +571,6 @@ describe("QueryableResource", function () {
           type: defaultType,
         },
       ];
-      innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
       innerAgent.getResultPath = sinon.stub().returns("body.d");
       innerAgent.merge = sinon.stub().returns(
         Promise.resolve({
@@ -644,6 +584,7 @@ describe("QueryableResource", function () {
       request._isRaw = false;
       innerEntitySetModel.name = "ENTITY_SET_NAME";
       innerAgent.batchManager = {};
+      sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
     });
     it("Successfully updates an entry by overwriting data", function () {
       let body = Object.assign(
@@ -653,7 +594,6 @@ describe("QueryableResource", function () {
         newData
       );
       let response = {};
-      let promise;
       innerAgent.merge = sinon.stub().returns(
         Promise.resolve({
           body: {
@@ -662,25 +602,24 @@ describe("QueryableResource", function () {
         })
       );
       request._payload = "BODY_PROPERTIES";
-      promise = entitySet.processUpdateCall("merge", body);
-      assert(entitySet.reset.called);
-      return promise.then((res) => {
-        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert(request.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(request.header.calledWith("Content-type", "application/json"));
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert.deepEqual(innerAgent.merge.getCall(0).args, [
-          "/ENTITY_SET_NAME(keyParameter='keyValue')",
-          request._headers,
-          "BODY_PROPERTIES",
-        ]);
-        assert(entitySet.bodyProperties.calledWith(newData));
-        assert.deepEqual(res, response);
-        assert.ok(entitySet.header.notCalled);
-      });
+      return entitySet
+        .processUpdateCall("merge", body)
+        .then(() => {
+          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
+          return entitySet._handleAgentCall.getCall(0).args[0](request);
+        })
+        .then(() => {
+          assert(request.header.calledWith("Content-Type", "application/json"));
+          assert.deepEqual(innerAgent.merge.getCall(0).args, [
+            "/ENTITY_SET_NAME(keyParameter='keyValue')",
+            request._headers,
+            JSON.stringify("BODY_PROPERTIES"),
+          ]);
+          assert(entitySet.bodyProperties.calledWith(newData));
+          assert.ok(entitySet.header.notCalled);
+        });
     });
     it("Successfully updates an entry entity, with response in raw format", function () {
-      let promise;
       let body = Object.assign(
         {
           keyParameter: "keyValue",
@@ -689,23 +628,22 @@ describe("QueryableResource", function () {
       );
       entitySet.raw();
       request._payload = "BODY_PROPERTIES";
-      promise = entitySet.processUpdateCall("merge", body);
-      assert(entitySet.reset.called);
-      return promise.then((res) => {
-        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert(request.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(request.header.calledWith("Content-type", "application/json"));
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert.deepEqual(res, {
-          ok: true,
+      return entitySet
+        .processUpdateCall("merge", body)
+        .then(() => {
+          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
+          return entitySet._handleAgentCall.getCall(0).args[0](request);
+        })
+        .then(() => {
+          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
+          assert(request.header.calledWith("Content-Type", "application/json"));
+          assert.deepEqual(innerAgent.merge.getCall(0).args, [
+            "/ENTITY_SET_NAME(keyParameter='keyValue')",
+            request._headers,
+            JSON.stringify("BODY_PROPERTIES"),
+          ]);
+          assert(entitySet.bodyProperties.calledWith(newData));
         });
-        assert.deepEqual(innerAgent.merge.getCall(0).args, [
-          "/ENTITY_SET_NAME(keyParameter='keyValue')",
-          request._headers,
-          "BODY_PROPERTIES",
-        ]);
-        assert(entitySet.bodyProperties.calledWith(newData));
-      });
     });
     it("Invalid response", function () {
       let body = Object.assign(
@@ -714,63 +652,44 @@ describe("QueryableResource", function () {
         },
         newData
       );
-      innerAgent.merge = sinon
-        .stub()
-        .returns(Promise.reject(new Error("ERROR")));
+      innerAgent.merge = sinon.stub().returns("REJECTED_PROMISE");
       request._payload = "BODY_PROPERTIES";
-      return entitySet.processUpdateCall("merge", body).catch((err) => {
-        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert(err instanceof Error);
-        assert(request.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(request.header.calledWith("Content-type", "application/json"));
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert(entitySet.reset.called);
-        assert.deepEqual(innerAgent.merge.getCall(0).args, [
-          "/ENTITY_SET_NAME(keyParameter='keyValue')",
-          request._headers,
-          "BODY_PROPERTIES",
-        ]);
-      });
-    });
-    it("Failed fetching of a token", function () {
-      let promise;
-      innerAgent.fetchToken.returns(Promise.reject(new Error("ERROR")));
-      promise = entitySet.merge("BODY");
-      assert.ok(entitySet.reset.called);
-      return promise.catch((err) => {
-        assert.ok(err instanceof Error);
-        assert.ok(request.header.notCalled);
-        assert.ok(request.header.notCalled);
-        assert.ok(request.header.notCalled);
-        assert.ok(innerAgent.merge.notCalled);
-      });
-    });
-    it("Call merge without parameters raises error", function () {
-      assert.throws(() => {
-        entitySet.merge();
-      });
-    });
-    it("Call merge with too parameters raises error", function () {
-      assert.throws(() => {
-        entitySet.merge(1, 2, 3);
-      });
+      return entitySet
+        .processUpdateCall("merge", body)
+        .then(() => {
+          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
+          return entitySet._handleAgentCall.getCall(0).args[0](request);
+        })
+        .then(() => {
+          assert.ok(
+            request.header.calledWith("Content-Type", "application/json")
+          );
+          assert.ok(entitySet._handleAgentCall.getCall(0).args[0](request));
+          assert.deepEqual(innerAgent.merge.getCall(0).args, [
+            "/ENTITY_SET_NAME(keyParameter='keyValue')",
+            request._headers,
+            JSON.stringify("BODY_PROPERTIES"),
+          ]);
+        });
     });
     it("Successfully updates an entry by overwriting data", function () {
       let entityKey = {
         keyParameter: "keyValue",
       };
       request._payload = "BODY_PROPERTIES";
-      return entitySet.merge(entityKey, newData).then((res) => {
-        assert(entitySet.reset.called);
-        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert.strictEqual(res, true);
-        assert.deepEqual(innerAgent.merge.getCall(0).args, [
-          "/ENTITY_SET_NAME(keyParameter='keyValue')",
-          request._headers,
-          "BODY_PROPERTIES",
-        ]);
-        assert(entitySet.bodyProperties.calledWith(newData));
-      });
+      return entitySet
+        .processUpdateCall("merge", entityKey, newData)
+        .then(() => {
+          return entitySet._handleAgentCall.getCall(0).args[0](request);
+        })
+        .then(() => {
+          assert.deepEqual(innerAgent.merge.getCall(0).args, [
+            "/ENTITY_SET_NAME(keyParameter='keyValue')",
+            request._headers,
+            JSON.stringify("BODY_PROPERTIES"),
+          ]);
+          assert(entitySet.bodyProperties.calledWith(newData));
+        });
     });
     it("Successfully updates an entry by overwriting data including key properties", function () {
       let entityKey = {
@@ -779,18 +698,27 @@ describe("QueryableResource", function () {
       // extend attributes to be updated of entity key
       newData = _.assign(newData, entityKey);
       request._payload = "BODY_PROPERTIES";
+      request.header = sinon.stub();
+      innerAgent.merge = sinon.stub().returns("PROMISE");
 
-      return entitySet.merge(entityKey, newData).then((res) => {
-        assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-        assert(entitySet.reset.called);
-        assert.strictEqual(res, true);
-        assert.deepEqual(innerAgent.merge.getCall(0).args, [
-          "/ENTITY_SET_NAME(keyParameter='keyValue')",
-          request._headers,
-          "BODY_PROPERTIES",
-        ]);
-        assert(entitySet.bodyProperties.calledWith(newData));
-      });
+      return entitySet
+        .processUpdateCall("merge", entityKey, newData)
+        .then(() => {
+          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
+          assert.ok(entitySet.bodyProperties.calledWith(newData));
+          assert.equal(
+            entitySet._handleAgentCall.getCall(0).args[0](request),
+            "PROMISE"
+          );
+          assert.ok(
+            request.header.calledWithExactly("Content-Type", "application/json")
+          );
+          assert.deepEqual(innerAgent.merge.getCall(0).args, [
+            "/ENTITY_SET_NAME(keyParameter='keyValue')",
+            request._headers,
+            JSON.stringify("BODY_PROPERTIES"),
+          ]);
+        });
     });
     it("Successfully merge entity and return parsed data inside batch", function () {
       let cb;
@@ -811,7 +739,7 @@ describe("QueryableResource", function () {
       request._payload = "BODY_PROPERTIES";
       sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
 
-      assert.ok(entitySet.merge(body), "PROMISE");
+      assert.ok(entitySet.processUpdateCall("merge", body), "PROMISE");
 
       cb = entitySet._handleBatchCall.getCall(0).args[0];
       cb();
@@ -851,131 +779,11 @@ describe("QueryableResource", function () {
   });
 
   describe(".delete()", function () {
-    let properties = {
-      DraftUUID: "guid'aaaa-bbbb-cccc'",
-    };
-    let response = {
-      ok: true,
-    };
-    let request;
     beforeEach(() => {
-      sinon.stub(entitySet, "keyProperties").returns("KEY_PROPERTIES");
-      sinon.stub(entitySet, "keyPredicate").returns("KEY_PREDICATE");
-      sinon.stub(entitySet, "reset");
-      innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
-      innerAgent.getResultPath = sinon.stub().returns("body.d");
-      innerAgent.delete = sinon.stub().returns(Promise.resolve(response));
-      request = entitySet.defaultRequest;
-      sinon.stub(request, "header");
-      sinon.stub(entitySet, "header");
-      request._headers = {};
-      request._isRaw = false;
-      innerEntitySetModel.name = "ENTITY_SET_NAME";
       innerAgent.batchManager = {};
+      sinon.stub(entitySet, "key");
     });
-    it("Successfully deletes an entry", function () {
-      let promise;
-      response = {};
-      innerAgent.delete = sinon.stub().returns(
-        Promise.resolve({
-          body: {
-            d: response,
-          },
-        })
-      );
-
-      promise = entitySet.delete(properties);
-
-      assert(entitySet.reset.called);
-      return promise.then((res) => {
-        assert(request.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert(request.header.calledWith("If-Match", "*"));
-        assert.deepEqual(res, response);
-        assert(
-          innerAgent.delete.calledWith(
-            "/ENTITY_SET_NAME(KEY_PREDICATE)",
-            request._headers
-          )
-        );
-        assert.ok(entitySet.header.notCalled);
-      });
-    });
-    it("Successfully deletes an entry entity in raw format", function () {
-      let promise;
-      entitySet.raw();
-      entitySet.key(properties);
-      promise = entitySet.delete();
-      assert(entitySet.reset.called);
-      return promise.then((res) => {
-        assert(request.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert(request.header.calledWith("If-Match", "*"));
-        assert.strictEqual(res, response);
-        assert(
-          innerAgent.delete.calledWith(
-            "/ENTITY_SET_NAME(KEY_PREDICATE)",
-            request._headers
-          )
-        );
-      });
-    });
-    it("Invalid response", function () {
-      let promise;
-
-      innerAgent.delete.returns(Promise.reject(new Error("ERROR")));
-      promise = entitySet.delete(properties);
-      assert(entitySet.reset.called);
-      return promise.catch((err) => {
-        assert(err instanceof Error);
-        assert(request.header.calledWith("x-csrf-token", "TOKEN"));
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert(request.header.calledWith("If-Match", "*"));
-        assert(
-          innerAgent.delete.calledWith(
-            "/ENTITY_SET_NAME(KEY_PREDICATE)",
-            request._headers
-          )
-        );
-      });
-    });
-    it("Failed fetching of a token", function () {
-      let promise;
-      innerAgent.fetchToken.returns(Promise.reject(new Error("ERROR")));
-      promise = entitySet.delete(properties);
-      assert(entitySet.reset.called);
-      return promise.catch((err) => {
-        assert(err instanceof Error);
-        assert(request.header.notCalled);
-        assert(innerAgent.delete.notCalled);
-      });
-    });
-    it("Successfully delete entity", function () {
-      let cb;
-      let deleteMethod = sinon.stub();
-
-      innerAgent.batchManager = {
-        defaultBatch: {
-          delete: deleteMethod,
-        },
-        defaultChangeSet: "DEFAULT_CHANGESET",
-      };
-      sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
-
-      assert.ok(entitySet.delete(properties), "PROMISE");
-
-      cb = entitySet._handleBatchCall.getCall(0).args[0];
-      cb();
-
-      assert.ok(
-        deleteMethod.calledWithExactly(
-          "/ENTITY_SET_NAME(KEY_PREDICATE)",
-          request._headers,
-          "DEFAULT_CHANGESET"
-        )
-      );
-      assert.ok(request.header.calledWithExactly("If-Match", "*"));
-    });
+    it("Successfully deletes an entry", function () {});
   });
 
   describe(".raw()", function () {
@@ -994,75 +802,34 @@ describe("QueryableResource", function () {
   });
 
   describe(".executeGet()", function () {
-    let resultData = {
-      a: {
-        b: {
-          c: {
-            KEY: "VALUE",
-          },
-        },
-      },
-    };
     beforeEach(() => {
-      entitySet.reset();
-      sinon.stub(entitySet, "reset");
-      innerAgent.get = sinon.stub().returns(Promise.resolve(resultData));
+      innerAgent.get = sinon.stub().returns(Promise.resolve());
       innerAgent.getResultPath = sinon.stub().returns("a.b.c");
-      innerEntitySetModel.name = "ENTITY_SET_NAME";
       innerAgent.batchManager = {};
     });
 
     it("Successfully gets entity", function () {
-      let request = entitySet.request();
-
-      request._path = "PATH";
-      request._headers = {};
-      request._resource.entityTypeModel.hasStream = "HAS_STREAM";
+      let request = {
+        _path: "PATH",
+        _headers: "HEADERS",
+        _resource: {
+          entityTypeModel: {
+            hasStream: "HAS_STREAM",
+          },
+        },
+      };
       sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
-
       return entitySet.executeGet(request).then(() => {
+        assert.equal(entitySet._handleAgentCall.getCall(0).args[1], request);
         entitySet._handleAgentCall.getCall(0).args[0]();
-        assert(entitySet._handleAgentCall.getCall(0).args[1] === request);
-        assert.deepEqual(innerAgent.get.getCall(0).args, [
-          "PATH",
-          request._headers,
-          undefined,
-          "HAS_STREAM",
-        ]);
-      });
-    });
-
-    it("Successfully gets entity in raw", function () {
-      let request = entitySet.request();
-      request._isRaw = true;
-      sinon.stub(request, "header");
-      return entitySet.executeGet(request).then((res) => {
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert(entitySet.reset.called);
-        assert.deepEqual(res, resultData);
-      });
-    });
-
-    it("Successfully received data in invalid", function () {
-      let request = entitySet.request();
-      sinon.stub(request, "header");
-
-      innerAgent.get.returns(Promise.resolve({}));
-      return entitySet.executeGet(request).then((res) => {
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert(entitySet.reset.called);
-        assert.strictEqual(res, undefined);
-      });
-    });
-
-    it("Invalid response", function () {
-      innerAgent.get.returns(Promise.reject(new Error("ERROR")));
-      let request = entitySet.request();
-      sinon.stub(request, "header");
-      return entitySet.executeGet(request).catch((err) => {
-        assert(_.isError(err));
-        assert(request.header.calledWith("Accept", "application/json"));
-        assert(entitySet.reset.called);
+        assert.ok(
+          innerAgent.get.calledWithExactly(
+            "PATH",
+            "HEADERS",
+            undefined,
+            "HAS_STREAM"
+          )
+        );
       });
     });
 
@@ -1625,44 +1392,27 @@ describe("QueryableResource", function () {
   });
 
   describe("._handleAgentCall()", function () {
-    it("Failed on token fetching", function () {
-      let promise;
-      let call = sinon.stub();
-      innerAgent.fetchToken = sinon.stub().returns(Promise.reject("ERROR"));
-      sinon.stub(entitySet, "reset");
-      promise = entitySet._handleAgentCall(call).catch((err) => {
-        assert.strictEqual(err, "ERROR");
-      });
-      assert(entitySet.reset.called);
-      return promise;
-    });
     it("Failed on request call", function () {
       let promise;
       let call = sinon.stub().returns(Promise.reject("ERROR"));
-      innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
       sinon.stub(entitySet, "reset");
       sinon.stub(entitySet, "determineRequestHeaders");
       promise = entitySet._handleAgentCall(call, "REQUEST").catch((err) => {
-        assert(
-          entitySet.determineRequestHeaders.calledWith("REQUEST", "TOKEN")
-        );
+        assert(entitySet.determineRequestHeaders.calledWith("REQUEST"));
         assert.ok(call.calledWith("REQUEST"));
         assert.strictEqual(err, "ERROR");
       });
       assert(entitySet.reset.called);
       return promise;
     });
-    it("Successfully reeive data", function () {
+    it("Successfully receive data", function () {
       let promise;
       let call = sinon.stub().returns(Promise.resolve("RESPONSE"));
-      innerAgent.fetchToken = sinon.stub().returns(Promise.resolve("TOKEN"));
       sinon.stub(entitySet, "reset");
       sinon.stub(entitySet, "determineRequestHeaders");
       sinon.stub(entitySet, "determineResponseResult").returns("RESULT");
       promise = entitySet._handleAgentCall(call, "REQUEST").then((result) => {
-        assert(
-          entitySet.determineRequestHeaders.calledWith("REQUEST", "TOKEN")
-        );
+        assert(entitySet.determineRequestHeaders.calledWith("REQUEST"));
         assert(
           entitySet.determineResponseResult.calledWith("REQUEST", "RESPONSE")
         );
@@ -1685,38 +1435,15 @@ describe("QueryableResource", function () {
         header: sinon.stub(),
       };
     });
-
-    it("Headers without csrf token", function () {
-      request._resource.entityTypeModel.hasStream = false;
-      entitySet.determineRequestHeaders(request, null);
-      assert.ok(request.header.calledOnce);
-      assert.deepEqual(request.header.getCall(0).args, [
-        "Accept",
-        "application/json",
-      ]);
+    it("Headers for standard odata request request", function () {
+      entitySet.determineRequestHeaders(request);
+      assert.ok(request.header.calledWithExactly("Accept", "application/json"));
     });
 
-    it("Headers for standard OData request", function () {
-      request._resource.entityTypeModel.hasStream = false;
-      entitySet.determineRequestHeaders(request, "TOKEN");
-      assert.deepEqual(request.header.getCall(0).args, [
-        "x-csrf-token",
-        "TOKEN",
-      ]);
-      assert.deepEqual(request.header.getCall(1).args, [
-        "Accept",
-        "application/json",
-      ]);
-    });
-
-    it("Headers for streamrequest", function () {
+    it("Headers for stream request", function () {
       request._resource.entityTypeModel.hasStream = true;
-      entitySet.determineRequestHeaders(request, "TOKEN");
-      assert.deepEqual(request.header.getCall(0).args, [
-        "x-csrf-token",
-        "TOKEN",
-      ]);
-      assert.ok(request.header.calledOnce);
+      entitySet.determineRequestHeaders(request);
+      assert.ok(request.header.notCalled);
     });
   });
 
@@ -1731,40 +1458,88 @@ describe("QueryableResource", function () {
         },
         header: sinon.stub(),
       };
-      response = {};
+      response = {
+        arrayBuffer: sinon.stub().returns(Promise.resolve([])),
+        json: sinon.stub().returns(
+          Promise.resolve({
+            body: "BODY",
+          })
+        ),
+      };
+      sinon
+        .stub(entitySet, "_unwrapNestedProperties")
+        .returns("UNWRAPPED_RESULT");
+      innerAgent.getResultPath = sinon.stub().returns("body");
     });
 
     it("Return body from response with binary data", function () {
       request._resource.entityTypeModel.hasStream = true;
-      response.body = "BODY";
-      assert.strictEqual(
-        entitySet.determineResponseResult(request, response),
-        "BODY"
-      );
+      return entitySet
+        .determineResponseResult(request, response)
+        .then((buf) => {
+          assert.ok(buf instanceof Buffer);
+        });
     });
 
     it("raw response", function () {
       request._isRaw = true;
-      assert.strictEqual(
-        entitySet.determineResponseResult(request, response),
-        response
-      );
+      return entitySet
+        .determineResponseResult(request, response)
+        .then((result) => {
+          assert.strictEqual(result, response);
+        });
     });
 
-    it("JSON response", function () {
+    it("JSON response with result path", function () {
       innerAgent.getResultPath = sinon.stub().returns("body");
-      sinon.stub(entitySet, "_unwrapNestedProperties").returns("RESULT");
-      response.body = "BODY";
       request._isList = "IS_LIST";
 
-      assert.strictEqual(
-        entitySet.determineResponseResult(request, response),
-        "RESULT"
-      );
-      assert.ok(
-        innerAgent.getResultPath.calledWithExactly("IS_LIST", response)
-      );
-      assert.ok(entitySet._unwrapNestedProperties.calledWithExactly("BODY"));
+      return entitySet
+        .determineResponseResult(request, response)
+        .then((json) => {
+          assert.strictEqual(json, "UNWRAPPED_RESULT");
+          assert.ok(
+            innerAgent.getResultPath.calledWithExactly("IS_LIST", {
+              body: "BODY",
+            })
+          );
+          assert.ok(
+            entitySet._unwrapNestedProperties.calledWithExactly("BODY")
+          );
+        });
+    });
+
+    it("JSON response without result path", function () {
+      innerAgent.getResultPath.returns("");
+      request._isList = "IS_LIST";
+
+      return entitySet
+        .determineResponseResult(request, response)
+        .then((json) => {
+          assert.strictEqual(json, "UNWRAPPED_RESULT");
+          assert.ok(
+            innerAgent.getResultPath.calledWithExactly("IS_LIST", {
+              body: "BODY",
+            })
+          );
+          assert.ok(
+            entitySet._unwrapNestedProperties.calledWithExactly({
+              body: "BODY",
+            })
+          );
+        });
+    });
+
+    it("non-content response", function () {
+      innerAgent.getResultPath.returns("");
+      request._isList = "IS_LIST";
+      response.status = 204;
+
+      return entitySet
+        .determineResponseResult(request, response)
+        .then((json) => {
+          assert.equal(json, null);
+        });
     });
   });
 

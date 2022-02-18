@@ -1,58 +1,43 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const _ = require("lodash");
+const agentUrl = require("../../../lib/agent/url");
+const xml2js = require("xml2js");
+const tough = require("tough-cookie");
+const log = require("../../../lib/agent/log");
 
-function getSampleMetadataResponse() {
-  return Promise.resolve({
-    body: {
-      "edmx:Edmx": {
-        "edmx:DataServices": [
-          {
-            Schema: [
-              {
-                EntityContainer: {},
-                Annotations: [{}],
-              },
-            ],
-          },
-        ],
-      },
-    },
-  });
-}
+let Agent;
+let agent;
+let authenticatorNone, authenticatorBasic, authenticatorSamlSap;
+let sandbox = sinon.createSandbox();
+let nodeFetch = sinon.stub();
 
-describe("Agent", function () {
-  let Agent;
-  let superagent;
-  let innerAgent;
-  let agent;
-  let url;
-  let authenticatorNone, authenticatorBasic, authenticatorSamlSap;
-
+describe("lib/engine/Agent", function () {
   beforeEach(function () {
-    innerAgent = sinon.stub();
-    superagent = {
-      agent: sinon.stub().returns(innerAgent),
-    };
-    url = {};
     authenticatorNone = sinon.stub();
     authenticatorBasic = sinon.stub();
     authenticatorSamlSap = sinon.stub();
 
     Agent = proxyquire("../../../lib/agent/Agent", {
-      superagent: superagent,
-      "./url": url,
       "./authentication/none": authenticatorNone,
       "./authentication/basic": authenticatorBasic,
       "./authentication/samlSap": authenticatorSamlSap,
+      "node-fetch": nodeFetch,
+    });
+    sandbox.stub(tough, "CookieJar").returns({
+      getCookieString: sinon.stub(),
+      setCookie: sinon.stub(),
     });
     agent = new Agent({
       url: "URL",
     });
-    agent.setServiceVersion("1.0");
+  });
+
+  afterEach(function () {
+    sandbox.restore();
   });
 
   describe("#constructor()", function () {
@@ -60,44 +45,7 @@ describe("Agent", function () {
       assert.deepEqual(agent.settings, {
         url: "URL",
       });
-      assert.strictEqual(agent.superagent, innerAgent);
       assert.ok(_.has(agent, "logger"));
-    });
-  });
-
-  describe(".logResponse", function () {
-    let response = {
-      request: {
-        header: "HEADER",
-        cookies: "COOKIES",
-      },
-      header: "HEADER",
-      body: "BODY",
-      statusCode: 200,
-    };
-
-    beforeEach(function () {
-      sinon.stub(agent.logger, "info");
-      sinon.stub(agent.logger, "debug");
-      sinon.stub(agent.logger, "error");
-    });
-
-    it("Response without error", function () {
-      agent.logResponse(response);
-      assert.ok(agent.logger.info.calledOnce);
-      assert.strictEqual(agent.logger.debug.callCount, 4);
-      assert.ok(agent.logger.error.notCalled);
-    });
-
-    it("Error response", function () {
-      response.error = {
-        message: "ERROR_MESSAGE",
-        stack: "ERROR_STACK",
-      };
-      agent.logResponse(response);
-      assert.ok(agent.logger.info.calledOnce);
-      assert.strictEqual(agent.logger.debug.callCount, 4);
-      assert.ok(agent.logger.error.calledTwice);
     });
   });
 
@@ -158,16 +106,15 @@ describe("Agent", function () {
   });
 
   describe(".metadata()", function () {
-    it("Read core metadata only", function () {
+    beforeEach(function () {
       sinon.stub(agent, "metadataSearch").returns("PARAMETERS");
       sinon.stub(agent, "authenticate").returns(Promise.resolve());
-      sinon.stub(agent, "createMetadataRequest").returns(
-        Promise.resolve({
-          body: "RESPONSE_BODY",
-        })
-      );
-      url.appendSearch = (a, b) => `${a}?${b}`;
-
+      sinon
+        .stub(agent, "createMetadataRequest")
+        .returns(Promise.resolve("RESPONSE_BODY"));
+      sandbox.stub(agentUrl, "appendSearch");
+    });
+    it("Read core metadata only", function () {
       return agent.metadata().then((responses) => {
         assert.deepEqual(responses, ["RESPONSE_BODY"]);
         assert.ok(agent.createMetadataRequest.calledOnce);
@@ -182,24 +129,13 @@ describe("Agent", function () {
       });
     });
     it("Read core metadata and annotations metadata", function () {
-      sinon.stub(agent, "metadataSearch").returns("PARAMETERS");
-      sinon.stub(agent, "authenticate").returns(Promise.resolve());
-      sinon
-        .stub(agent, "createMetadataRequest")
+      agent.createMetadataRequest
         .onCall(0)
-        .returns(
-          Promise.resolve({
-            body: "METADATA_RESPONSE_BODY",
-          })
-        );
-      agent.createMetadataRequest.onCall(1).returns(
-        Promise.resolve({
-          body: "ANNOTATIONS_RESPONSE_BODY",
-        })
-      );
-      url.appendSearch = sinon
-        .stub()
-        .returns("ANNOTATIONS_URL_WITH_PARAMETERS");
+        .returns(Promise.resolve("METADATA_RESPONSE_BODY"));
+      agent.createMetadataRequest
+        .onCall(1)
+        .returns(Promise.resolve("ANNOTATIONS_RESPONSE_BODY"));
+      agentUrl.appendSearch.returns("ANNOTATIONS_URL_WITH_PARAMETERS");
       agent.settings.annotationsUrl = "ANNOTATIONS_URL";
 
       return agent.metadata().then((responses) => {
@@ -220,65 +156,51 @@ describe("Agent", function () {
           agent.createMetadataRequest.getCall(1).args[0],
           "ANNOTATIONS_URL_WITH_PARAMETERS"
         );
-        assert.equal(url.appendSearch.getCall(0).args[0], "ANNOTATIONS_URL");
-        assert.equal(url.appendSearch.getCall(0).args[1], "PARAMETERS");
+        assert.equal(
+          agentUrl.appendSearch.getCall(0).args[0],
+          "ANNOTATIONS_URL"
+        );
+        assert.equal(agentUrl.appendSearch.getCall(0).args[1], "PARAMETERS");
       });
     });
   });
 
   describe(".createMetadataRequest()", function () {
+    beforeEach(function () {
+      sinon.stub(agent, "fetch").returns(
+        Promise.resolve({
+          text: sinon.stub().returns(Promise.resolve("METADATA_RESPONSE")),
+        })
+      );
+      sinon.stub(agent.logger, "info");
+      sandbox
+        .stub(xml2js, "parseString")
+        .yieldsRight(null, "METADATA_DOM_OBJECT");
+    });
     it("Successfull request", function () {
-      sinon.stub(agent, "logResponse");
-      sinon.stub(agent, "logRequest");
-      innerAgent.get = sinon.stub().returns({
-        buffer: sinon.stub().returns(getSampleMetadataResponse()),
-      });
-      return agent.createMetadataRequest("metadataUrl").then(() => {
-        assert.ok(innerAgent.get.calledWith("metadataUrl"));
-        assert.ok(innerAgent.get().buffer.calledWith(true));
-        assert.ok(agent.logResponse.called);
-        assert.ok(agent.logRequest.calledWithExactly("metadataUrl", "GET"));
-      });
-    });
-    it("Process invalid request", function () {
-      sinon.stub(agent, "logResponse");
-      sinon.stub(agent, "logRequest");
-      sinon.stub(Agent, "formatResponseError").returns("FORMATTED_ERROR");
-      innerAgent.get = sinon.stub().returns({
-        buffer: sinon.stub().returns(
-          Promise.reject({
-            response: "ERROR",
-          })
-        ),
-      });
-      return agent.createMetadataRequest("metadataUrl").catch((err) => {
+      return agent.createMetadataRequest("METADATA_URL").then((res) => {
+        assert.equal(res, "METADATA_DOM_OBJECT");
+        assert.ok(agent.fetch.calledWithExactly("METADATA_URL"));
         assert.ok(
-          Agent.formatResponseError.calledWith({
-            response: "ERROR",
-          })
+          agent.logger.info.calledWithExactly(
+            "Metadata successfully fetched from 'METADATA_URL'."
+          )
         );
-        assert.ok(agent.logResponse.calledWithExactly("ERROR"));
-        assert.equal(err, "FORMATTED_ERROR");
-        Agent.formatResponseError.restore();
       });
     });
-  });
-
-  describe(".initializeAgent()", function () {
-    it("Initialize without ca", function () {
-      innerAgent.ca = sinon.stub();
-      agent.initializeAgent({
-        url: "URL",
+    it("HTTP request rejected", function () {
+      agent.fetch.returns(Promise.reject("ERROR"));
+      return agent.createMetadataRequest("METADATA_URL").catch((err) => {
+        assert.equal(err, "ERROR");
+        assert.ok(agent.fetch.calledWithExactly("METADATA_URL"));
       });
-      assert.ok(innerAgent.ca.notCalled);
     });
-    it("Initialize with auth", function () {
-      innerAgent.ca = sinon.stub();
-      agent.initializeAgent({
-        url: "URL",
-        ca: "CA_PATH",
+    it("metadata XML parsed with errors", function () {
+      xml2js.parseString.yieldsRight("PARSE_ERROR", "METADATA_DOM_OBJECT");
+      return agent.createMetadataRequest("METADATA_URL").catch((err) => {
+        assert.equal(err, "PARSE_ERROR");
+        assert.ok(agent.fetch.calledWithExactly("METADATA_URL"));
       });
-      assert.ok(innerAgent.ca.getCall(0).calledWithExactly("CA_PATH"));
     });
   });
 
@@ -298,76 +220,60 @@ describe("Agent", function () {
 
   describe(".sendRequest()", function () {
     beforeEach(() => {
-      url.normalize = sinon.stub();
-      url.normalize.returns("NORMALIZED_PATH");
-
-      sinon.spy(agent.logger, "info");
-      sinon
-        .stub(agent, "headersToRequest")
-        .returns(Promise.resolve("RESPONSE"));
-      sinon.stub(agent, "logResponse");
-      innerAgent.post = sinon.stub();
+      sinon.stub(agent, "fetchToken").returns(Promise.resolve("X_CSRF_TOKEN"));
+      sinon.stub(agent, "fetch").returns(Promise.resolve("RESPONSE"));
+      sandbox.stub(agentUrl, "normalize").returns("SERVICE_URL");
     });
-    it("Envelope superagent request with payload", function () {
-      let postRequest = {
-        send: sinon.stub().returns("SUPERAGENT_POST_PROMISE"),
-        buffer: sinon.stub(),
-      };
-
-      innerAgent.post.returns(postRequest);
-
+    it("does not use csrf token", function () {
       return agent
-        .sendRequest("POST", "INPUT_PATH", "HEADERS", "PAYLOAD")
-        .then((res) => {
-          assert.equal(res, "RESPONSE");
-          assert.ok(innerAgent.post.calledWith("NORMALIZED_PATH"));
-          assert.ok(postRequest.send.calledWith("PAYLOAD"));
-          assert.ok(agent.headersToRequest.calledWith("HEADERS", postRequest));
-          assert.deepEqual(url.normalize.getCall(0).args, [
-            "INPUT_PATH",
-            "URL",
-          ]);
-          assert.ok(agent.logResponse.calledWith("RESPONSE"));
-          assert.ok(postRequest.buffer.calledWithExactly(false));
+        .sendRequest("get", "INPUT_URL", {
+          additionalParameter: "ADDITIONAL_PARAMETER",
+        })
+        .then((response) => {
+          assert.ok(agentUrl.normalize.calledWith("INPUT_URL", "URL"));
+          assert.equal(response, "RESPONSE");
+          assert.ok(
+            agent.fetch.calledWith("SERVICE_URL", {
+              method: "GET",
+              headers: {
+                additionalParameter: "ADDITIONAL_PARAMETER",
+              },
+            })
+          );
         });
     });
-    it("Envelope superagent request without payload", function () {
-      let postRequest = {
-        buffer: sinon.stub(),
-      };
-      innerAgent.post.returns(postRequest);
-
+    it("use csrf token", function () {
       return agent
-        .sendRequest("POST", "INPUT_PATH", "HEADERS", undefined, true)
-        .then((res) => {
-          assert.equal(res, "RESPONSE");
-          assert.ok(innerAgent.post.calledWith("NORMALIZED_PATH"));
-          assert.ok(agent.headersToRequest.calledWith("HEADERS", postRequest));
-          assert.deepEqual(url.normalize.getCall(0).args, [
-            "INPUT_PATH",
-            "URL",
-          ]);
-          assert.ok(agent.logResponse.calledWith("RESPONSE"));
-          assert.ok(postRequest.buffer.calledWithExactly(true));
+        .sendRequest("DELETE", "INPUT_URL", { "sap-server": "true" })
+        .then((response) => {
+          assert.equal(response, "RESPONSE");
+          assert.ok(
+            agent.fetch.calledWith("SERVICE_URL", {
+              method: "DELETE",
+              headers: {
+                "sap-server": "true",
+                "x-csrf-token": "X_CSRF_TOKEN",
+              },
+            })
+          );
         });
     });
-    it("Error response from superagent request", function () {
-      let postRequest = {
-        buffer: sinon.stub(),
-      };
-      innerAgent.post.returns(postRequest);
-      sinon.stub(Agent, "formatResponseError").returns("FORMATTED_ERROR");
-      agent.headersToRequest.returns(Promise.reject("ERROR"));
-
-      return agent.sendRequest("POST", "INPUT_PATH", "HEADERS").catch((err) => {
-        assert.equal(err, "FORMATTED_ERROR");
-        assert.ok(innerAgent.post.calledWith("NORMALIZED_PATH"));
-        assert.ok(agent.headersToRequest.calledWith("HEADERS", postRequest));
-        assert.deepEqual(url.normalize.getCall(0).args, ["INPUT_PATH", "URL"]);
-        assert.ok(Agent.formatResponseError.calledWith("ERROR"));
-        Agent.formatResponseError.restore();
-        assert.ok(postRequest.buffer.calledWithExactly(false));
-      });
+    it("use payload token", function () {
+      return agent
+        .sendRequest("POST", "INPUT_URL", { "sap-server": "true" }, "PAYLOAD")
+        .then((response) => {
+          assert.equal(response, "RESPONSE");
+          assert.ok(
+            agent.fetch.calledWith("SERVICE_URL", {
+              method: "POST",
+              body: "PAYLOAD",
+              headers: {
+                "sap-server": "true",
+                "x-csrf-token": "X_CSRF_TOKEN",
+              },
+            })
+          );
+        });
     });
   });
 
@@ -404,7 +310,6 @@ describe("Agent", function () {
             true
           )
         );
-        assert.ok(_.isFunction(promiseBatch.request._parser));
         assert.ok(batchObject.process.calledWith("BATCH_RESPONSE"));
         assert.ok(
           agent.normalizeBatchResponse.calledWith(
@@ -489,7 +394,6 @@ describe("Agent", function () {
           )
         );
         assert.equal(error, "ERROR");
-        assert.ok(_.isFunction(promiseBatch.request._parser));
       });
     });
     it("fails batch processing", function () {
@@ -564,118 +468,6 @@ describe("Agent", function () {
     );
   });
 
-  describe("#enhanceError()", function () {
-    it("Process non superagent error", function () {
-      assert.ok(Agent.formatResponseError({}) instanceof Error);
-    });
-    it("Process response error", function () {
-      sinon.stub(Agent, "parseNetweaverErrorMessage");
-      assert.ok(
-        Agent.formatResponseError({
-          response: {
-            error: {
-              message: "ERROR",
-            },
-            request: {
-              url: "URL",
-              header: {
-                HEADER: "VALUE",
-              },
-              cookies: "COOKIE1=VALUE1;COOKIE2=VALUE2",
-            },
-          },
-        }) instanceof Error
-      );
-      assert.ok(Agent.parseNetweaverErrorMessage.calledWith("ERROR"));
-      Agent.parseNetweaverErrorMessage.restore();
-    });
-    it("Process response text", function () {
-      sinon.stub(Agent, "parseNetweaverErrorMessage").returns("PARSED_MESSAGE");
-      assert.ok(
-        Agent.formatResponseError({
-          response: {
-            text: "ERROR",
-            request: {
-              url: "URL",
-              header: {
-                HEADER: "VALUE",
-              },
-              cookies: "COOKIE1=VALUE1;COOKIE2=VALUE2",
-            },
-          },
-        }) instanceof Error
-      );
-      assert.ok(Agent.parseNetweaverErrorMessage.calledWith("ERROR"));
-      Agent.parseNetweaverErrorMessage.restore();
-    });
-    it("Process response text", () => {
-      sinon.stub(Agent, "parseNetweaverErrorMessage");
-      assert.ok(
-        Agent.formatResponseError({
-          response: {
-            request: {
-              url: "URL",
-              header: {
-                HEADER: "VALUE",
-              },
-              cookies: "COOKIE1=VALUE1;COOKIE2=VALUE2",
-            },
-          },
-        }) instanceof Error
-      );
-      assert.ok(Agent.parseNetweaverErrorMessage.calledWith(""));
-      Agent.parseNetweaverErrorMessage.restore();
-    });
-  });
-
-  describe("#parseNetweaverErrorMessage()", function () {
-    it("Process JSON message", function () {
-      let responseError = JSON.stringify({
-        error: {
-          message: {
-            value: "MESSAGE",
-          },
-        },
-      });
-      assert.equal(
-        Agent.parseNetweaverErrorMessage(responseError),
-        `MESSAGE\n\n${JSON.stringify(
-          { error: { message: { value: "MESSAGE" } } },
-          null,
-          2
-        )}`
-      );
-    });
-    it("Process unidentified response", function () {
-      let responseError = JSON.stringify({
-        error: {
-          messageText: {
-            value: "MESSAGE",
-          },
-        },
-      });
-      assert.equal(Agent.parseNetweaverErrorMessage(undefined), undefined);
-      assert.equal(
-        Agent.parseNetweaverErrorMessage(responseError),
-        JSON.stringify(
-          {
-            error: {
-              messageText: {
-                value: "MESSAGE",
-              },
-            },
-          },
-          null,
-          2
-        )
-      );
-      assert.equal(
-        Agent.parseNetweaverErrorMessage("<xmlerror>ERROR</xmlerror>"),
-        "<xmlerror>ERROR</xmlerror>"
-      );
-    });
-  });
-
   describe(".initializeLogger()", function () {
     it("Create implicit logger", function () {
       let logger = agent.initializeLogger({});
@@ -711,21 +503,23 @@ describe("Agent", function () {
   });
 
   describe(".fetchToken()", function () {
+    let headers;
     beforeEach(() => {
+      headers = {
+        get: sinon.stub().withArgs("x-csrf-token").returns("X_CSRF_TOKEN"),
+      };
       sinon.stub(agent.logger, "info");
-      sinon.stub(agent, "sendRequest").returns(
+      sandbox.stub(agentUrl, "normalize").returns("NORMALIZED_URL");
+      sinon.stub(agent, "fetch").returns(
         Promise.resolve({
-          headers: {
-            "x-csrf-token": "X_CSRF_TOKEN",
-          },
+          headers: headers,
         })
       );
     });
     it("Fetch token from backend", function () {
-      return agent.fetchToken().then(function () {
+      return agent.fetchToken().then((token) => {
         assert.ok(agent.logger.info.calledTwice);
-        assert.ok(agent.sendRequest.calledWith("GET", "/"));
-        assert.equal(agent.csrfToken, "X_CSRF_TOKEN");
+        assert.equal(token, "X_CSRF_TOKEN");
       });
     });
     it("Use cached token", function () {
@@ -733,12 +527,12 @@ describe("Agent", function () {
         .fetchToken()
         .then(function () {
           agent.logger.info.reset();
-          agent.sendRequest.reset();
+          agent.fetch.reset();
           return agent.fetchToken();
         })
-        .then(function () {
-          assert.ok(agent.logger.info.notCalled);
-          assert.ok(agent.sendRequest.notCalled);
+        .then(function (token) {
+          assert.equal(token, "X_CSRF_TOKEN");
+          assert.ok(agent.fetch.notCalled);
         });
     });
   });
@@ -771,7 +565,7 @@ describe("Agent", function () {
           {
             url: "URL",
           },
-          innerAgent,
+          agent,
           "URL",
         ]);
       });
@@ -799,7 +593,7 @@ describe("Agent", function () {
             {
               url: "URL",
             },
-            innerAgent,
+            agent,
             "URL",
           ]);
         });
@@ -985,6 +779,7 @@ describe("Agent", function () {
 
   describe(".normalizeBatchResponse", function () {
     it("Returns parsed particular OData responses.", function () {
+      agent.setServiceVersion("1.0");
       assert.deepEqual(
         agent.normalizeBatchResponse(
           "BATCH_RESPONSE",
@@ -1008,6 +803,7 @@ describe("Agent", function () {
       );
     });
     it("Returns batch responses with full particular responses.", function () {
+      agent.setServiceVersion("1.0");
       assert.deepEqual(
         agent.normalizeBatchResponse({}, ["RESPONSE_1", "RESPONSE_2"], true),
         {
@@ -1016,6 +812,7 @@ describe("Agent", function () {
       );
     });
     it("Returns parsed OData responses in changeSet.", function () {
+      agent.setServiceVersion("1.0");
       assert.deepEqual(
         agent.normalizeBatchResponse(
           "BATCH_RESPONSE",
@@ -1043,57 +840,504 @@ describe("Agent", function () {
   });
 
   describe(".getResultPath", function () {
-    it("SAP list result path v1", function () {
-      let result = {
-        body: {
-          d: {
-            results: "RESULTS",
-          },
+    let result;
+    beforeEach(function () {
+      result = {
+        d: {
+          results: "RESULTS",
         },
       };
-      assert.strictEqual(agent.getResultPath(true, result), "body.d.results");
+      agent.setServiceVersion("1.0");
+    });
+    it("SAP list result path v1", function () {
+      assert.strictEqual(agent.getResultPath(true, result), "d.results");
     });
     it("SAP object result path v1", function () {
-      let result = {
-        body: {
-          d: {
-            results: "RESULTS",
-          },
-        },
-      };
-      assert.strictEqual(agent.getResultPath(false, result), "body.d");
+      assert.strictEqual(agent.getResultPath(false, result), "d");
     });
     it("MS list result path v1", function () {
-      let result = {
-        body: {
-          d: "RESULTS",
-        },
-      };
-      assert.strictEqual(agent.getResultPath(true, result), "body.d");
+      result.d = "RESULTS";
+      assert.strictEqual(agent.getResultPath(true, result), "d");
     });
     it("List result path v4", function () {
-      let result = {
-        body: {
-          value: "RESULTS",
-        },
-      };
+      result.value = "RESULTS";
       agent = new Agent({
         url: "URL",
       });
       agent.setServiceVersion("4.0");
-      assert.strictEqual(agent.getResultPath(true, result), "body.value");
+      assert.strictEqual(agent.getResultPath(true, result), "value");
     });
     it("Object result path v4", function () {
-      let result = {
-        body: {
-          value: "RESULTS",
-        },
-      };
+      result.value = "RESULTS";
       agent = new Agent({
         url: "URL",
       });
       agent.setServiceVersion("4.0");
-      assert.strictEqual(agent.getResultPath(false, result), "body");
+      assert.strictEqual(agent.getResultPath(false, result), "");
+    });
+  });
+
+  describe(".setServiceVersion", function () {
+    it("invalid version", function () {
+      assert.throws(function () {
+        agent.setServiceVersion(null);
+      });
+    });
+    it("paths for version 1", function () {
+      agent.setServiceVersion("1.0");
+      assert.equal(agent._listResultPath, "d.results");
+      assert.equal(agent._instanceResultPath, "d");
+    });
+    it("paths for version 4", function () {
+      agent.setServiceVersion("4.0");
+      assert.equal(agent._listResultPath, "value");
+      assert.equal(agent._instanceResultPath, "");
+    });
+  });
+
+  describe(".fetch", function () {
+    let opts;
+    beforeEach(function () {
+      sinon.stub(agent, "readCookies").returns(Promise.resolve("COOKIES"));
+      sinon.stub(agent, "appendHeaders");
+      sandbox.stub(log, "logRequest");
+      nodeFetch.returns(Promise.resolve("RESPONSE"));
+      sinon.stub(agent, "saveCookies").returns(Promise.resolve());
+      sinon.stub(agent, "isResponseRedirect");
+      sinon.stub(agent, "redirect").returns(Promise.resolve());
+      sinon.stub(agent, "processResponse").returns(Promise.resolve());
+      opts = {};
+      agent.setAuthorizationHeaders({ "x-csrf-token": "X-CSRF-TOKEN" });
+    });
+    it("invalid options", function () {
+      assert.throws(function () {
+        agent.fetch("URL", null);
+      });
+    });
+    it("use fetch to handle normal http request ", function () {
+      return agent.fetch("URL", opts).then(function () {
+        assert.ok(agent.readCookies.calledWithExactly("URL"));
+        assert.ok(
+          agent.appendHeaders.calledWithExactly(
+            {
+              Cookie: "COOKIES",
+            },
+            opts
+          )
+        );
+        assert.ok(
+          agent.appendHeaders.calledWithExactly(
+            { "x-csrf-token": "X-CSRF-TOKEN" },
+            opts
+          )
+        );
+        assert.equal(log.logRequest.getCall(0).args[0], agent.logger);
+        assert.ok(_.isNumber(log.logRequest.getCall(0).args[1]));
+        assert.deepEqual(log.logRequest.getCall(0).args.slice(2), [
+          "URL",
+          opts,
+        ]);
+        assert.ok(nodeFetch.calledWithExactly("URL", { redirect: "manual" }));
+        assert.ok(agent.saveCookies.calledWithExactly("RESPONSE"));
+        assert.ok(
+          agent.isResponseRedirect.calledWithExactly(
+            "RESPONSE",
+            undefined,
+            false
+          )
+        );
+        assert.ok(agent.redirect.notCalled);
+        assert.ok(_.isNumber(agent.processResponse.getCall(0).args[0]));
+        assert.deepEqual(agent.processResponse.getCall(0).args.slice(1), [
+          "URL",
+          opts,
+          "RESPONSE",
+        ]);
+      });
+    });
+    it("use fetch to handle redirect", function () {
+      agent.isResponseRedirect.returns(true);
+      return agent.fetch("URL", opts).then(function () {
+        assert.ok(agent.readCookies.calledWithExactly("URL"));
+        assert.ok(
+          agent.appendHeaders.calledWithExactly(
+            {
+              Cookie: "COOKIES",
+            },
+            opts
+          )
+        );
+        assert.ok(
+          agent.appendHeaders.calledWithExactly(
+            { "x-csrf-token": "X-CSRF-TOKEN" },
+            opts
+          )
+        );
+        assert.equal(log.logRequest.getCall(0).args[0], agent.logger);
+        assert.ok(_.isNumber(log.logRequest.getCall(0).args[1]));
+        assert.deepEqual(log.logRequest.getCall(0).args.slice(2), [
+          "URL",
+          opts,
+        ]);
+        assert.ok(nodeFetch.calledWithExactly("URL", { redirect: "manual" }));
+        assert.ok(agent.saveCookies.calledWithExactly("RESPONSE"));
+        assert.ok(
+          agent.isResponseRedirect.calledWithExactly(
+            "RESPONSE",
+            undefined,
+            false
+          )
+        );
+        assert.ok(agent.processResponse.notCalled);
+        assert.ok(_.isNumber(agent.redirect.getCall(0).args[0]));
+        assert.deepEqual(agent.redirect.getCall(0).args.slice(1), [
+          "URL",
+          opts,
+          "RESPONSE",
+        ]);
+      });
+    });
+  });
+
+  describe(".processResponse", function () {
+    let response;
+    beforeEach(function () {
+      response = {
+        status: 400,
+        text: sinon.stub().returns(Promise.resolve("ERROR_DESCRIPTION")),
+        statusText: "STATUS_TEXT",
+      };
+    });
+    it("correct responsed", function () {
+      response.status = 200;
+      sandbox.stub(log, "logResponse");
+      return agent
+        .processResponse("COUNTER", "requestUrl", "OPTS", response)
+        .then((result) => {
+          assert.deepEqual(
+            result,
+            _.assign(
+              {
+                requestCounter: "COUNTER",
+              },
+              response
+            )
+          );
+          assert.ok(
+            log.logResponse.calledWithExactly(
+              agent.logger,
+              "COUNTER",
+              "requestUrl",
+              "OPTS"
+            )
+          );
+        });
+    });
+    it("response with error status code", function () {
+      sandbox.stub(log, "logResponse");
+      return agent
+        .processResponse("COUNTER", "requestUrl", "OPTS", response)
+        .catch((err) => {
+          assert.equal(err.name, "STATUS_TEXT");
+          assert.equal(err.message, "ERROR_DESCRIPTION");
+          assert.equal(err.status, 400);
+          assert.ok(
+            log.logResponse.calledWithExactly(
+              agent.logger,
+              "COUNTER",
+              "requestUrl",
+              "OPTS"
+            )
+          );
+        });
+    });
+    it("error response without body content", function () {
+      sandbox.stub(log, "logResponse");
+      response.text.returns(Promise.resolve(undefined));
+      return agent
+        .processResponse("COUNTER", "requestUrl", "OPTS", response)
+        .catch((err) => {
+          assert.equal(err.name, "STATUS_TEXT");
+          assert.equal(err.message, "STATUS_TEXT");
+          assert.equal(err.status, 400);
+          assert.ok(
+            log.logResponse.calledWithExactly(
+              agent.logger,
+              "COUNTER",
+              "requestUrl",
+              "OPTS"
+            )
+          );
+        });
+    });
+  });
+
+  describe(".redirect", function () {
+    let response;
+    beforeEach(function () {
+      response = {
+        headers: {
+          get: sinon.stub().returns("LOCATION"),
+        },
+      };
+      sinon.stub(agent, "fetch").returns("FETCH_PROMISE");
+      sandbox.stub(log, "logResponse");
+    });
+    it("normally processs HTTP request with redirect", function () {
+      assert.equal(
+        agent.redirect("COUNTER", "URL", "OPTS", response),
+        "FETCH_PROMISE"
+      );
+      assert.ok(
+        log.logResponse.calledWithExactly(
+          agent.logger,
+          "COUNTER",
+          "URL",
+          "OPTS",
+          response
+        )
+      );
+      assert.ok(
+        agent.fetch.calledWithExactly(
+          "LOCATION",
+          {
+            method: "GET",
+            body: null,
+          },
+          true
+        )
+      );
+    });
+    it("processs HTTP redirect with follow option ", function () {
+      assert.equal(
+        agent.redirect("COUNTER", "URL", { follow: 1 }, response),
+        "FETCH_PROMISE"
+      );
+      assert.ok(
+        log.logResponse.calledWithExactly(
+          agent.logger,
+          "COUNTER",
+          "URL",
+          { follow: 1 },
+          response
+        )
+      );
+      assert.ok(
+        agent.fetch.calledWithExactly(
+          "LOCATION",
+          {
+            method: "GET",
+            body: null,
+            follow: 0,
+          },
+          true
+        )
+      );
+    });
+    it("processs HTTP temporary redirect with follow option ", function () {
+      response.status = 307;
+      assert.equal(
+        agent.redirect("COUNTER", "URL", { follow: 1 }, response),
+        "FETCH_PROMISE"
+      );
+      assert.ok(
+        log.logResponse.calledWithExactly(
+          agent.logger,
+          "COUNTER",
+          "URL",
+          { follow: 1 },
+          response
+        )
+      );
+      assert.ok(
+        agent.fetch.calledWithExactly(
+          "LOCATION",
+          {
+            follow: 0,
+          },
+          true
+        )
+      );
+    });
+  });
+
+  describe(".readCookies", function () {
+    let promise;
+    it("read cookies with url as string", function () {
+      promise = agent.readCookies("URL");
+      assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
+      agent.cookieJar.getCookieString.getCall(0).args[1](null, "COOKIES");
+      return promise.then((cookies) => {
+        assert.equal(cookies, "COOKIES");
+      });
+    });
+    it("read cookies with url as HTTP response", function () {
+      promise = agent.readCookies({
+        url: "URL",
+      });
+      assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
+      agent.cookieJar.getCookieString.getCall(0).args[1](null, "COOKIES");
+      return promise.then((cookies) => {
+        assert.equal(cookies, "COOKIES");
+      });
+    });
+    it("read cookies rejected", function () {
+      promise = agent.readCookies({
+        url: "URL",
+      });
+      assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
+      agent.cookieJar.getCookieString.getCall(0).args[1]("ERROR", "COOKIES");
+      return promise.catch((err) => {
+        assert.equal(err, "ERROR");
+      });
+    });
+  });
+
+  it(".isResponseRedirect", function () {
+    assert.equal(
+      agent.isResponseRedirect(
+        {
+          status: 200,
+        },
+        0,
+        true
+      ),
+      false
+    );
+    assert.equal(
+      agent.isResponseRedirect(
+        {
+          status: 303,
+        },
+        0,
+        true
+      ),
+      false
+    );
+    assert.equal(
+      agent.isResponseRedirect(
+        {
+          status: 303,
+        },
+        1,
+        true
+      ),
+      false
+    );
+    assert.equal(
+      agent.isResponseRedirect(
+        {
+          status: 303,
+        },
+        1,
+        false
+      ),
+      true
+    );
+  });
+
+  describe(".appendHeaders", function () {
+    let opts;
+    let headers = {
+      Cookie: "COOKIE",
+      "x-csrf-token": "TOKEN",
+      foo: null,
+    };
+    beforeEach(function () {
+      opts = {
+        headers: {
+          append: sinon.stub(),
+        },
+      };
+    });
+    it("invalid parameters passed", function () {
+      agent.appendHeaders();
+      agent.appendHeaders({});
+      agent.appendHeaders(undefined, opts);
+      assert.ok(opts.headers.append.notCalled);
+    });
+    it("headers object is symbol list", function () {
+      agent.appendHeaders(headers, opts);
+      assert.ok(opts.headers.append.calledWithExactly("Cookie", "COOKIE"));
+      assert.ok(opts.headers.append.calledWithExactly("x-csrf-token", "TOKEN"));
+      assert.ok(opts.headers.append.calledTwice);
+    });
+    it("headers object is plain object", function () {
+      opts.headers = {
+        foo: "BAR",
+      };
+      agent.appendHeaders(headers, opts);
+      assert.deepEqual(opts.headers, {
+        Cookie: "COOKIE",
+        "x-csrf-token": "TOKEN",
+        foo: "BAR",
+      });
+    });
+    it("headers object is not defined", function () {
+      delete opts.headers;
+
+      agent.appendHeaders(headers, opts);
+      assert.deepEqual(opts.headers, {
+        Cookie: "COOKIE",
+        "x-csrf-token": "TOKEN",
+      });
+    });
+  });
+
+  describe(".saveCookies", function () {
+    let response;
+    beforeEach(function () {
+      response = {
+        url: "URL",
+        headers: {
+          raw: sinon.stub().returns({}),
+        },
+      };
+    });
+    it("cookie header is not exists", function () {
+      return agent.saveCookies(response).then(() => {
+        assert.ok(tough.CookieJar().setCookie.notCalled);
+      });
+    });
+    it("cookie header exists", function () {
+      let promise;
+      response.headers.raw.returns({ "set-cookie": ["COOKIE1", "COOKIE2"] });
+      promise = agent.saveCookies(response);
+      tough.CookieJar().setCookie.getCall(0).args[2](null, "COOKIE1");
+      tough.CookieJar().setCookie.getCall(1).args[2](null, "COOKIE2");
+
+      return promise.then((result) => {
+        assert.deepEqual(result, ["COOKIE1", "COOKIE2"]);
+        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE1", "URL"));
+        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE2", "URL"));
+      });
+    });
+    it("cookie saving raises error", function () {
+      let promise;
+      response.headers.raw.returns({ "set-cookie": ["COOKIE1", "COOKIE2"] });
+      promise = agent.saveCookies(response);
+      tough.CookieJar().setCookie.getCall(0).args[2](null, "COOKIE1");
+      tough.CookieJar().setCookie.getCall(1).args[2]("ERROR");
+
+      return promise.catch((err) => {
+        assert.equal(err, "ERROR");
+        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE1", "URL"));
+        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE2", "URL"));
+      });
+    });
+  });
+
+  describe(".setAuthorizationHeaders", function () {
+    it("Invalid authorization header", function () {
+      assert.throws(function () {
+        agent.setAuthorizationHeaders(null);
+      });
+      assert.throws(function () {
+        agent.setAuthorizationHeaders("AUTH");
+      });
+    });
+    it("Correctly set authorization header", function () {
+      agent.setAuthorizationHeaders({ "x-csrf-token": "X_CSRF_TOKEN" });
     });
   });
 });

@@ -72,15 +72,15 @@ describe("EdmSimpleType (nw)", function () {
     assert.throws(() => type.format("A"));
     assert.strictEqual(
       type.format("datetime'2000-12-12T12:00'"),
-      "datetime'2000-12-12T12:00:00'"
+      "datetime'2000-12-12T12%3A00%3A00'"
     );
     assert.strictEqual(
       type.format("/Date(1514764800000)/"),
-      "datetime'2018-01-01T00:00:00'"
+      "datetime'2018-01-01T00%3A00%3A00'"
     );
     assert.strictEqual(
       type.format(new Date(1514764800000)),
-      "datetime'2018-01-01T00:00:00'"
+      "datetime'2018-01-01T00%3A00%3A00'"
     );
 
     assert.strictEqual(

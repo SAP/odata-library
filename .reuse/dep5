@@ -3,6 +3,6 @@ Upstream-Name: OData-library
 Upstream-Contact: Norbert Volf <norbert.volf@sap.com>
 Source: https://github.com/SAP/odata-library
 
-Files: lib/* test/* doc/* README.md CHANGELOG.md gulpfile.js index.js package-lock.json package.json .eslintrc .gitignore .npmrc .npmignore
+Files: lib/* test/* doc/* README.md CHANGELOG.md gulpfile.js index.js package-lock.json package.json .eslintrc .gitignore .npmrc .npmignore .husky/*
 Copyright: 2020 SAP Norbert Volf
 License: Apache-2.0

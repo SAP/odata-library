@@ -1,5 +1,10 @@
 # Changelog
 
+# 1.0.0
+
+- d859989 - [FIX] Raise error for error status codes - Norbert Volf
+- 3c19ed9 - [FEATURE] Use fetch api as HTTP agent - Norbert Volf
+
 # 0.10.5
 
 - 11412e6 - [FIX] Correctly create entity with complex type - Norbert Volf

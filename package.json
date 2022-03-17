@@ -20,7 +20,7 @@
     "validate": "npm run validate:eslint && npm run validate:prettier && npm run validate:test",
     "validate:prettier": "prettier --check \"lib/**/*.js\" \"test/**/*.js\"",
     "validate:eslint": "eslint \"lib/**/*.js\" \"test/**/*.js\"",
-    "validate:test": "mocha -R progress ./test/unit/**/*.js ./test/func/**/*.js",
+    "validate:test": "mocha -R progress --recursive ./test/unit/ ./test/func/",
     "watch": "nodemon -e js,xml -x \"npm run validate\""
   },
   "repository": {

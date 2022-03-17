@@ -3,8 +3,10 @@
 const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
+const responseType = require("../../../lib/engine/responseType");
 const _ = require("lodash");
-
+const sandbox = sinon.createSandbox();
+const parsers = require("../../../lib/agent/parsers");
 const defaultType = {
   format: (x) => `'${x}'`,
   formatBody: (x) => x,
@@ -55,6 +57,10 @@ describe("QueryableResource", function () {
       innerEntitySetModel,
       innerEntityTypeModel
     );
+  });
+
+  afterEach(function () {
+    sandbox.restore();
   });
 
   describe("#constructor()", function () {
@@ -822,21 +828,15 @@ describe("QueryableResource", function () {
       return entitySet.executeGet(request).then(() => {
         assert.equal(entitySet._handleAgentCall.getCall(0).args[1], request);
         entitySet._handleAgentCall.getCall(0).args[0]();
-        assert.ok(
-          innerAgent.get.calledWithExactly(
-            "PATH",
-            "HEADERS",
-            undefined,
-            "HAS_STREAM"
-          )
-        );
+        assert.ok(innerAgent.get.calledWithExactly("PATH", "HEADERS"));
       });
     });
 
     it("Successfully get entity in batch", function () {
+      const getMethod = sinon.stub();
+      const request = entitySet.request();
+
       let cb;
-      let getMethod = sinon.stub();
-      let request = entitySet.request();
 
       sinon.stub(request, "header");
       request._path = "PATH";
@@ -849,6 +849,7 @@ describe("QueryableResource", function () {
       };
       sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
       sinon.stub(request, "calculatePath");
+      sandbox.stub(responseType, "determine").returns("RESPONSE_TYPE");
 
       assert.ok(entitySet.executeGet(request), "PROMISE");
 
@@ -860,7 +861,8 @@ describe("QueryableResource", function () {
         getMethod.calledWithExactly(
           "PATH",
           request._headers,
-          "DEFAULT_CHANGESET"
+          "DEFAULT_CHANGESET",
+          "RESPONSE_TYPE"
         )
       );
       assert.ok(request.header.calledWith("Accept", "application/json"));
@@ -868,97 +870,20 @@ describe("QueryableResource", function () {
   });
 
   describe(".count()", function () {
-    let request;
-    beforeEach(() => {
-      sinon.stub(entitySet, "reset");
-      innerAgent.get = sinon.stub().returns(
-        Promise.resolve({
-          body: "5",
-        })
-      );
-      request = entitySet.defaultRequest;
-      request._headers = {};
-      request._isRaw = false;
-      innerEntitySetModel.name = "ENTITY_SET_NAME";
-      innerEntitySetModel.sap.countable = true;
-    });
-    it("Successfully count of EntitySet", function () {
-      let promise = entitySet.count().then((res) => {
-        assert(entitySet.reset.called);
-        assert.strictEqual(res, 5);
-        assert(
-          innerAgent.get.calledWithExactly(
-            "/ENTITY_SET_NAME/$count",
-            request._headers,
-            undefined,
-            true
-          )
-        );
+    it("count by default request", function () {
+      entitySet._requestDefinition = {
+        count: sinon.stub().returns(Promise.resolve()),
+      };
+      return entitySet.count().then(() => {
+        assert.ok(entitySet._requestDefinition.count.called);
       });
-      assert(entitySet.reset.called);
-      return promise;
     });
-    it("Successfully raw count of EntitySet ", function () {
-      entitySet.raw();
-      let promise = entitySet.count().then((res) => {
-        assert.deepEqual(res, {
-          body: "5",
-        });
-        assert(
-          innerAgent.get.calledWithExactly(
-            "/ENTITY_SET_NAME/$count",
-            request._headers,
-            undefined,
-            true
-          )
-        );
-      });
-      assert(entitySet.reset.called);
-      return promise;
-    });
-    it("Reject on not counteable entity set", function () {
-      innerEntitySetModel.sap.countable = false;
-      let promise = entitySet.count().catch((err) => {
-        assert.ok(err.message.match(/not countable/));
-        assert.ok(innerAgent.get.notCalled);
-      });
-      assert(entitySet.reset.called);
-      return promise;
-    });
-    it("Reject invalid response (response is not number)", function () {
-      let promise;
-      innerAgent.get.returns(
-        Promise.resolve({
-          body: "",
-        })
-      );
-      promise = entitySet.count().catch((err) => {
-        assert.ok(err.message.match(/invalid count/));
-        assert(
-          innerAgent.get.calledWithExactly(
-            "/ENTITY_SET_NAME/$count",
-            request._headers,
-            undefined,
-            true
-          )
-        );
-      });
-      assert(entitySet.reset.called);
-      return promise;
-    });
-    it("Reject by HTTP error", function () {
-      innerAgent.get.returns(Promise.reject(new Error("ERROR")));
-      return entitySet.count().catch((err) => {
-        assert(_.isError(err));
-        assert(entitySet.reset.called);
-        assert(
-          innerAgent.get.calledWithExactly(
-            "/ENTITY_SET_NAME/$count",
-            request._headers,
-            undefined,
-            true
-          )
-        );
+    it("count by expricit", function () {
+      const requestDefinition = {
+        count: sinon.stub().returns(Promise.resolve()),
+      };
+      return entitySet.count(requestDefinition).then(() => {
+        assert.ok(requestDefinition.count.called);
       });
     });
   });
@@ -1445,6 +1370,13 @@ describe("QueryableResource", function () {
       entitySet.determineRequestHeaders(request);
       assert.ok(request.header.notCalled);
     });
+
+    it("Headers for count request", function () {
+      request._isCount = true;
+      request._resource.entityTypeModel.hasStream = false;
+      entitySet.determineRequestHeaders(request);
+      assert.ok(request.header.notCalled);
+    });
   });
 
   describe(".determineResponseResult()", function () {
@@ -1541,35 +1473,16 @@ describe("QueryableResource", function () {
           assert.equal(json, null);
         });
     });
-  });
-
-  it(".parseCount()", function () {
-    assert.strictEqual(
-      entitySet.parseCount({
-        body: "10",
-      }),
-      10
-    );
-    assert.strictEqual(
-      entitySet.parseCount({
-        body: 10,
-      }),
-      10
-    );
-    assert.strictEqual(
-      entitySet.parseCount({
-        body: {},
-        res: {
-          text: "10",
-        },
-      }),
-      10
-    );
-    assert.strictEqual(
-      entitySet.parseCount({
-        body: {},
-      }),
-      NaN
-    );
+    it("Return body from response with binary data", function () {
+      request._isCount = true;
+      response.text = sinon.stub().returns(Promise.resolve("RECEIVED_COUNT"));
+      sandbox.stub(parsers, "count").returns("PARSED_COUNT");
+      return entitySet
+        .determineResponseResult(request, response)
+        .then((res) => {
+          assert.ok(parsers.count.calledWithExactly("RECEIVED_COUNT"));
+          assert.equal(res, "PARSED_COUNT");
+        });
+    });
   });
 });

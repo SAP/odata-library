@@ -28,6 +28,7 @@ describe("agent/batch/Batch", function () {
       Header: "header-value",
     });
     assert.strictEqual(request.content, "PAYLOAD");
+    assert.strictEqual(request.responseType, null);
   });
 
   describe(".payload", function () {

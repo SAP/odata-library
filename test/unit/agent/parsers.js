@@ -152,4 +152,12 @@ describe("parsers", function () {
       );
     });
   });
+
+  it(".count()", function () {
+    assert.strictEqual(parsers.count("10"), 10);
+    assert.strictEqual(parsers.count(10), 10);
+    assert.throws(() => {
+      parsers.count(null);
+    });
+  });
 });

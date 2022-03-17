@@ -55,9 +55,29 @@ describe("RequestDefinition", function () {
   });
 
   describe(".count()", function () {
-    it("calls entity set count", function () {
-      request.count();
-      assert.ok(entitySet.count.calledWith(request));
+    it("try run count on non-countable entity set", function () {
+      request._resource.entitySetModel = {
+        sap: {
+          countable: false,
+        },
+      };
+      assert.throws(() => {
+        request.count();
+      });
+    });
+    it("try run count on non-countable entity set", function () {
+      request._resource.entitySetModel = {
+        sap: {
+          countable: true,
+        },
+      };
+      request._resource.executeGet = sinon.stub().returns(Promise.resolve());
+      sinon.stub(request, "calculatePath");
+      return request.count().then(() => {
+        assert.equal(request._isCount, true);
+        assert.ok(request.calculatePath.called);
+        assert.ok(request._resource.executeGet.calledWithExactly(request));
+      });
     });
   });
 
@@ -245,7 +265,7 @@ describe("RequestDefinition", function () {
       sinon.stub(request, "_isList").get(function () {
         return true;
       });
-      request._resource.entityTypeModel.hasStream = true;
+      request._resource.entityTypeModel.hasStream = false;
       sinon.stub(request._resource, "urlQuery").returns("QUERY");
       request.calculatePath();
       assert.strictEqual(request._path, "/path?QUERY");

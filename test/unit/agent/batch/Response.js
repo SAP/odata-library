@@ -4,6 +4,7 @@ const assert = require("assert");
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const _ = require("lodash");
+const responseType = require("../../../../lib/engine/responseType");
 
 describe("agent/batch/Response", function () {
   let response;
@@ -367,5 +368,27 @@ describe("agent/batch/Response", function () {
       HEADER_KEY_1: "HEADER_VALUE_1",
       HEADER_KEY_2: "HEADER_VALUE_2",
     });
+  });
+
+  it(".plain", function () {
+    response.request = {
+      responseType: responseType.ENTITY,
+    };
+    response.body = {
+      d: {},
+    };
+    assert.deepEqual(response.plain("d.results", "d"), {});
+    response.request = {
+      responseType: responseType.LIST,
+    };
+    response.body = {
+      d: { results: [] },
+    };
+    assert.deepEqual(response.plain("d.results", "d"), []);
+    response.request = {
+      responseType: responseType.COUNT,
+    };
+    response.body = "5";
+    assert.deepEqual(response.plain("d.results", "d"), 5);
   });
 });

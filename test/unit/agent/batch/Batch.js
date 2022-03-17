@@ -4,6 +4,7 @@ const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const ChangeSet = require("../../../../lib/agent/batch/ChangeSet");
+const responseType = require("../../../../lib/engine/responseType");
 
 describe("agent/batch/Batch", function () {
   let Base;
@@ -190,8 +191,13 @@ describe("agent/batch/Batch", function () {
   });
 
   it(".get", function () {
-    sinon.stub(batch, "addRequest");
-    batch.get("INPUT_URL", "HEADERS", "CHANGE_SET");
+    sinon.stub(batch, "addRequest").returns({});
+    assert.deepEqual(
+      batch.get("INPUT_URL", "HEADERS", "CHANGE_SET", "RESPONSE_TYPE"),
+      {
+        responseType: "RESPONSE_TYPE",
+      }
+    );
     assert.ok(
       batch.addRequest.calledWithExactly(
         "GET",
@@ -203,7 +209,41 @@ describe("agent/batch/Batch", function () {
     );
   });
 
-  ["post", "merge", "put"].forEach((methodName) => {
+  it(".post", function () {
+    sinon.stub(batch, "addRequest").returns({});
+    assert.deepEqual(
+      batch.post(
+        "INPUT_URL",
+        {
+          NAME: "VALUE",
+        },
+        "PAYLOAD",
+        "CHANGE_SET"
+      ),
+      {
+        responseType: responseType.ENTITY,
+      }
+    );
+    assert.ok(
+      batch.addRequest.calledWithExactly(
+        "POST",
+        "INPUT_URL",
+        {
+          NAME: "VALUE",
+          "sap-contextid-accept": "header",
+          Accept: "application/json",
+          DataServiceVersion: "2.0",
+          MaxDataServiceVersion: "2.0",
+          "Content-Type": "application/json",
+          "sap-message-scope": "BusinessObject",
+        },
+        "PAYLOAD",
+        "CHANGE_SET"
+      )
+    );
+  });
+
+  ["merge", "put"].forEach((methodName) => {
     it("." + methodName, function () {
       sinon.stub(batch, "addRequest");
       batch[methodName](

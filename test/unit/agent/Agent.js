@@ -780,26 +780,31 @@ describe("lib/engine/Agent", function () {
   describe(".normalizeBatchResponse", function () {
     it("Returns parsed particular OData responses.", function () {
       agent.setServiceVersion("1.0");
+      const response1 = {
+        plain: sinon.stub().returns([]),
+      };
+      const response2 = {
+        plain: sinon.stub().returns({}),
+      };
       assert.deepEqual(
         agent.normalizeBatchResponse(
           "BATCH_RESPONSE",
-          [
-            {
-              body: {
-                d: {
-                  results: [],
-                },
-              },
-            },
-            {
-              body: {
-                d: {},
-              },
-            },
-          ],
+          [response1, response2],
           false
         ),
         [[], {}]
+      );
+      assert.ok(
+        response1.plain.calledWithExactly(
+          agent._listResultPath,
+          agent._instanceResultPath
+        )
+      );
+      assert.ok(
+        response2.plain.calledWithExactly(
+          agent._listResultPath,
+          agent._instanceResultPath
+        )
       );
     });
     it("Returns batch responses with full particular responses.", function () {
@@ -809,32 +814,6 @@ describe("lib/engine/Agent", function () {
         {
           batchResponses: ["RESPONSE_1", "RESPONSE_2"],
         }
-      );
-    });
-    it("Returns parsed OData responses in changeSet.", function () {
-      agent.setServiceVersion("1.0");
-      assert.deepEqual(
-        agent.normalizeBatchResponse(
-          "BATCH_RESPONSE",
-          [
-            [
-              {
-                body: {
-                  d: {
-                    results: [],
-                  },
-                },
-              },
-              {
-                body: {
-                  d: {},
-                },
-              },
-            ],
-          ],
-          false
-        ),
-        [[], {}]
       );
     });
   });

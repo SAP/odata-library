@@ -88,8 +88,11 @@ function createSchema(type) {
 
 describe("EntityType (nw)", function () {
   let type;
+  let model;
+
   beforeEach(function () {
-    type = new EntityType(sampleEntityTypeMD, "MODEL");
+    model = {};
+    type = new EntityType(sampleEntityTypeMD, model);
   });
 
   describe("#constructor()", function () {
@@ -99,7 +102,7 @@ describe("EntityType (nw)", function () {
       assert.ok(_.isArray(type.properties));
       assert.ok(_.isArray(type.navigationProperties));
       assert.ok(_.isArray(type.key));
-      assert.equal(type.model, "MODEL");
+      assert.equal(type.model, model);
     });
 
     it("creates key", function () {
@@ -192,42 +195,30 @@ describe("EntityType (nw)", function () {
   describe(".navigationPropertyAssociationTo()", function () {
     it("Missing navigation property raises error.", function () {
       assert.throws(() => {
-        type.navigationPropertyAssociationTo("METAMODEL", "NavPropMissing");
+        type.navigationPropertyAssociationTo("NavPropMissing");
       }, /Navigation property/);
     });
     it("Missing association raises error.", function () {
+      model.resolveModelPath = sinon.stub();
       assert.throws(() => {
-        type.navigationPropertyAssociationTo(
-          {
-            resolveModelPath: sinon.stub(),
-          },
-          "NavProp1"
-        );
+        type.navigationPropertyAssociationTo("NavProp1");
       }, /Association for/);
     });
     it("Missing association end raises error.", function () {
+      model.resolveModelPath = sinon.stub().returns({
+        findEnd: sinon.stub(),
+      });
       assert.throws(() => {
-        type.navigationPropertyAssociationTo(
-          {
-            resolveModelPath: sinon.stub().returns({
-              findEnd: sinon.stub(),
-            }),
-          },
-          "NavProp1"
-        );
+        type.navigationPropertyAssociationTo("NavProp1");
       }, /Association endpoint/);
     });
 
     it("Association end found.", function () {
+      model.resolveModelPath = sinon.stub().returns({
+        findEnd: sinon.stub().returns("ASSOCIATION_END"),
+      });
       assert.strictEqual(
-        type.navigationPropertyAssociationTo(
-          {
-            resolveModelPath: sinon.stub().returns({
-              findEnd: sinon.stub().returns("ASSOCIATION_END"),
-            }),
-          },
-          "NavProp1"
-        ),
+        type.navigationPropertyAssociationTo("NavProp1"),
         "ASSOCIATION_END"
       );
     });

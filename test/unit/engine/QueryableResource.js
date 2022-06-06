@@ -1079,7 +1079,6 @@ describe("QueryableResource", function () {
       }, /End EntityType/);
       assert.ok(
         entityTypeModel.navigationPropertyAssociationTo.calledWith(
-          "MODEL",
           "navPropKey1"
         )
       );
@@ -1122,7 +1121,6 @@ describe("QueryableResource", function () {
       );
       assert.ok(
         entityTypeModel.navigationPropertyAssociationTo.calledWith(
-          "MODEL",
           "navPropKey1"
         )
       );
@@ -1184,8 +1182,7 @@ describe("QueryableResource", function () {
         }
       );
       assert.ok(
-        entityTypeModel.navigationPropertyAssociationTo.calledWith(
-          "MODEL",
+        entityTypeModel.navigationPropertyAssociationTo.calledWithExactly(
           "navPropKey1"
         )
       );

@@ -1,5 +1,10 @@
 # Changelog
 
+# 1.0.1
+
+- c660f58 - [FEATURE] Resolve deep property - Norbert Volf
+- daee07d - [FEATURE] Add $filter to entity set count request - Norbert Volf
+
 # 1.0.0
 
 - d859989 - [FIX] Raise error for error status codes - Norbert Volf

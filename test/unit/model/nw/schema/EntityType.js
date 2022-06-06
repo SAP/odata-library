@@ -89,7 +89,7 @@ function createSchema(type) {
 describe("EntityType (nw)", function () {
   let type;
   beforeEach(function () {
-    type = new EntityType(sampleEntityTypeMD);
+    type = new EntityType(sampleEntityTypeMD, "MODEL");
   });
 
   describe("#constructor()", function () {
@@ -99,6 +99,7 @@ describe("EntityType (nw)", function () {
       assert.ok(_.isArray(type.properties));
       assert.ok(_.isArray(type.navigationProperties));
       assert.ok(_.isArray(type.key));
+      assert.equal(type.model, "MODEL");
     });
 
     it("creates key", function () {

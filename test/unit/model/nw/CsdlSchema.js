@@ -79,7 +79,7 @@ const sampleSchemaMD = {
 describe("CsdlSchema", function () {
   describe("#constructor()", function () {
     it("initializes properties", function () {
-      let schema = new CsdlSchema(emptySchemaMD, settings);
+      let schema = new CsdlSchema(emptySchemaMD, settings, "MODEL");
       assert.strictEqual(schema.raw, emptySchemaMD);
       assert.deepEqual(schema.namespace, "ns");
       assert.equal(schema.settings, settings);
@@ -88,6 +88,7 @@ describe("CsdlSchema", function () {
       assert.ok(_.isArray(schema.entityTypes));
       assert.ok(_.isArray(schema.entityContainers));
       assert.ok(_.isArray(schema.extensions));
+      assert.strictEqual(schema.model, "MODEL");
     });
 
     it("applies annotations", function () {

@@ -1,7 +1,7 @@
 "use strict";
 
 const _ = require("lodash");
-const assert = require("assert");
+const assert = require("assert").strict;
 const AnnotationTarget = require("../../../../../lib/model/oasis/annotations/AnnotationTarget");
 
 function applyAnnotationsToTarget() {
@@ -41,11 +41,12 @@ describe("AnnotationTarget", function () {
         },
       };
 
-      let target = new AnnotationTarget(md);
+      let target = new AnnotationTarget(md, "MODEL");
 
       assert.equal(target.name, "name");
       assert.equal(target.raw, md);
       assert.ok(_.isArray(target.annotations));
+      assert.equal(target.model, "MODEL");
     });
 
     it("allows empty name", function () {

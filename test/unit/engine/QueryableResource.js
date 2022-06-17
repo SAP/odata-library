@@ -1115,8 +1115,10 @@ describe("QueryableResource", function () {
           entityTypeModel
         ),
         {
-          processedProperty: "VALUE",
-          processedNavigationProperty: "VALUE",
+          navPropKey1: {
+            processedProperty: "VALUE",
+            processedNavigationProperty: "VALUE",
+          },
         }
       );
       assert.ok(

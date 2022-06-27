@@ -777,8 +777,8 @@ describe("lib/engine/Agent", function () {
     });
   });
 
-  describe(".normalizeBatchResponse", function () {
-    it("Returns parsed particular OData responses.", function () {
+  describe(".normalizeBatchResponse", () => {
+    it("Returns parsed particular OData responses.", () => {
       agent.setServiceVersion("1.0");
       const response1 = {
         plain: sinon.stub().returns([]),
@@ -786,35 +786,48 @@ describe("lib/engine/Agent", function () {
       const response2 = {
         plain: sinon.stub().returns({}),
       };
-      assert.deepEqual(
-        agent.normalizeBatchResponse(
-          "BATCH_RESPONSE",
-          [response1, response2],
-          false
-        ),
-        [[], {}]
-      );
-      assert.ok(
-        response1.plain.calledWithExactly(
-          agent._listResultPath,
-          agent._instanceResultPath
-        )
-      );
-      assert.ok(
-        response2.plain.calledWithExactly(
-          agent._listResultPath,
-          agent._instanceResultPath
-        )
-      );
+      return agent
+        .normalizeBatchResponse("BATCH_RESPONSE", [response1, response2], false)
+        .then((response) => {
+          assert.deepEqual(response, [[], {}]);
+          assert.ok(
+            response1.plain.calledWithExactly(
+              agent._listResultPath,
+              agent._instanceResultPath
+            )
+          );
+          assert.ok(
+            response2.plain.calledWithExactly(
+              agent._listResultPath,
+              agent._instanceResultPath
+            )
+          );
+        });
     });
-    it("Returns batch responses with full particular responses.", function () {
+    it("Returns batch responses with full particular responses.", () => {
       agent.setServiceVersion("1.0");
-      assert.deepEqual(
-        agent.normalizeBatchResponse({}, ["RESPONSE_1", "RESPONSE_2"], true),
-        {
-          batchResponses: ["RESPONSE_1", "RESPONSE_2"],
-        }
-      );
+      return agent
+        .normalizeBatchResponse({}, ["RESPONSE_1", "RESPONSE_2"], true)
+        .then((response) => {
+          assert.deepEqual(response, {
+            batchResponses: ["RESPONSE_1", "RESPONSE_2"],
+          });
+        });
+    });
+    it("Normalize batch responses contains Error response.", () => {
+      agent.setServiceVersion("1.0");
+      const response1 = {
+        plain: sinon.stub().returns([]),
+      };
+      return agent
+        .normalizeBatchResponse(
+          "BATCH_RESPONSE",
+          [response1, new Error()],
+          false
+        )
+        .then((result) => {
+          assert.ok(result[1] instanceof Error);
+        });
     });
   });
 

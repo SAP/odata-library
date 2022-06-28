@@ -10,7 +10,44 @@ let sandbox = sinon.createSandbox();
 describe("lib/engine/agent/authentication", function () {
   afterEach(() => sandbox.restore());
 
-  describe(".authenticate", function () {
+  describe(".authenticate", () => {
+    it("authenticate by cookie", () => {
+      const agent = {
+        settings: {
+          auth: {
+            cookies: ["COOKIE"],
+          },
+        },
+      };
+      sandbox
+        .stub(authentication, "authenticateByCookie")
+        .returns(Promise.resolve());
+      return authentication.authenticate(agent, "ENDPOINT_URL").then(() => {
+        assert.ok(
+          authentication.authenticateByCookie.calledWithExactly(
+            agent,
+            "ENDPOINT_URL"
+          )
+        );
+      });
+    });
+    it("auto authentication", () => {
+      const agent = {};
+      sandbox
+        .stub(authentication, "authenticateAuto")
+        .returns(Promise.resolve());
+      return authentication.authenticate(agent, "ENDPOINT_URL").then(() => {
+        assert.ok(
+          authentication.authenticateAuto.calledWithExactly(
+            agent,
+            "ENDPOINT_URL"
+          )
+        );
+      });
+    });
+  });
+
+  describe(".authenticateAuto", function () {
     let backupAuthenticators;
     let agent;
     beforeEach(() => {
@@ -29,14 +66,14 @@ describe("lib/engine/agent/authentication", function () {
     it("if authenticators does not exists raise error.", function () {
       authentication.AUTHENTICATORS = null;
       return authentication
-        .authenticate(agent, "URL")
+        .authenticateAuto(agent, "URL")
         .then(() => assert.ok(false))
         .catch((err) => assert.ok(err.message.match(/not defined/)));
     });
     it("if authenticators are empty raise error.", function () {
       authentication.AUTHENTICATORS = [];
       return authentication
-        .authenticate(agent, "URL")
+        .authenticateAuto(agent, "URL")
         .then(() => assert.ok(false))
         .catch((err) => assert.ok(err.message.match(/not defined/)));
     });
@@ -44,7 +81,7 @@ describe("lib/engine/agent/authentication", function () {
       let promise;
       sandbox.stub(authentication, "tryAuthenticator");
       authentication.AUTHENTICATORS = [sinon.stub().returns("AUTHENTICATOR")];
-      promise = authentication.authenticate(agent, "URL").then(() => {
+      promise = authentication.authenticateAuto(agent, "URL").then(() => {
         assert.ok(authentication.tryAuthenticator.calledOnce);
         assert.ok(authentication.tryAuthenticator.calledWith(1, "URL"));
         assert.deepEqual(authentication.AUTHENTICATORS[0].getCall(0).args, [
@@ -64,7 +101,7 @@ describe("lib/engine/agent/authentication", function () {
       sandbox.stub(authentication, "tryAuthenticator");
       authentication.AUTHENTICATORS = [sinon.stub().returns("AUTHENTICATOR")];
       promise = authentication
-        .authenticate(agent, "URL")
+        .authenticateAuto(agent, "URL")
         .then(() => assert.ok(false))
         .catch(() => {
           assert.ok(authentication.tryAuthenticator.calledOnce);

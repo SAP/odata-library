@@ -1,12 +1,13 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
+const sandbox = sinon.createSandbox();
 
 describe("settings", function () {
-  var settings;
-  var fs;
+  let settings;
+  let fs;
 
   beforeEach(function () {
     delete process.env.ODATA_URL;
@@ -244,5 +245,96 @@ describe("settings", function () {
         strict: true,
       }
     );
+  });
+
+  describe("_.parseConnectionCookie", () => {
+    let parameters;
+    let settingsObject;
+    beforeEach(() => {
+      settingsObject = {
+        auth: {
+          cookies: ["COOKIE"],
+        },
+      };
+      parameters = {};
+      sandbox.stub(settings._, "checkCookieSettings").returns(true);
+    });
+    it("get cookie from settings", () => {
+      settings._.parseConnectionCookie(settingsObject, parameters);
+      assert.deepEqual(parameters, {
+        auth: {
+          cookies: ["COOKIE"],
+        },
+      });
+      assert.ok(
+        settings._.checkCookieSettings.calledWithExactly(settingsObject)
+      );
+    });
+    it("get cookie from environment", () => {
+      delete settingsObject.auth.cookies;
+      process.env.ODATA_COOKIE = "ENV_COOKIE";
+      settings._.parseConnectionCookie(settingsObject, parameters);
+      assert.deepEqual(parameters, {
+        auth: {
+          cookies: ["ENV_COOKIE"],
+        },
+      });
+      assert.ok(
+        settings._.checkCookieSettings.calledWithExactly(settingsObject)
+      );
+    });
+    it("get cookie list from environment", () => {
+      delete settingsObject.auth.cookies;
+      process.env.ODATA_COOKIE = '["ENV_COOKIE", "ENV_COOKIE"]';
+      settings._.parseConnectionCookie(settingsObject, parameters);
+      assert.deepEqual(parameters, {
+        auth: {
+          cookies: ["ENV_COOKIE", "ENV_COOKIE"],
+        },
+      });
+      assert.ok(
+        settings._.checkCookieSettings.calledWithExactly(settingsObject)
+      );
+    });
+    it("constructor settings precede environment", () => {
+      process.env.ODATA_COOKIE = "ENV_COOKIE";
+      settings._.parseConnectionCookie(settingsObject, parameters);
+      assert.deepEqual(parameters, {
+        auth: {
+          cookies: ["COOKIE"],
+        },
+      });
+      assert.ok(
+        settings._.checkCookieSettings.calledWithExactly(settingsObject)
+      );
+    });
+    it("raise error on invalid cookie definition", () => {
+      settings._.checkCookieSettings.returns(false);
+      assert.throws(() => {
+        settings._.parseConnectionCookie(settingsObject, parameters);
+      });
+    });
+  });
+
+  it("_.checkCookieSettings", () => {
+    assert.equal(settings._.checkCookieSettings({}), true);
+    assert.equal(
+      settings._.checkCookieSettings({ auth: { cookies: ["cookie"] } }),
+      true
+    );
+    assert.equal(
+      settings._.checkCookieSettings({ auth: { cookies: {} } }),
+      false
+    );
+    assert.equal(
+      settings._.checkCookieSettings({ auth: { cookies: true } }),
+      false
+    );
+    process.env.ODATA_COOKIE = "ENV_COOKIE";
+    assert.equal(settings._.checkCookieSettings({}), true);
+    process.env.ODATA_COOKIE = '["ENV_COOKIE", "ENV_COOKIE"]';
+    assert.equal(settings._.checkCookieSettings({}), true);
+    process.env.ODATA_COOKIE = '{"ENV_COOKIE", "ENV_COOKIE"}';
+    assert.equal(settings._.checkCookieSettings({}), true);
   });
 });

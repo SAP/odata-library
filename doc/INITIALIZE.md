@@ -5,7 +5,7 @@
 You can pass url with (or without) authorization in one string in the code.
 
 ```javascript
-var service = new Service(
+const service = new Service(
   "https://username:password@localhost/path/to/service/"
 );
 
@@ -28,7 +28,7 @@ export ODATA_CA_CERT_PATH="/etc/ssl/certificates/root.crt"
 ```
 
 ```javascript
-var service = new Service();
+const service = new Service();
 
 service.init.then(() => {
   //Code
@@ -43,11 +43,10 @@ definitons in the environment variables.
 
 ```shell
 export NODE_EXTRA_CA_CERTS=/etc/ssl/certificates/root.crt
-
 ```
 
 ```javascript
-var service = new Service({
+const service = new Service({
   url: "https://localhost/service/",
   annotationsUrl: "https://localhost/serviceMetadata/annotations",
   auth: {
@@ -66,6 +65,57 @@ var service = new Service({
 service.init.then(() => {
   //Code
 });
+```
+
+## Authenticate to service outside of Service
+
+Handle authorization process outside of the odata-library and pass authorization cookie
+to odata-library service.
+
+Set cookie via environment variable
+
+```shell
+export ODATA_COOKIE="JSESSIONID=s:bdzps02ARlShtevVcSWsTLptzhPdAF-y.r2nlOcl38jriMxfIhcvIzyFwS0V9nITPUz8orkAHMic"
+```
+
+More than one cookie by JSON string
+
+```shell
+export ODATA_COOKIE='["JSESSIONID=s:bdzps02ARlShtevVcSWsTLptzhPdAF-y.r2nlOcl38jriMxfIhcvIzyFwS0V9nITPUz8orkAHMic", "language=cz"]'
+```
+
+Set cookie via constructor
+
+```javascript
+const service = new Service({
+  url: "https://localhost/service/",
+  auth: {
+    cookies: [
+      "JSESSIONID=s:bdzps02ARlShtevVcSWsTLptzhPdAF-y.r2nlOcl38jriMxfIhcvIzyFwS0V9nITPUz8orkAHMic",
+      "language=cz",
+    ],
+  },
+  parameters: {
+    //Define initial request by $metadata?sap-client=902&sap-documentation=&sap-language=EN
+    "sap-client": "902",
+    "sap-documentation": ["heading", "quickinfo"],
+    "sap-language": "EN",
+  },
+  strict: false, // ignore non critical errors, e.g. orphaned annotations
+});
+
+service.init.then(() => {
+  //Code
+});
+```
+
+Do not forgot to decode encoded cookie header which is taken from request/response header
+in browser development tools
+
+```javascript
+decodeURIComponent(
+  "JSESSIONID=s%3Abdzps02ARlShtevVcSWsTLptzhPdAF-y.r2nlOcl38jriMxfIhcvIzyFwS0V9nITPUz8orkAHMic"
+);
 ```
 
 ## TLS/SSL server certificate

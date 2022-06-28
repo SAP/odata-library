@@ -8,23 +8,16 @@ const agentUrl = require("../../../lib/agent/url");
 const xml2js = require("xml2js");
 const tough = require("tough-cookie");
 const log = require("../../../lib/agent/log");
+const authentication = require("../../../lib/agent/authentication");
 
 let Agent;
 let agent;
-let authenticatorNone, authenticatorBasic, authenticatorSamlSap;
 let sandbox = sinon.createSandbox();
 let nodeFetch = sinon.stub();
 
 describe("lib/engine/Agent", function () {
   beforeEach(function () {
-    authenticatorNone = sinon.stub();
-    authenticatorBasic = sinon.stub();
-    authenticatorSamlSap = sinon.stub();
-
     Agent = proxyquire("../../../lib/agent/Agent", {
-      "./authentication/none": authenticatorNone,
-      "./authentication/basic": authenticatorBasic,
-      "./authentication/samlSap": authenticatorSamlSap,
       "node-fetch": nodeFetch,
     });
     sandbox.stub(tough, "CookieJar").returns({
@@ -108,7 +101,7 @@ describe("lib/engine/Agent", function () {
   describe(".metadata()", function () {
     beforeEach(function () {
       sinon.stub(agent, "metadataSearch").returns("PARAMETERS");
-      sinon.stub(agent, "authenticate").returns(Promise.resolve());
+      sandbox.stub(authentication, "authenticate").returns(Promise.resolve());
       sinon
         .stub(agent, "createMetadataRequest")
         .returns(Promise.resolve("RESPONSE_BODY"));
@@ -123,9 +116,10 @@ describe("lib/engine/Agent", function () {
           "URL/$metadata?PARAMETERS"
         );
         assert.equal(
-          agent.authenticate.getCall(0).args[0],
+          authentication.authenticate.getCall(0).args[1],
           "URL/$metadata?PARAMETERS"
         );
+        assert.equal(authentication.authenticate.getCall(0).args[0], agent);
       });
     });
     it("Read core metadata and annotations metadata", function () {
@@ -144,8 +138,9 @@ describe("lib/engine/Agent", function () {
           "ANNOTATIONS_RESPONSE_BODY",
         ]);
         assert.ok(agent.createMetadataRequest.calledTwice);
+        assert.equal(authentication.authenticate.getCall(0).args[0], agent);
         assert.equal(
-          agent.authenticate.getCall(0).args[0],
+          authentication.authenticate.getCall(0).args[1],
           "URL/$metadata?PARAMETERS"
         );
         assert.equal(
@@ -534,246 +529,6 @@ describe("lib/engine/Agent", function () {
           assert.equal(token, "X_CSRF_TOKEN");
           assert.ok(agent.fetch.notCalled);
         });
-    });
-  });
-
-  describe(".authenticate", function () {
-    it("if authenticators does not exists raise error.", function () {
-      sinon.stub(Agent, "authenticators").value(null);
-      return agent
-        .authenticate("URL")
-        .then(() => assert.ok(false))
-        .catch((err) => assert.ok(err.message.match(/not defined/)));
-    });
-    it("if authenticators are empty raise error.", function () {
-      sinon.stub(Agent, "authenticators").value([]);
-      return agent
-        .authenticate("URL")
-        .then(() => assert.ok(false))
-        .catch((err) => assert.ok(err.message.match(/not defined/)));
-    });
-    it("Initialize authenticating by first authenticator with correct authentication", function () {
-      let promise;
-      sinon.stub(agent, "tryAuthenticator");
-      sinon.stub(agent.logger, "debug");
-      sinon.stub(Agent, "authenticators").value(["./authentication/none"]);
-      authenticatorNone.returns("AUTHENTICATOR");
-      promise = agent.authenticate("URL").then(() => {
-        assert.ok(agent.tryAuthenticator.calledOnce);
-        assert.ok(agent.tryAuthenticator.calledWith(1, "URL", "AUTHENTICATOR"));
-        assert.deepEqual(authenticatorNone.getCall(0).args, [
-          {
-            url: "URL",
-          },
-          agent,
-          "URL",
-        ]);
-      });
-
-      setTimeout(() => {
-        agent.tryAuthenticator.getCall(0).args[3]();
-      }, 0);
-      return promise;
-    });
-    it("Initialize authenticating by first authenticator but all authenticators failed", function () {
-      let promise;
-      sinon.stub(agent, "tryAuthenticator");
-      sinon.stub(agent.logger, "debug");
-      sinon.stub(Agent, "authenticators").value(["./authentication/none"]);
-      authenticatorNone.returns("AUTHENTICATOR");
-      promise = agent
-        .authenticate("URL")
-        .then(() => assert.ok(false))
-        .catch(() => {
-          assert.ok(agent.tryAuthenticator.calledOnce);
-          assert.ok(
-            agent.tryAuthenticator.calledWith(1, "URL", "AUTHENTICATOR")
-          );
-          assert.deepEqual(authenticatorNone.getCall(0).args, [
-            {
-              url: "URL",
-            },
-            agent,
-            "URL",
-          ]);
-        });
-
-      setTimeout(() => {
-        agent.tryAuthenticator.getCall(0).args[4]();
-      }, 0);
-      return promise;
-    });
-  });
-
-  describe(".tryAuthenticator", function () {
-    it("Succeed on first authenticator", function (done) {
-      sinon.stub(agent.logger, "debug");
-      authenticatorSamlSap.authenticatorName = "AUTHENTICATOR";
-      agent.tryAuthenticator(
-        1,
-        "URL",
-        Promise.resolve("RESPONSE"),
-        function (response) {
-          assert.equal(response, "RESPONSE");
-          assert.ok(
-            agent.logger.debug.getCall(0).args[0].match(/AUTHENTICATOR/)
-          );
-          done();
-        }
-      );
-    });
-    it("Succeed on next authenticator", function (done) {
-      sinon.stub(agent.logger, "warn");
-      sinon.stub(agent.logger, "debug");
-      authenticatorSamlSap.authenticatorName = "FIRST_AUTHENTICATOR";
-      authenticatorBasic.returns(Promise.resolve("RESPONSE"));
-      authenticatorBasic.authenticatorName = "SECOND_AUTHENTICATOR";
-
-      agent.tryAuthenticator(
-        1,
-        "URL",
-        Promise.reject({
-          message: "ERROR",
-          unsupported: true,
-        }),
-        function () {
-          assert.ok(
-            agent.logger.debug.getCall(0).args[0].match(/SECOND_AUTHENTICATOR/)
-          );
-          assert.ok(
-            agent.logger.warn.getCall(0).args[0].match(/FIRST_AUTHENTICATOR/)
-          );
-          assert.ok(
-            agent.logger.debug.getCall(1).args[0].match(/SECOND_AUTHENTICATOR/)
-          );
-          done();
-        }
-      );
-    });
-    it("Fails on all authenticators", function (done) {
-      sinon.stub(agent.logger, "warn");
-      sinon.stub(agent.logger, "debug");
-      authenticatorBasic.returns(
-        Promise.reject({
-          message: "ERROR MESSAGE",
-          unsupported: true,
-        })
-      );
-      authenticatorNone.returns(
-        Promise.reject({
-          message: "ERROR MESSAGE",
-          unsupported: true,
-        })
-      );
-
-      agent.tryAuthenticator(
-        1,
-        "URL",
-        Promise.reject({
-          message: "ERROR",
-          unsupported: true,
-        }),
-        null,
-        function (error) {
-          assert.equal(
-            error.message,
-            "Not valid authenticator found - ERROR MESSAGE."
-          );
-          done();
-        }
-      );
-    });
-    it("Stops if rejection is fatal", function (done) {
-      sinon.stub(agent.logger, "warn");
-      sinon.stub(agent.logger, "debug");
-      sinon.stub(agent, "fatalAuthenticateError").returns("FATAL_ERROR");
-
-      agent.tryAuthenticator(
-        1,
-        "URL",
-        Promise.reject("Internet is down!"),
-        null,
-        function (error) {
-          assert.equal(error, "FATAL_ERROR");
-          done();
-        }
-      );
-    });
-    it("Error handler is permissive", function (done) {
-      sinon.stub(agent.logger, "warn");
-      sinon.stub(agent.logger, "debug");
-      authenticatorBasic.returns(Promise.resolve("RESPONSE"));
-
-      agent.tryAuthenticator(
-        1,
-        "URL",
-        Promise.reject({
-          response: {
-            forbidden: false,
-          },
-        }),
-        function (response) {
-          assert.equal(response, "RESPONSE");
-          done();
-        }
-      );
-    });
-  });
-
-  describe(".fatalAuthenticateError", function () {
-    it("No error for non-fatal issue", function () {
-      assert.strictEqual(
-        agent.fatalAuthenticateError({
-          unsupported: true,
-        }),
-        undefined
-      );
-    });
-    it("No network connection.", function () {
-      let err = agent.fatalAuthenticateError(
-        {},
-        {
-          authenticatorName: "AUTHENTICATOR_NAME",
-        }
-      );
-      assert.ok(err instanceof Error);
-      assert.ok(err.message.indexOf("AUTHENTICATOR_NAME") > -1);
-    });
-    it("Forbidden respons", function () {
-      let err = agent.fatalAuthenticateError(
-        {
-          response: {
-            forbidden: true,
-            res: {
-              text: "FORBIDDEN",
-            },
-          },
-        },
-        {
-          authenticatorName: "AUTHENTICATOR_NAME",
-        }
-      );
-      assert.ok(err instanceof Error);
-      assert.ok(err.message.indexOf("AUTHENTICATOR_NAME") > -1);
-      assert.ok(err.message.indexOf("FORBIDDEN") > -1);
-    });
-    it("Internal server error response", function () {
-      let err = agent.fatalAuthenticateError(
-        {
-          response: {
-            serverError: true,
-            res: {
-              text: "SERVER_ERROR",
-            },
-          },
-        },
-        {
-          authenticatorName: "AUTHENTICATOR_NAME",
-        }
-      );
-      assert.ok(err instanceof Error);
-      assert.ok(err.message.indexOf("AUTHENTICATOR_NAME") > -1);
-      assert.ok(err.message.indexOf("SERVER_ERROR") > -1);
     });
   });
 

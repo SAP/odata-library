@@ -27,7 +27,7 @@ Promise.all([
     if (matchCurrentBranch && !commitMessage.match(/^\[/)) {
       topic = matchCurrentBranch[2].trim();
       type = matchCurrentBranch[1].trim();
-      type = type.charAt(0).toUpperCase() + type.slice(1);
+      type = type.toUpperCase();
 
       commitMessage = `[${type}] ${commitMessage}\n\n\nTopic: ${topic}`;
       messageUpdated = true;

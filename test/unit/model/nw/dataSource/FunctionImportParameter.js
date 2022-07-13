@@ -1,6 +1,6 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const _ = require("lodash");
 const FunctionImportParameter = require("../../../../../lib/model/nw/dataSource/FunctionImportParameter");
 const sampleMD = {
@@ -72,6 +72,28 @@ describe("FunctionImportParameter", function () {
             sampleSchema
           )
       );
+    });
+
+    it("Do not throws error on invalid metadata for non-strict mode", function () {
+      const functionImportParameter = new FunctionImportParameter(
+        {
+          $: {
+            Mode: "None",
+            Name: "name",
+            Type: "Edm.String",
+          },
+        },
+        Object.assign(
+          {
+            settings: {
+              strict: false,
+            },
+          },
+          sampleSchema
+        )
+      );
+
+      assert.equal(functionImportParameter.mode, "In");
     });
   });
 

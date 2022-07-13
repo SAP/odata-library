@@ -1,5 +1,11 @@
 # Changelog
 
+# 1.0.3
+
+- [FEATURE] Use "In" as default parameter mode - Norbert Volf
+- [FEATURE] Use cookie to authorize requests - Norbert Volf
+- [FIX] Correctly process invalid response in batch - Norbert Volf
+
 # 1.0.2
 
 - [FIX] Correctly process 1:1 navigation property - Norbert Volf

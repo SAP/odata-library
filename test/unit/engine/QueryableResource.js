@@ -1059,48 +1059,33 @@ describe("QueryableResource", function () {
   });
 
   describe(".processNavigationPropertyItems()", function () {
-    it("Missing entity type definition for the navigation property", function () {
-      let navigationProperty = {
+    let navigationProperty;
+    let entityTypeProperties;
+    beforeEach(() => {
+      navigationProperty = {
         name: "navPropKey1",
+        isCollection: false,
       };
-      let entityTypeProperties = {
+      entityTypeProperties = {
         navPropKey1: "NAV_PROP_1",
       };
-      let entityTypeModel = {
-        navigationPropertyAssociationTo: sinon.stub(),
-      };
-      innerMetadata.model = "MODEL";
+    });
+    it("Missing entity type definition for the navigation property", function () {
       assert.throws(() => {
         entitySet.processNavigationPropertyItems(
           navigationProperty,
-          entityTypeProperties,
-          entityTypeModel
+          entityTypeProperties
         );
       }, /End EntityType/);
-      assert.ok(
-        entityTypeModel.navigationPropertyAssociationTo.calledWith(
-          "navPropKey1"
-        )
-      );
     });
+
     it("Process navigation property with multiplicity 1:1", function () {
-      let navigationProperty = {
-        name: "navPropKey1",
-      };
-      let entityTypeProperties = {
-        navPropKey1: "NAV_PROP_1",
-      };
-      let assoociationEnd = {
-        multiplicity: "1",
-        type: {
+      navigationProperty.type = {
+        elementType: {
           properties: "NAVIGATION_PROPERTIES",
         },
       };
-      let entityTypeModel = {
-        navigationPropertyAssociationTo: sinon.stub().returns(assoociationEnd),
-      };
 
-      innerMetadata.model = "MODEL";
       sinon.stub(entitySet, "processProperties").returns({
         processedProperty: "VALUE",
       });
@@ -1111,8 +1096,7 @@ describe("QueryableResource", function () {
       assert.deepEqual(
         entitySet.processNavigationPropertyItems(
           navigationProperty,
-          entityTypeProperties,
-          entityTypeModel
+          entityTypeProperties
         ),
         {
           navPropKey1: {
@@ -1120,11 +1104,6 @@ describe("QueryableResource", function () {
             processedNavigationProperty: "VALUE",
           },
         }
-      );
-      assert.ok(
-        entityTypeModel.navigationPropertyAssociationTo.calledWith(
-          "navPropKey1"
-        )
       );
       assert.ok(
         entitySet.processProperties.calledWith(
@@ -1135,28 +1114,19 @@ describe("QueryableResource", function () {
       assert.ok(
         entitySet.processNavigationProperties.calledWith(
           "NAV_PROP_1",
-          assoociationEnd.type
+          navigationProperty.type.elementType
         )
       );
     });
     it("Process navigation property with multiplicity 1:N", function () {
-      let navigationProperty = {
-        name: "navPropKey1",
-      };
-      let entityTypeProperties = {
-        navPropKey1: ["NAV_PROP_1_0", "NAV_PROP_1_1"],
-      };
-      let assoociationEnd = {
-        multiplicity: "*",
-        type: {
+      navigationProperty.isCollection = true;
+      navigationProperty.type = {
+        elementType: {
           properties: "PROPERTIES",
         },
       };
-      let entityTypeModel = {
-        navigationPropertyAssociationTo: sinon.stub().returns(assoociationEnd),
-      };
+      entityTypeProperties.navPropKey1 = ["NAV_PROP_1_0", "NAV_PROP_1_1"];
 
-      innerMetadata.model = "MODEL";
       sinon.stub(entitySet, "processProperties").returns({
         processedProperty: "VALUE",
       });
@@ -1167,8 +1137,7 @@ describe("QueryableResource", function () {
       assert.deepEqual(
         entitySet.processNavigationPropertyItems(
           navigationProperty,
-          entityTypeProperties,
-          entityTypeModel
+          entityTypeProperties
         ),
         {
           navPropKey1: [
@@ -1184,11 +1153,6 @@ describe("QueryableResource", function () {
         }
       );
       assert.ok(
-        entityTypeModel.navigationPropertyAssociationTo.calledWithExactly(
-          "navPropKey1"
-        )
-      );
-      assert.ok(
         entitySet.processProperties
           .getCall(0)
           .calledWith("NAV_PROP_1_0", "PROPERTIES")
@@ -1202,12 +1166,12 @@ describe("QueryableResource", function () {
       assert.ok(
         entitySet.processNavigationProperties
           .getCall(0)
-          .calledWith("NAV_PROP_1_0", assoociationEnd.type)
+          .calledWith("NAV_PROP_1_0", navigationProperty.type.elementType)
       );
       assert.ok(
         entitySet.processNavigationProperties
           .getCall(1)
-          .calledWith("NAV_PROP_1_1", assoociationEnd.type)
+          .calledWith("NAV_PROP_1_1", navigationProperty.type.elementType)
       );
       assert.ok(entitySet.processNavigationProperties.calledTwice);
     });

@@ -2,7 +2,6 @@
 
 const _ = require("lodash");
 const assert = require("assert").strict;
-const sinon = require("sinon");
 const EntityType = require("../../../../../lib/model/nw/schema/EntityType");
 
 const sampleEntityTypeMD = {
@@ -100,7 +99,11 @@ describe("EntityType (nw)", function () {
       assert.equal(type.raw, sampleEntityTypeMD);
       assert.equal(type.name, "EntityType1");
       assert.ok(_.isArray(type.properties));
-      assert.ok(_.isArray(type.navigationProperties));
+      assert.equal(
+        sampleEntityTypeMD.NavigationProperty.length,
+        type.navigationProperties.length
+      );
+      assert.equal(type.navigationProperties[0].model, model);
       assert.ok(_.isArray(type.key));
       assert.equal(type.model, model);
     });
@@ -189,38 +192,6 @@ describe("EntityType (nw)", function () {
       assert.ok(_.has(api, "NavigationProperties"));
       assert.equal(api.NavigationProperties.NavProp1.Name, "NavProp1");
       assert.ok(_.isArray(api.Key));
-    });
-  });
-
-  describe(".navigationPropertyAssociationTo()", function () {
-    it("Missing navigation property raises error.", function () {
-      assert.throws(() => {
-        type.navigationPropertyAssociationTo("NavPropMissing");
-      }, /Navigation property/);
-    });
-    it("Missing association raises error.", function () {
-      model.resolveModelPath = sinon.stub();
-      assert.throws(() => {
-        type.navigationPropertyAssociationTo("NavProp1");
-      }, /Association for/);
-    });
-    it("Missing association end raises error.", function () {
-      model.resolveModelPath = sinon.stub().returns({
-        findEnd: sinon.stub(),
-      });
-      assert.throws(() => {
-        type.navigationPropertyAssociationTo("NavProp1");
-      }, /Association endpoint/);
-    });
-
-    it("Association end found.", function () {
-      model.resolveModelPath = sinon.stub().returns({
-        findEnd: sinon.stub().returns("ASSOCIATION_END"),
-      });
-      assert.strictEqual(
-        type.navigationPropertyAssociationTo("NavProp1"),
-        "ASSOCIATION_END"
-      );
     });
   });
 });

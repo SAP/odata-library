@@ -1,6 +1,6 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const EdmSimpleType = require("../../../../../lib/model/oasis/schema/EdmSimpleType");
 
 function getType(name) {
@@ -120,5 +120,14 @@ describe("EdmSimpleType (oasis)", function () {
     assert.strictEqual(type.formatBody(1), "1");
     assert.strictEqual(type.formatBody("TEST"), "TEST");
     assert.strictEqual(type.formatBody("#"), "#");
+  });
+
+  it("handles Decimal", function () {
+    let type = getType("Decimal");
+    assert.equal(type.format(true), 1);
+    assert.equal(type.format(10.25), 10.25);
+    assert.equal(type.format("10.25"), 10.25);
+    assert.ok(isNaN(type.format({})));
+    assert.ok(isNaN(type.format("foo")));
   });
 });

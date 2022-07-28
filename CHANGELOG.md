@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.0.4
+
+- [FEATURE] Send navigation properties for v4 - Norbert Volf
+
 # 1.0.3
 
 - [FEATURE] Use "In" as default parameter mode - Norbert Volf

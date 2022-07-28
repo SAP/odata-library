@@ -1,6 +1,6 @@
 {
   "name": "@sap_oss/odata-library",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "OData client for testing Netweawer OData services.",
   "main": "index.js",
   "dependencies": {

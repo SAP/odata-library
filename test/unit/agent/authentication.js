@@ -44,26 +44,6 @@ describe("lib/engine/agent/authentication", function () {
         );
       });
     });
-    it("authenticate by cookie", () => {
-      const agent = {
-        settings: {
-          auth: {
-            cookies: ["COOKIE"],
-          },
-        },
-      };
-      sandbox
-        .stub(authentication, "authenticateByCookie")
-        .returns(Promise.resolve());
-      return authentication.authenticate(agent, "ENDPOINT_URL").then(() => {
-        assert.ok(
-          authentication.authenticateByCookie.calledWithExactly(
-            agent,
-            "ENDPOINT_URL"
-          )
-        );
-      });
-    });
     it("auto authentication", () => {
       const agent = {};
       sandbox

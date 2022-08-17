@@ -264,6 +264,7 @@ describe("settings", function () {
       assert.deepEqual(parameters, {
         auth: {
           cookies: ["COOKIE"],
+          type: "cookie",
         },
       });
       assert.ok(
@@ -277,6 +278,7 @@ describe("settings", function () {
       assert.deepEqual(parameters, {
         auth: {
           cookies: ["ENV_COOKIE"],
+          type: "cookie",
         },
       });
       assert.ok(
@@ -290,6 +292,7 @@ describe("settings", function () {
       assert.deepEqual(parameters, {
         auth: {
           cookies: ["ENV_COOKIE", "ENV_COOKIE"],
+          type: "cookie",
         },
       });
       assert.ok(
@@ -302,6 +305,7 @@ describe("settings", function () {
       assert.deepEqual(parameters, {
         auth: {
           cookies: ["COOKIE"],
+          type: "cookie",
         },
       });
       assert.ok(

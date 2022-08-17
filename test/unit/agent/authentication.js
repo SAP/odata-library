@@ -11,6 +11,39 @@ describe("lib/engine/agent/authentication", function () {
   afterEach(() => sandbox.restore());
 
   describe(".authenticate", () => {
+    it("authenticate with invalid type ", () => {
+      const agent = {
+        settings: {
+          auth: {
+            type: "bar",
+          },
+        },
+      };
+      return authentication.authenticate(agent, "ENDPOINT_URL").catch((err) => {
+        assert.ok(err.message.match(/Missing authenticator type/));
+      });
+    });
+    it("authenticate by type", () => {
+      const agent = {
+        settings: {
+          auth: {
+            type: "foo",
+          },
+        },
+      };
+      authentication.AUTHENTICATORS.foo = sinon
+        .stub()
+        .returns(Promise.resolve());
+      return authentication.authenticate(agent, "ENDPOINT_URL").then(() => {
+        assert.ok(
+          authentication.AUTHENTICATORS.foo.calledWithExactly(
+            agent.settings,
+            agent,
+            "ENDPOINT_URL"
+          )
+        );
+      });
+    });
     it("authenticate by cookie", () => {
       const agent = {
         settings: {

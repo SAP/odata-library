@@ -51,8 +51,8 @@ describe("lib/engine/agent/authentication", function () {
     let backupAuthenticators;
     let agent;
     beforeEach(() => {
-      backupAuthenticators = authentication.AUTHENTICATORS;
-      authentication.AUTHENTICATORS = _.clone(backupAuthenticators);
+      backupAuthenticators = authentication.AUTHENTICATORS_AUTO_ORDER;
+      authentication.AUTHENTICATORS_AUTO_ORDER = _.clone(backupAuthenticators);
       agent = {
         logger: {
           debug: sinon.stub(),
@@ -61,17 +61,17 @@ describe("lib/engine/agent/authentication", function () {
       };
     });
     afterEach(() => {
-      authentication.AUTHENTICATORS = backupAuthenticators;
+      authentication.AUTHENTICATORS_AUTO_ORDER = backupAuthenticators;
     });
     it("if authenticators does not exists raise error.", function () {
-      authentication.AUTHENTICATORS = null;
+      authentication.AUTHENTICATORS_AUTO_ORDER = null;
       return authentication
         .authenticateAuto(agent, "URL")
         .then(() => assert.ok(false))
         .catch((err) => assert.ok(err.message.match(/not defined/)));
     });
     it("if authenticators are empty raise error.", function () {
-      authentication.AUTHENTICATORS = [];
+      authentication.AUTHENTICATORS_AUTO_ORDER = [];
       return authentication
         .authenticateAuto(agent, "URL")
         .then(() => assert.ok(false))
@@ -80,15 +80,16 @@ describe("lib/engine/agent/authentication", function () {
     it("Initialize authenticating by first authenticator with correct authentication", function () {
       let promise;
       sandbox.stub(authentication, "tryAuthenticator");
-      authentication.AUTHENTICATORS = [sinon.stub().returns("AUTHENTICATOR")];
+      authentication.AUTHENTICATORS_AUTO_ORDER = [
+        sinon.stub().returns("AUTHENTICATOR"),
+      ];
       promise = authentication.authenticateAuto(agent, "URL").then(() => {
         assert.ok(authentication.tryAuthenticator.calledOnce);
         assert.ok(authentication.tryAuthenticator.calledWith(1, "URL"));
-        assert.deepEqual(authentication.AUTHENTICATORS[0].getCall(0).args, [
-          "SETTINGS",
-          agent,
-          "URL",
-        ]);
+        assert.deepEqual(
+          authentication.AUTHENTICATORS_AUTO_ORDER[0].getCall(0).args,
+          ["SETTINGS", agent, "URL"]
+        );
       });
 
       setTimeout(() => {
@@ -99,18 +100,19 @@ describe("lib/engine/agent/authentication", function () {
     it("Initialize authenticating by first authenticator but all authenticators failed", function () {
       let promise;
       sandbox.stub(authentication, "tryAuthenticator");
-      authentication.AUTHENTICATORS = [sinon.stub().returns("AUTHENTICATOR")];
+      authentication.AUTHENTICATORS_AUTO_ORDER = [
+        sinon.stub().returns("AUTHENTICATOR"),
+      ];
       promise = authentication
         .authenticateAuto(agent, "URL")
         .then(() => assert.ok(false))
         .catch(() => {
           assert.ok(authentication.tryAuthenticator.calledOnce);
           assert.ok(authentication.tryAuthenticator.calledWith(1, "URL"));
-          assert.deepEqual(authentication.AUTHENTICATORS[0].getCall(0).args, [
-            "SETTINGS",
-            agent,
-            "URL",
-          ]);
+          assert.deepEqual(
+            authentication.AUTHENTICATORS_AUTO_ORDER[0].getCall(0).args,
+            ["SETTINGS", agent, "URL"]
+          );
         });
 
       setTimeout(() => {
@@ -130,13 +132,14 @@ describe("lib/engine/agent/authentication", function () {
         },
       };
 
-      authentication.AUTHENTICATORS[0] = sinon.stub();
-      authentication.AUTHENTICATORS[1] = sinon.stub();
-      authentication.AUTHENTICATORS[2] = sinon.stub();
+      authentication.AUTHENTICATORS_AUTO_ORDER[0] = sinon.stub();
+      authentication.AUTHENTICATORS_AUTO_ORDER[1] = sinon.stub();
+      authentication.AUTHENTICATORS_AUTO_ORDER[2] = sinon.stub();
     });
 
     it("Succeed on first authenticator", function (done) {
-      authentication.AUTHENTICATORS[0].authenticatorName = "AUTHENTICATOR";
+      authentication.AUTHENTICATORS_AUTO_ORDER[0].authenticatorName =
+        "AUTHENTICATOR";
       authentication.tryAuthenticator(1, "URL", {
         authentcatePromise: Promise.resolve("RESPONSE"),
         agent: agent,
@@ -150,10 +153,12 @@ describe("lib/engine/agent/authentication", function () {
       });
     });
     it("Succeed on next authenticator", function (done) {
-      authentication.AUTHENTICATORS[0].authenticatorName =
+      authentication.AUTHENTICATORS_AUTO_ORDER[0].authenticatorName =
         "FIRST_AUTHENTICATOR";
-      authentication.AUTHENTICATORS[1].returns(Promise.resolve("RESPONSE"));
-      authentication.AUTHENTICATORS[1].authenticatorName =
+      authentication.AUTHENTICATORS_AUTO_ORDER[1].returns(
+        Promise.resolve("RESPONSE")
+      );
+      authentication.AUTHENTICATORS_AUTO_ORDER[1].authenticatorName =
         "SECOND_AUTHENTICATOR";
 
       authentication.tryAuthenticator(1, "URL", {
@@ -177,13 +182,13 @@ describe("lib/engine/agent/authentication", function () {
       });
     });
     it("Fails on all authenticators", function (done) {
-      authentication.AUTHENTICATORS[1].returns(
+      authentication.AUTHENTICATORS_AUTO_ORDER[1].returns(
         Promise.reject({
           message: "ERROR MESSAGE",
           unsupported: true,
         })
       );
-      authentication.AUTHENTICATORS[2].returns(
+      authentication.AUTHENTICATORS_AUTO_ORDER[2].returns(
         Promise.reject({
           message: "ERROR MESSAGE",
           unsupported: true,
@@ -220,7 +225,9 @@ describe("lib/engine/agent/authentication", function () {
       });
     });
     it("Error handler is permissive", function (done) {
-      authentication.AUTHENTICATORS[1].returns(Promise.resolve("RESPONSE"));
+      authentication.AUTHENTICATORS_AUTO_ORDER[1].returns(
+        Promise.resolve("RESPONSE")
+      );
 
       authentication.tryAuthenticator(1, "URL", {
         authentcatePromise: Promise.reject({

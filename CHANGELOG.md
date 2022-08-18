@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.0.5
+
+- [FEATURE] Force to use specific authenticator - Norbert Volf
+
 # 1.0.4
 
 - [FEATURE] Send navigation properties for v4 - Norbert Volf

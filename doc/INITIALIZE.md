@@ -41,15 +41,12 @@ You can pass url and othere settings by object passed to the Service constructor
 You can also combine definitions. The parameter definition has precedence before
 definitons in the environment variables.
 
-```shell
-export NODE_EXTRA_CA_CERTS=/etc/ssl/certificates/root.crt
-```
-
 ```javascript
 const service = new Service({
   url: "https://localhost/service/",
   annotationsUrl: "https://localhost/serviceMetadata/annotations",
   auth: {
+    type: "basic"
     username: "foo",
     password: "bar",
   },
@@ -66,6 +63,18 @@ service.init.then(() => {
   //Code
 });
 ```
+
+## Authentication types
+
+The odata-library currently support four authentication types.
+
+- none - authentication is not needed
+- basic - [use basic access authentication](https://en.wikipedia.org/wiki/Basic_access_authentication)
+- samlSap - specific authentication for sap based services
+- cookie - run authentication code externally and just pass authentication cookies to odata-library
+
+If authentication type is not specified odata-library tries to use first three authentication
+types automatically.
 
 ## Authenticate to service outside of Service
 

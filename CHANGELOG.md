@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.0.6
+
+- [FIX] Fallback navigation target type resolution - Jakub Vaclavik
+
 # 1.0.5
 
 - [FEATURE] Force to use specific authenticator - Norbert Volf

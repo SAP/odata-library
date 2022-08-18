@@ -102,6 +102,27 @@ describe("NavigationProperty", function () {
 
       assert.strictEqual(navigationProperty.entityTypeModel, elementType);
     });
+
+    it("v2 no-collection type multiple target", function () {
+      let entityType = {};
+      navigationProperty = new NavigationProperty(
+        innerSource,
+        {
+          isCollection: true,
+          getTarget: sinon.stub().returns({
+            entitySet: {},
+            entityType: entityType,
+          }),
+        },
+        {
+          model: {
+            getSchema: sinon.stub(),
+          },
+        }
+      );
+
+      assert.strictEqual(navigationProperty.entityTypeModel, entityType);
+    });
   });
 
   describe(".isMultiple()", function () {

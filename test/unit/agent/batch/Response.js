@@ -1,10 +1,12 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const _ = require("lodash");
 const responseType = require("../../../../lib/engine/responseType");
+const Headers = require("../../../../lib/agent/batch/Headers");
+const sandbox = sinon.createSandbox();
 
 describe("agent/batch/Response", function () {
   let response;
@@ -28,6 +30,10 @@ describe("agent/batch/Response", function () {
 
     assert.ok(response.process.calledWith("RAW_RESPONSE"));
     Response.prototype.process.restore();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
   });
 
   it(".constructor", function () {
@@ -350,24 +356,15 @@ describe("agent/batch/Response", function () {
   });
 
   it(".processHeaderInfo", function () {
-    response.handlerHeadersComplete({
-      headers: [
-        "HEADER_KEY_1",
-        "HEADER_VALUE_1",
-        "HEADER_KEY_2",
-        "HEADER_VALUE_2",
-      ],
+    sandbox.stub(Headers.prototype, "parseHeadersArray");
+    response.processHeaderInfo({
+      headers: "RAW_HEADERS",
     });
-    assert.deepEqual(response.rawHeaders, [
-      "HEADER_KEY_1",
-      "HEADER_VALUE_1",
-      "HEADER_KEY_2",
-      "HEADER_VALUE_2",
-    ]);
-    assert.deepEqual(response.headers, {
-      HEADER_KEY_1: "HEADER_VALUE_1",
-      HEADER_KEY_2: "HEADER_VALUE_2",
-    });
+    assert.equal(response.rawHeaders, "RAW_HEADERS");
+    assert.ok(response.headers instanceof Headers);
+    assert.ok(
+      Headers.prototype.parseHeadersArray.calledWithExactly("RAW_HEADERS")
+    );
   });
 
   it(".plain", function () {
@@ -390,5 +387,10 @@ describe("agent/batch/Response", function () {
     };
     response.body = "5";
     assert.deepEqual(response.plain("d.results", "d"), 5);
+  });
+
+  it(".json", function () {
+    response.body = { body: "BODY" };
+    response.json().then((body) => assert.deepEqual(body, { body: "BODY" }));
   });
 });

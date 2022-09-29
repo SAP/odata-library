@@ -24,7 +24,6 @@ export ODATA_URL="http://localhost:3000/"
 export ODATA_USER=UZIVATEL
 export ODATA_PASSWORD=tajN3hes10
 export ODATA_PARAMETERS='{"sap-client":"902","sap-documentation":["heading", "quickinfo"],"sap-language":"EN"}'
-export ODATA_CA_CERT_PATH="/etc/ssl/certificates/root.crt"
 ```
 
 ```javascript
@@ -72,11 +71,108 @@ The odata-library currently support four authentication types.
 - basic - [use basic access authentication](https://en.wikipedia.org/wiki/Basic_access_authentication)
 - samlSap - specific authentication for sap based services
 - cookie - run authentication code externally and just pass authentication cookies to odata-library
+- cert - pass client certificate in PEM format
 
 If authentication type is not specified odata-library tries to use first three authentication
 types automatically.
 
-## Authenticate to service outside of Service
+### Client certificate authentication
+
+The client certificate settings are passed to [https.Agent](https://nodejs.org/api/https.html#class-httpsagent) which is used
+
+inside odata-library too handle HTTP requests.
+
+Pass client certificate by Service constructor in PEM format. "ca" parameter is used for
+certificates signed by certification authoritity which is not inside Node js certificate
+authority store.
+
+```javascript
+const service = new Service({
+  url: "https://localhost/service/",
+  auth: {
+    ca: fs.readFileSync("path/to/ca.pem"),
+    cert: fs.readFileSync("path/to/clientCert.pem"),
+    key: fs.readFileSync("path/to/clientKe.pem"),
+  },
+});
+
+service.init.then(() => {
+  //Code
+});
+```
+
+Set PEM certificate and by environment variables.
+
+```shell
+export ODATA_CLIENT_CERT="-----BEGIN CERTIFICATE-----....."
+export ODATA_CLIENT_KEY="-----BEGIN RSA PRIVATE KEY-----....."
+export ODATA_EXTRA_CA="-----BEGIN CERTIFICATE-----....."
+```
+
+Pass client certificate by Service constructor in PFX format
+
+```javascript
+const service = new Service({
+  url: "https://localhost/service/",
+  auth: {
+    pfx: fs.readFileSync("path/to/cert.pfx"),
+    passphrase: "secretphrase",
+  },
+});
+```
+
+#### How to convert certificates from PFX to PEM
+
+If you would like to use PEM format (typically for settings by shell environment).
+Use `openssl` to convert the p12 to PEM format.
+
+```shell
+openssl pkcs12 -in i332698.p12 -out i332698.client.pem -clcerts -nokeys
+openssl pkcs12 -in i332698.p12 -out i332698.key.pem -nocerts -nodes
+```
+
+You need also append certificate chain for certificates which is not signed by
+root certificates in Mozilla certificate store (which is included in node)
+
+```shell
+openssl pkcs12 -in i332698.p12 -out i332698.ca.pem -cacerts -nokeys
+```
+
+## TLS/SSL server certificate
+
+We would like to connect to web server with untrusted TLS certificate some times
+for testing reasons. To ignore untrusted certificate you could set environment
+variable in this case.
+
+```bash
+export NODE_TLS_REJECT_UNAUTHORIZED=0;
+```
+
+If you have certificate signed by authority which is not in OS repository
+pass root certificate to the service.
+
+```shell
+export NODE_EXTRA_CA_CERTS=/etc/ssl/certificates/root.crt
+
+```
+
+You can pass additional certificate authority certificate
+
+```javascript
+const service = new Service({
+  url: "https://localhost/service/",
+  annotationsUrl: "https://localhost/serviceMetadata/annotations",
+  auth: {
+    type: "basic"
+    username: "foo",
+    password: "bar",
+    ca: fs.readFileSync("/path/to/additional.ca.pem")
+  },
+  strict: false, // ignore non critical errors, e.g. orphaned annotations
+});
+```
+
+### Cookie authentication
 
 Handle authorization process outside of the odata-library and pass authorization cookie
 to odata-library service.
@@ -125,24 +221,6 @@ in browser development tools
 decodeURIComponent(
   "JSESSIONID=s%3Abdzps02ARlShtevVcSWsTLptzhPdAF-y.r2nlOcl38jriMxfIhcvIzyFwS0V9nITPUz8orkAHMic"
 );
-```
-
-## TLS/SSL server certificate
-
-We would like to connect to web server with untrusted TLS certificate some times
-for testing reasons. To ignore untrusted certificate you could set environment
-variable in this case.
-
-```bash
-export NODE_TLS_REJECT_UNAUTHORIZED=0;
-```
-
-If you have certificate signed by authority which is not in OS repository
-pass root certificate to the service.
-
-```shell
-export NODE_EXTRA_CA_CERTS=/etc/ssl/certificates/root.crt
-
 ```
 
 ## Access EntitySets

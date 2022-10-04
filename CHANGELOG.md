@@ -1,5 +1,10 @@
 # Changelog
 
+# 1.0.7
+
+- [FEATURE] Add authentication by client certificate - Norbert Volf
+- [FIX] Emulate Fetch API response in batch processing - Norbert Volf
+
 # 1.0.6
 
 - [FIX] Fallback navigation target type resolution - Jakub Vaclavik

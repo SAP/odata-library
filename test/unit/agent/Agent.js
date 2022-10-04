@@ -9,6 +9,7 @@ const xml2js = require("xml2js");
 const tough = require("tough-cookie");
 const log = require("../../../lib/agent/log");
 const authentication = require("../../../lib/agent/authentication");
+const https = require("https");
 
 let Agent;
 let agent;
@@ -39,6 +40,37 @@ describe("lib/engine/Agent", function () {
         url: "URL",
       });
       assert.ok(_.has(agent, "logger"));
+      assert.deepEqual(agent.defaultFetchOptions, {});
+    });
+  });
+
+  describe("initializeDefaultFetchOptions", function () {
+    it("settings for default fetch options not found", function () {
+      assert.deepEqual(agent.initializeDefaultFetchOptions({ url: "URL" }), {});
+    });
+    it("settings for default fetch options not found", function () {
+      sandbox.stub(https, "Agent");
+      const defaultOptions = agent.initializeDefaultFetchOptions({
+        url: "URL",
+        auth: {
+          cert: "CERT",
+          key: "KEY",
+          pfx: "PFX",
+          ca: "CA",
+          passphrase: "PASSPHRASE",
+          foo: "BAR",
+        },
+      });
+      assert.ok(defaultOptions.agent instanceof https.Agent);
+      assert.ok(
+        https.Agent.calledWithExactly({
+          cert: "CERT",
+          key: "KEY",
+          pfx: "PFX",
+          ca: "CA",
+          passphrase: "PASSPHRASE",
+        })
+      );
     });
   });
 
@@ -655,6 +687,7 @@ describe("lib/engine/Agent", function () {
       sinon.stub(agent, "processResponse").returns(Promise.resolve());
       opts = {};
       agent.setAuthorizationHeaders({ "x-csrf-token": "X-CSRF-TOKEN" });
+      agent.defaultFetchOptions.defaultOption = "DEFAULT_OPTION";
     });
     it("invalid options", function () {
       assert.throws(function () {
@@ -669,22 +702,33 @@ describe("lib/engine/Agent", function () {
             {
               Cookie: "COOKIES",
             },
-            opts
+            {
+              defaultOption: "DEFAULT_OPTION",
+            }
           )
         );
         assert.ok(
           agent.appendHeaders.calledWithExactly(
             { "x-csrf-token": "X-CSRF-TOKEN" },
-            opts
+            {
+              defaultOption: "DEFAULT_OPTION",
+            }
           )
         );
         assert.equal(log.logRequest.getCall(0).args[0], agent.logger);
         assert.ok(_.isNumber(log.logRequest.getCall(0).args[1]));
         assert.deepEqual(log.logRequest.getCall(0).args.slice(2), [
           "URL",
-          opts,
+          {
+            defaultOption: "DEFAULT_OPTION",
+          },
         ]);
-        assert.ok(nodeFetch.calledWithExactly("URL", { redirect: "manual" }));
+        assert.ok(
+          nodeFetch.calledWithExactly("URL", {
+            redirect: "manual",
+            defaultOption: "DEFAULT_OPTION",
+          })
+        );
         assert.ok(agent.saveCookies.calledWithExactly("RESPONSE"));
         assert.ok(
           agent.isResponseRedirect.calledWithExactly(
@@ -697,7 +741,9 @@ describe("lib/engine/Agent", function () {
         assert.ok(_.isNumber(agent.processResponse.getCall(0).args[0]));
         assert.deepEqual(agent.processResponse.getCall(0).args.slice(1), [
           "URL",
-          opts,
+          {
+            defaultOption: "DEFAULT_OPTION",
+          },
           "RESPONSE",
         ]);
       });
@@ -711,22 +757,33 @@ describe("lib/engine/Agent", function () {
             {
               Cookie: "COOKIES",
             },
-            opts
+            {
+              defaultOption: "DEFAULT_OPTION",
+            }
           )
         );
         assert.ok(
           agent.appendHeaders.calledWithExactly(
             { "x-csrf-token": "X-CSRF-TOKEN" },
-            opts
+            {
+              defaultOption: "DEFAULT_OPTION",
+            }
           )
         );
         assert.equal(log.logRequest.getCall(0).args[0], agent.logger);
         assert.ok(_.isNumber(log.logRequest.getCall(0).args[1]));
         assert.deepEqual(log.logRequest.getCall(0).args.slice(2), [
           "URL",
-          opts,
+          {
+            defaultOption: "DEFAULT_OPTION",
+          },
         ]);
-        assert.ok(nodeFetch.calledWithExactly("URL", { redirect: "manual" }));
+        assert.ok(
+          nodeFetch.calledWithExactly("URL", {
+            redirect: "manual",
+            defaultOption: "DEFAULT_OPTION",
+          })
+        );
         assert.ok(agent.saveCookies.calledWithExactly("RESPONSE"));
         assert.ok(
           agent.isResponseRedirect.calledWithExactly(
@@ -739,7 +796,9 @@ describe("lib/engine/Agent", function () {
         assert.ok(_.isNumber(agent.redirect.getCall(0).args[0]));
         assert.deepEqual(agent.redirect.getCall(0).args.slice(1), [
           "URL",
-          opts,
+          {
+            defaultOption: "DEFAULT_OPTION",
+          },
           "RESPONSE",
         ]);
       });

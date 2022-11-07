@@ -15,6 +15,7 @@ describe("settings", function () {
     delete process.env.ODATA_PASSWORD;
     delete process.env.ODATA_PARAMETERS;
     delete process.env.ODATA_CA_CERT_PATH;
+    delete process.env.ODATA_HEADERS;
     fs = {};
     settings = proxyquire("../../../lib/agent/settings", {
       fs: fs,
@@ -205,7 +206,6 @@ describe("settings", function () {
   });
 
   it("Combine environment variables and object settings", function () {
-    sandbox.spy(settings._, "parseTLSDefinitions");
     process.env.ODATA_URL = "http://localhost/";
     process.env.ODATA_USER = "uzivatel";
     process.env.ODATA_PASSWORD = "heslo";
@@ -223,7 +223,76 @@ describe("settings", function () {
         strict: true,
       }
     );
-    assert.ok(settings._.parseTLSDefinitions.called);
+  });
+
+  it("Parse additional parameters", function () {
+    sandbox.stub(settings._, "parseConnectionCookie").returnsArg(1);
+    sandbox.stub(settings._, "parseTLSDefinitions").returnsArg(3);
+    sandbox.stub(settings._, "parseHeadersDefinitions").returnsArg(2);
+
+    process.env.ODATA_URL = "http://localhost/";
+    process.env.ODATA_USER = "uzivatel";
+    process.env.ODATA_PASSWORD = "heslo";
+    assert.deepEqual(
+      settings({
+        logger: console,
+      }),
+      {
+        url: "http://localhost/",
+        auth: {
+          username: "uzivatel",
+          password: "heslo",
+        },
+        logger: console,
+        strict: true,
+      }
+    );
+
+    assert.deepEqual(settings._.parseConnectionCookie.args[0], [
+      {
+        logger: console,
+      },
+      {
+        url: "http://localhost/",
+        auth: {
+          username: "uzivatel",
+          password: "heslo",
+        },
+        logger: console,
+        strict: true,
+      },
+    ]);
+    assert.deepEqual(settings._.parseTLSDefinitions.args[0], [
+      settings.AUTH.CERT,
+      {
+        logger: console,
+      },
+      process.env,
+      {
+        url: "http://localhost/",
+        auth: {
+          username: "uzivatel",
+          password: "heslo",
+        },
+        logger: console,
+        strict: true,
+      },
+    ]);
+    assert.deepEqual(settings._.parseHeadersDefinitions.args[0], [
+      {
+        logger: console,
+      },
+      process.env,
+      {
+        url: "http://localhost/",
+        auth: {
+          username: "uzivatel",
+          password: "heslo",
+        },
+        logger: console,
+        strict: true,
+      },
+    ]);
   });
 
   describe("_.parseConnectionCookie", () => {
@@ -607,7 +676,7 @@ describe("settings", function () {
 
   describe("_._.checkTLSDefinition", function () {
     it("definition not found (nothing to check)", function () {
-      assert.strictEqual(
+      assert.equal(
         settings._.checkTLSDefinition(
           undefined,
           "CONNECTION_SETTINGS",
@@ -791,6 +860,150 @@ describe("settings", function () {
             ca: "CA",
           },
         }
+      );
+    });
+  });
+
+  describe("_.parseHeadersDefinitions", function () {
+    beforeEach(function () {
+      sandbox.stub(settings._, "checkHeadersSettings");
+    });
+    it("headers definition is not defined", function () {
+      settings._.checkHeadersSettings.returns(true);
+      assert.deepEqual(
+        settings._.parseHeadersDefinitions(
+          "CONNECTION_SETTINGS",
+          "PROCESS_ENV",
+          {}
+        ),
+        {}
+      );
+      assert.ok(
+        settings._.checkHeadersSettings.calledWithExactly(
+          "CONNECTION_SETTINGS",
+          "PROCESS_ENV"
+        )
+      );
+    });
+    it("headers definition is invalid", function () {
+      settings._.checkHeadersSettings.returns(false);
+      assert.throws(() => {
+        settings._.parseHeadersDefinitions(
+          "CONNECTION_SETTINGS",
+          "PROCESS_ENV",
+          {}
+        );
+      });
+      assert.ok(
+        settings._.checkHeadersSettings.calledWithExactly(
+          "CONNECTION_SETTINGS",
+          "PROCESS_ENV"
+        )
+      );
+    });
+    it("headers definition is passed by constructor settings", function () {
+      settings._.checkHeadersSettings.returns(true);
+      assert.deepEqual(
+        settings._.parseHeadersDefinitions(
+          {
+            auth: {
+              headers: { Auth: "AUTH" },
+            },
+          },
+          "PROCESS_ENV",
+          {}
+        ),
+        {
+          auth: {
+            headers: { Auth: "AUTH" },
+            type: "headers",
+          },
+        }
+      );
+
+      assert.ok(
+        settings._.checkHeadersSettings.calledWithExactly(
+          {
+            auth: {
+              headers: { Auth: "AUTH" },
+            },
+          },
+          "PROCESS_ENV"
+        )
+      );
+    });
+    it("headers definition is passed by environment variable", function () {
+      settings._.checkHeadersSettings.returns(true);
+      assert.deepEqual(
+        settings._.parseHeadersDefinitions(
+          {},
+          {
+            ODATA_HEADERS: '{"Auth":"AUTH"}',
+          },
+          {}
+        ),
+        {
+          auth: {
+            headers: { Auth: "AUTH" },
+            type: "headers",
+          },
+        }
+      );
+
+      assert.ok(
+        settings._.checkHeadersSettings.calledWithExactly(
+          {},
+
+          {
+            ODATA_HEADERS: '{"Auth":"AUTH"}',
+          }
+        )
+      );
+    });
+  });
+
+  describe("_.checkHeadersSettings", function () {
+    it("headers definition is not defined", function () {
+      assert.equal(
+        settings._.checkHeadersSettings("CONNECTION_SETTINGS", "PROCESS_ENV"),
+        null
+      );
+    });
+    it("headers definition is invalid", function () {
+      assert.equal(
+        settings._.checkHeadersSettings(
+          {},
+          {
+            ODATA_HEADERS: "{Foo",
+          }
+        ),
+        false
+      );
+    });
+    it("headers definition is coming from constructor settings", function () {
+      assert.equal(
+        settings._.checkHeadersSettings(
+          {
+            auth: {
+              headers: {
+                Auth: "header",
+              },
+            },
+          },
+          {}
+        ),
+        true
+      );
+    });
+    it("headers definition is coming from environment variables", function () {
+      assert.equal(
+        settings._.checkHeadersSettings(
+          {},
+          {
+            ODATA_HEADERS: '{"Auth":"Key"}',
+          }
+        ),
+        true
       );
     });
   });

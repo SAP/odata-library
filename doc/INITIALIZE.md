@@ -72,6 +72,7 @@ The odata-library currently support four authentication types.
 - samlSap - specific authentication for sap based services
 - cookie - run authentication code externally and just pass authentication cookies to odata-library
 - cert - pass client certificate in PEM format
+- headers - directly set authentication headers
 
 If authentication type is not specified odata-library tries to use first three authentication
 types automatically.
@@ -221,6 +222,35 @@ in browser development tools
 decodeURIComponent(
   "JSESSIONID=s%3Abdzps02ARlShtevVcSWsTLptzhPdAF-y.r2nlOcl38jriMxfIhcvIzyFwS0V9nITPUz8orkAHMic"
 );
+```
+
+### Headers authentication
+
+Handle authorization process outside of the odata-library and pass authorization headers
+to odata-library service.
+
+Set authorization headers via environment variable
+
+```shell
+export ODATA_HEADERS='{"Authorization":"Bearer S0VLU0UhIExFQ0tFUiEK"}'
+```
+
+Set authorization headers via constructor
+
+```javascript
+const service = new Service({
+  url: "https://localhost/service/",
+  auth: {
+    type: "headers",
+    headers: {
+      Authorization: "Basic Vk9MRk46aXVnaGVlOU8=",
+    },
+  },
+});
+
+service.init.then(() => {
+  //Code
+});
 ```
 
 ## Access EntitySets

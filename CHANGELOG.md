@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.0.8
+
+- [FEATURE] Use HTTP headers for authentication - Norbert Volf
+
 # 1.0.7
 
 - [FEATURE] Add authentication by client certificate - Norbert Volf

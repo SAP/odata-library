@@ -1,18 +1,21 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const proxyquire = require("proxyquire");
 const sinon = require("sinon");
 const _ = require("lodash");
+const responseType = require("../../../lib/engine/responseType");
+const requestPath = require("../../../lib/engine/request/path");
 
+const sandbox = sinon.createSandbox();
 const defaultType = {
   format: (x) => `'${x}'`,
   formatBody: (x) => x,
 };
 
 describe("RequestDefinition", function () {
-  var entitySet;
-  var request;
+  let entitySet;
+  let request;
   let Filter;
   let Sorter;
 
@@ -52,6 +55,10 @@ describe("RequestDefinition", function () {
       urlQuery: (x) => x,
     };
     request = new Request(entitySet, {});
+  });
+
+  afterEach(function () {
+    sandbox.restore();
   });
 
   describe(".count()", function () {
@@ -239,44 +246,25 @@ describe("RequestDefinition", function () {
   });
 
   describe(".calculatePath()", function () {
-    it("entity stream path", function () {
-      sinon.stub(request, "_isList").get(function () {
-        return false;
-      });
-      sinon.stub(request, "_isEntity").get(function () {
-        return true;
-      });
-      request._resource.getSingleResourcePath = sinon
-        .stub()
-        .returns("SINGLE_PATH");
-      request._resource.entityTypeModel.hasStream = true;
+    it("exists calculation for response type", function () {
+      sandbox.stub(responseType, "determine").returns(responseType.COUNT);
+      sandbox
+        .stub(requestPath.calculate, responseType.COUNT)
+        .returns("PATH_FOR_COUNT");
       request.calculatePath();
-      assert.strictEqual(request._path, "/SINGLE_PATH/$value");
+      assert.equal(request._path, "PATH_FOR_COUNT");
+      assert.ok(
+        responseType.determine.calledWithExactly(request, request._resource)
+      );
     });
-    it("list stream path", function () {
-      sinon.stub(request, "_isList").get(function () {
-        return false;
-      });
-      request._resource.entityTypeModel.hasStream = true;
+    it("missing calculation for response type", function () {
+      sandbox.stub(responseType, "determine");
+      sandbox.stub(requestPath, "default").returns("PATH_DEFAULT");
       request.calculatePath();
-      assert.strictEqual(request._path, "/path/$value");
-    });
-    it("list path", function () {
-      sinon.stub(request, "_isList").get(function () {
-        return true;
-      });
-      request._resource.entityTypeModel.hasStream = false;
-      sinon.stub(request._resource, "urlQuery").returns("QUERY");
-      request.calculatePath();
-      assert.strictEqual(request._path, "/path?QUERY");
-    });
-    it("entity path", function () {
-      sinon.stub(request, "_isList").get(function () {
-        return false;
-      });
-      sinon.stub(request._resource, "urlQuery").returns("QUERY");
-      request.calculatePath();
-      assert.strictEqual(request._path, "/path?QUERY");
+      assert.equal(request._path, "PATH_DEFAULT");
+      assert.ok(
+        responseType.determine.calledWithExactly(request, request._resource)
+      );
     });
   });
 
@@ -329,19 +317,12 @@ describe("RequestDefinition", function () {
     });
   });
 
-  describe(".payload()", function () {
-    it("pass valid payload", function () {
-      request.payload({
-        key: "VALUE",
-      });
-      assert.deepEqual(request._payload, {
-        key: "VALUE",
-      });
+  it(".payload()", function () {
+    request.payload({
+      key: "VALUE",
     });
-    it("pass invalid payload", function () {
-      assert.throws(() => {
-        request.payload("VALUE");
-      });
+    assert.deepEqual(request._payload, {
+      key: "VALUE",
     });
   });
 
@@ -418,6 +399,19 @@ describe("RequestDefinition", function () {
       request.actions.Confirm();
       assert.strictEqual(request._path, "/path/ALIAS.Confirm?URL_QUERY");
       assert.ok(entitySet.callAction.calledWithExactly(request));
+    });
+  });
+
+  describe(".value()", function () {
+    it("property name is passed", function () {
+      request.value("PROPERTY_NAME");
+      assert.equal(request._isValue, true);
+      assert.equal(request._valuePropertyName, "PROPERTY_NAME");
+    });
+    it("property name is missing", function () {
+      request.value();
+      assert.equal(request._isValue, true);
+      assert.ok(!_.has(request, "_valuePropertyName"));
     });
   });
 });

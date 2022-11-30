@@ -1,6 +1,6 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const sinon = require("sinon");
 const EntitySet = require("../../../lib/engine/EntitySet");
 const NavigationProperty = require("../../../lib/engine/NavigationProperty");
@@ -45,7 +45,15 @@ describe("EntitySet", function () {
       assert.deepEqual(entitySet.entitySetModel, innerEntitySetModel);
       assert.deepEqual(entitySet.entityTypeModel, innerEntityTypeModel);
       assert.ok(entitySet.reset instanceof Function);
-      assert.deepEqual(entitySet.defaultRequest, entitySet._defaults);
+      assert.deepEqual(
+        entitySet.defaultRequest._headers,
+        entitySet._defaults._headers
+      );
+      assert.equal(entitySet.defaultRequest._isRaw, entitySet._defaults._isRaw);
+      assert.deepEqual(
+        entitySet.defaultRequest._query,
+        entitySet._defaults._query
+      );
       assert.ok(!entitySet.isParameterized);
     });
 
@@ -183,5 +191,12 @@ describe("EntitySet", function () {
       );
       assert.ok(request.header.calledWith("Accept", "application/json"));
     });
+  });
+  it(".value", function () {
+    sinon.stub(entitySet.defaultRequest, "value");
+    assert.equal(entitySet.value("PROPERTY_NAME"), entitySet);
+    assert.ok(
+      entitySet.defaultRequest.value.calledWithExactly("PROPERTY_NAME")
+    );
   });
 });

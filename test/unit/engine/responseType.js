@@ -33,32 +33,21 @@ describe("engine/responseType", function () {
       ),
       responseType.ENTITY
     );
-    assert.equal(
-      responseType.determine(
-        {
-          _isList: true,
-        },
-        {
-          entityTypeModel: {
-            hasStream: true,
-          },
-        }
-      ),
-      responseType.LIST_STREAM
-    );
-    assert.equal(
-      responseType.determine(
-        {
-          _isEntity: true,
-        },
-        {
-          entityTypeModel: {
-            hasStream: true,
-          },
-        }
-      ),
-      responseType.ENTITY_STREAM
-    );
     assert.equal(responseType.determine(), undefined);
+    assert.equal(
+      responseType.determine({
+        _isValue: true,
+        _isEntity: true,
+      }),
+      responseType.ENTITY_VALUE
+    );
+    assert.equal(
+      responseType.determine({
+        _isValue: true,
+        _isEntity: true,
+        _valuePropertyName: "PROPERTY_NAME",
+      }),
+      responseType.PROPERTY_VALUE
+    );
   });
 });

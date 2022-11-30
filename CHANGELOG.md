@@ -1,5 +1,12 @@
 # Changelog
 
+# 2.0.8
+
+- [FEATURE] Add support for explicit operator - Norbert Volf
+  API has changed. Use value() for reading STREAM
+  from entity instead of automatically read STREAM
+  from entity set with hasStream attribute.
+
 # 1.0.8
 
 - [FEATURE] Use HTTP headers for authentication - Norbert Volf

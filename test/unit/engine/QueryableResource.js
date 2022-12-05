@@ -4,6 +4,7 @@ const assert = require("assert").strict;
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const responseType = require("../../../lib/engine/responseType");
+const requestPut = require("../../../lib/engine/request/put");
 const _ = require("lodash");
 const sandbox = sinon.createSandbox();
 const parsers = require("../../../lib/agent/parsers");
@@ -362,7 +363,7 @@ describe("QueryableResource", function () {
       sinon
         .stub(entitySet.defaultRequest, "key")
         .returns(entitySet.defaultRequest);
-      assert.strictEqual(entitySet.key("A"), entitySet.defaultRequest);
+      assert.deepEqual(entitySet.key("A"), entitySet);
       assert.ok(entitySet.defaultRequest.key.calledWithExactly("A"));
     });
   });
@@ -441,124 +442,10 @@ describe("QueryableResource", function () {
     });
   });
 
-  describe(".put()", function () {
-    let body = {
-      keyParameter: "keyValue",
-      parameter: "value",
-    };
-    let req;
-    this.beforeEach(() => {
-      sinon.stub(entitySet, "keyProperties").returns("KEY_PROPERTIES");
-      sinon.stub(entitySet, "keyPredicate").returns("KEY_PREDICATE");
-      sinon.stub(entitySet, "bodyProperties").returns("BODY_PROPERTIES");
-      sinon.stub(entitySet, "header");
-      sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
-      innerEntityTypeModel.key = [
-        {
-          name: "keyParameter",
-          type: defaultType,
-        },
-      ];
-
-      req = entitySet.defaultRequest;
-      sinon.stub(req, "header");
-      sinon.stub(req, "payload");
-      req._headers = {};
-      req._isRaw = false;
-      innerEntitySetModel.name = "ENTITY_SET_NAME";
-      innerAgent.batchManager = {};
-    });
-
-    it("Successfully updates an entry by overwriting data", function () {
-      innerAgent.put = sinon.stub().returns(Promise.resolve());
-      req._payload = "BODY_PROPERTIES";
-      return entitySet
-        .put(body)
-        .then(() => {
-          assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
-          return entitySet._handleAgentCall.getCall(0).args[0](req);
-        })
-        .then(() => {
-          assert(req.header.calledWith("Content-Type", "application/json"));
-          assert(
-            innerAgent.put.calledWith(
-              "/ENTITY_SET_NAME(KEY_PREDICATE)",
-              req._headers,
-              JSON.stringify("BODY_PROPERTIES")
-            )
-          );
-          assert.ok(entitySet.header.notCalled);
-        });
-    });
-
-    it("Successfully updates in raw mode", function () {
-      let resp = {
-        ok: true,
-      };
-
-      innerAgent.put = sinon.stub().returns(Promise.resolve(resp));
-      entitySet.raw();
-      req._payload = "BODY_PROPERTIES";
-
-      return entitySet
-        .put(body)
-        .then(() => {
-          assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
-          return entitySet._handleAgentCall.getCall(0).args[0](req);
-        })
-        .then(() => {
-          assert(req.header.calledWith("Content-Type", "application/json"));
-          assert(
-            innerAgent.put.calledWith(
-              "/ENTITY_SET_NAME(KEY_PREDICATE)",
-              req._headers,
-              JSON.stringify("BODY_PROPERTIES")
-            )
-          );
-        });
-    });
-
-    it("handes invalid response", function () {
-      let promise;
-      entitySet._handleAgentCall.returns(Promise.reject(new Error("ERROR")));
-      promise = entitySet.put(body);
-      return promise.catch((err) => {
-        assert(err instanceof Error);
-      });
-    });
-
-    it("Successfully update entity and return parsed data inside batch", function () {
-      let cb;
-      let put = sinon.stub();
-      innerAgent.batchManager = {
-        defaultBatch: {
-          put: put,
-        },
-        defaultChangeSet: "DEFAULT_CHANGESET",
-      };
-      sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
-      req._payload = "BODY_PROPERTIES";
-
-      assert.ok(entitySet.put(body), "PROMISE");
-
-      cb = entitySet._handleBatchCall.getCall(0).args[0];
-      cb();
-
-      assert.ok(req.payload.calledWithExactly("BODY_PROPERTIES"));
-      assert.ok(
-        put.calledWithExactly(
-          "/ENTITY_SET_NAME(KEY_PREDICATE)",
-          req._headers,
-          "BODY_PROPERTIES",
-          "DEFAULT_CHANGESET"
-        )
-      );
-      assert.ok(req.header.calledWithExactly("Accept", "application/json"));
-      assert.strictEqual(
-        entitySet._handleBatchCall.getCall(0).args[1],
-        innerAgent.batchManager.defaultBatch
-      );
-    });
+  it(".put", function () {
+    sandbox.stub(requestPut, "call");
+    entitySet.put("BODY");
+    assert.ok(requestPut.call.calledWithExactly("BODY", entitySet));
   });
 
   describe(".processUpdateCall()", function () {
@@ -1329,7 +1216,7 @@ describe("QueryableResource", function () {
     });
 
     it("Headers for stream request", function () {
-      request._resource.entityTypeModel.hasStream = true;
+      request._isValue = true;
       entitySet.determineRequestHeaders(request);
       assert.ok(request.header.notCalled);
     });
@@ -1360,6 +1247,7 @@ describe("QueryableResource", function () {
             body: "BODY",
           })
         ),
+        text: sinon.stub().returns(Promise.resolve("PROPERTY_VALUE")),
       };
       sinon
         .stub(entitySet, "_unwrapNestedProperties")
@@ -1367,12 +1255,26 @@ describe("QueryableResource", function () {
       innerAgent.getResultPath = sinon.stub().returns("body");
     });
 
-    it("Return body from response with binary data", function () {
+    it("response for entity with binary data", function () {
       request._resource.entityTypeModel.hasStream = true;
+      sandbox
+        .stub(responseType, "determine")
+        .returns(responseType.ENTITY_VALUE);
       return entitySet
         .determineResponseResult(request, response)
         .then((buf) => {
           assert.ok(buf instanceof Buffer);
+        });
+    });
+
+    it("response for raw property ", function () {
+      sandbox
+        .stub(responseType, "determine")
+        .returns(responseType.PROPERTY_VALUE);
+      return entitySet
+        .determineResponseResult(request, response)
+        .then((result) => {
+          assert.equal(result, "PROPERTY_VALUE");
         });
     });
 

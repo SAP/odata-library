@@ -3,26 +3,24 @@
 Use EntitySet.post to create new entity. The entity is created from
 object passed as parameter of the EntitySet.post method.
 
-
 ```javascript
-    let service = new Service();
-	return service.CorrespondenceOutputSet
-		.post({
-			"Event": "SAP08",
-			"CorrespondenceTypeId": "SAP08",
-			"VariantId": "SAP08",
-			"CompanyCode": "M101",
-			"CustomerNumber": "BRQ002",
-			"AccountType": "D",
-			"Date1": "datetime'2038-01-19T03:14:07'",
-			"Email": {
-				"To": "nobody@sap.com",
-				"Subject": "SAP08 OM-OC arbitrary test",
-				"MailTemplateId": "FIN_OPI_LIST_EMAIL_TEMPLATE"
-			}
-	}).then((res) => {
-		console.log("Newly created entity ", res);
-	});
+let service = new Service();
+return service.CorrespondenceOutputSet.post({
+  Event: "SAP08",
+  CorrespondenceTypeId: "SAP08",
+  VariantId: "SAP08",
+  CompanyCode: "M101",
+  CustomerNumber: "BRQ002",
+  AccountType: "D",
+  Date1: "datetime'2038-01-19T03:14:07'",
+  Email: {
+    To: "nobody@sap.com",
+    Subject: "SAP08 OM-OC arbitrary test",
+    MailTemplateId: "FIN_OPI_LIST_EMAIL_TEMPLATE",
+  },
+}).then((res) => {
+  console.log("Newly created entity ", res);
+});
 ```
 
 ## Navigation property
@@ -30,22 +28,24 @@ object passed as parameter of the EntitySet.post method.
 Use Association.post to create a new entry referenced by already initialized EntitySet
 
 ```javascript
-	var service = new Service();
-	service.C_AllocationCycleTP.key({
-		"AllocationType": "ACDOC_CC",
-		"AllocationCycle": "0L14011902",
-		"AllocationCycleStartDate": "\/Date(1547424000000)\/",
-		"DraftUUID": "42f2e9af-c507-1ed9-8bbb-f206cf2596a5",
-		"IsActiveEntity": false
-	}).to_Segment.post({
-		"SegmentName": "003",
-		"SegmentNameDescription": "",
-		"AllocationType": "ACDOC_CC",
-		"AllocationCycle": "0L14011902",
-		"AllocationCycleStartDate": "\/Date(1547424000000)\/"
-	}).then(segment => {
-		console.log("Newly created entity ", segment);
-	});
+var service = new Service();
+service.C_AllocationCycleTP.key({
+  AllocationType: "ACDOC_CC",
+  AllocationCycle: "0L14011902",
+  AllocationCycleStartDate: "/Date(1547424000000)/",
+  DraftUUID: "42f2e9af-c507-1ed9-8bbb-f206cf2596a5",
+  IsActiveEntity: false,
+})
+  .to_Segment.post({
+    SegmentName: "003",
+    SegmentNameDescription: "",
+    AllocationType: "ACDOC_CC",
+    AllocationCycle: "0L14011902",
+    AllocationCycleStartDate: "/Date(1547424000000)/",
+  })
+  .then((segment) => {
+    console.log("Newly created entity ", segment);
+  });
 ```
 
 # Update entity
@@ -54,7 +54,7 @@ OData protocol versions 1.0 and 2.0 define "MERGE" HTTP method to update
 existing entity. Newer versions of OData protocol define "PATCH"
 HTTP method to update existing entity. EntitySet supports both HTTP
 methods. The EntitySet does not check current version of the OData
-protocol version. You can try use *patch* for OData 2.0 also. You
+protocol version. You can try use _patch_ for OData 2.0 also. You
 are limited by server implementation only. EntitySet.patch and
 EntitySet.merge are synonyms.
 
@@ -64,36 +64,38 @@ entries of the entity's key properties and entries of properties,
 which are supposed to be updated.
 
 ```javascript
-    let service  = new Service();
-	return service .C_PaymentRequest
-		.patch({
-			"PaymentRequest": "861",
-			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
-			"IsActiveEntity": false,
-			"Supplier": "100060"
-		}).then((res) => {
-		console.log("Updated draft entity ", res);
-	});
+let service = new Service();
+return service.C_PaymentRequest.patch({
+  PaymentRequest: "861",
+  DraftUUID: "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+  IsActiveEntity: false,
+  Supplier: "100060",
+}).then((res) => {
+  console.log("Updated draft entity ", res);
+});
 ```
 
 merge and patch could be called with two parameter also. First parameter
 contains key and second parameter contains object with properties
-to change.  It is useful for chaining.
+to change. It is useful for chaining.
 
 ```javascript
-    let service  = new Service();
-	return service.init.then(() => {
-			return service.C_PaymentRequest.get({
-				"PaymentRequest": "861",
-				"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96"
-			});
-		}).then((paymentRequest) => {
-			return service.merge(paymentRequest, {
-				"Supplier": "100060"
-			});
-		}).then((res) => {
-			console.log("Updated draft entity ", res);
-		});
+let service = new Service();
+return service.init
+  .then(() => {
+    return service.C_PaymentRequest.get({
+      PaymentRequest: "861",
+      DraftUUID: "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+    });
+  })
+  .then((paymentRequest) => {
+    return service.merge(paymentRequest, {
+      Supplier: "100060",
+    });
+  })
+  .then((res) => {
+    console.log("Updated draft entity ", res);
+  });
 ```
 
 # Replace entity (entire resource)
@@ -123,6 +125,24 @@ passed as parameter of the EntitySet.put method.
 	});
 ```
 
+The entity set can implement passing raw value
+to the particular entity. You can set the value
+to the entity by enabling value flag.
+
+The functionality is used for uploading whole
+files or whole JSON string to the backend.
+
+```
+    service.UploadedFiles.key({
+        AllocationImportDataUUID: result.AllocationImportDataUUID
+    })
+        .value()
+        .raw()
+        .put(`RAW TEXT FOR BACKEND`).then(results => {
+                assert.ok(_.isObject(results));
+        });
+```
+
 # Delete entity
 
 Use EntitySet.delete to delete an entity. The entity is deleted according
@@ -130,15 +150,14 @@ to the object, which contains key properties, passed as parameter of the
 EntitySet.delete method.
 
 ```javascript
-    let service  = new Service();
-	service .C_PaymentRequest
-		.delete({
-			"PaymentRequest": "861",
-			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
-			"IsActiveEntity": false
-		}).then((res) => {
-			console.log("Deleted draft entity ", res);
-		});
+let service = new Service();
+service.C_PaymentRequest.delete({
+  PaymentRequest: "861",
+  DraftUUID: "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+  IsActiveEntity: false,
+}).then((res) => {
+  console.log("Deleted draft entity ", res);
+});
 ```
 
 You can pass additional headers for the delete method also

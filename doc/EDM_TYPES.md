@@ -15,7 +15,7 @@ define new entity or updates existing entity.
 
 ## Key predicate
 
-If you try to red the entity the library automatically
+If you try to read the entity the library automatically
 converts values passed to the service.entitySet.get method
 to the valid URL.
 

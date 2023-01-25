@@ -30,10 +30,10 @@ describe("EntitySet (oasis)", function () {
       let set;
       sampleSchema.actions = [
         {
-          entityTypePath: "entityType1",
+          entityType: "entityType1",
         },
         {
-          entityTypePath: "entityType2",
+          entityType: "entityType2",
         },
       ];
       set = new EntitySet(sampleSetMD, sampleSchema);
@@ -45,7 +45,7 @@ describe("EntitySet (oasis)", function () {
       assert.equal(set.navigationPropertyBindings.length, 1);
       assert.deepEqual(set.actions, [
         {
-          entityTypePath: "entityType1",
+          entityType: "entityType1",
         },
       ]);
     });

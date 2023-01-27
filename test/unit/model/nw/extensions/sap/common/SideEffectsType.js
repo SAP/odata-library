@@ -32,13 +32,15 @@ describe("SideEffectsType", function () {
 
     beforeEach(function () {
       entityType = {
-        getNavigationProperty: () => "navProp",
-        getProperty: () => "prop",
+        getNavigationProperty: sinon.stub().returns("navProp"),
+        getProperty: sinon.stub().returns("prop"),
       };
     });
 
     it("initializes properties", function () {
-      let sideEffects = new SideEffectsType(annotation, entityType);
+      let sideEffects = new SideEffectsType(annotation, entityType, "SCHEMA", {
+        strict: true,
+      });
 
       assert.equal(sideEffects.annotation, annotation);
 
@@ -56,6 +58,9 @@ describe("SideEffectsType", function () {
       assert.strictEqual(sideEffects.sourceProperties[0], "prop");
       assert.strictEqual(sideEffects.targetEntities[0], "navProp");
       assert.strictEqual(sideEffects.targetProperties[0], "prop");
+
+      assert.deepEqual(entityType.getProperty.args[0], ["a", true]);
+      assert.deepEqual(entityType.getNavigationProperty.args[0], ["a", true]);
     });
 
     it("define target property as path", function () {
@@ -73,7 +78,9 @@ describe("SideEffectsType", function () {
       };
 
       sandbox.stub(SideEffectsType._, "definePropertyCollection");
-      sideEffects = new SideEffectsType(annotation, entityType, "SCHEMA");
+      sideEffects = new SideEffectsType(annotation, entityType, "SCHEMA", {
+        strict: true,
+      });
       assert.ok(
         SideEffectsType._.definePropertyCollection
           .getCall(3)

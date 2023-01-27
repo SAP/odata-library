@@ -66,6 +66,12 @@ describe("ComplexType (oasis)", function () {
       let type = new ComplexType(sampleComplexTypeMD);
       assert.throws(() => type.getProperty("noProp"));
     });
+
+    it("doesn't throw error when property is not available with no strict", function () {
+      let type = new ComplexType(sampleComplexTypeMD);
+      let missing = type.getProperty("noProp", false);
+      assert.ok(!missing);
+    });
   });
 
   describe(".getNavigationProperty()", function () {
@@ -79,6 +85,12 @@ describe("ComplexType (oasis)", function () {
     it("throw error when navigation property is not available", function () {
       let type = new ComplexType(sampleComplexTypeMD);
       assert.throws(() => type.getNavigationProperty("noProp"));
+    });
+
+    it("doesn't throw error when navigation property is not available with no strict", function () {
+      let type = new ComplexType(sampleComplexTypeMD);
+      let missing = type.getNavigationProperty("noProp", false);
+      assert.ok(!missing);
     });
   });
 

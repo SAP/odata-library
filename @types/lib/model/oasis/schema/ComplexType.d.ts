@@ -28,20 +28,22 @@ declare class ComplexType extends AnnotationTarget {
      * Gets property by its name.
      *
      * @param {string} [name] property name
+     * @param {bool} [strict] throw error if not found
      * @returns {Object} property with given name
      * @memberof ComplexType
      * @throws {Error} when property is not found
      */
-    getProperty(name?: string): any;
+    getProperty(name?: string, strict?: bool): any;
     /**
      * Gets navigation property by its name.
      *
      * @param {string} [name] navigation property name
+     * @param {bool} [strict] throw error if not found
      * @returns {Object} navigation property with given name
      * @memberof EntityType
      * @throws {Error} when navigation property is not found
      */
-    getNavigationProperty(name?: string): any;
+    getNavigationProperty(name?: string, strict?: bool): any;
     /**
      * Resolves model path within this type.
      *

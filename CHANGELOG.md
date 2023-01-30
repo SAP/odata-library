@@ -1,5 +1,10 @@
 # Changelog
 
+# 2.1.1
+
+- [FIX] No strict mode for SideEffect annotation - Jakub Vaclavik
+- [FIX] Use default entityTypePath in Action definition - Norbert Volf
+
 # 2.1.0
 
 - [FEATURE] Added typescript types to project - Akos Szalay

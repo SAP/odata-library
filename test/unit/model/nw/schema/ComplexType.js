@@ -63,6 +63,11 @@ describe("ComplexType (nw)", function () {
       assert.throws(() => type.getProperty("noProp"));
     });
 
+    it("no throw error when property is not available in no strict", function () {
+      let prop = type.getProperty("noProp", false);
+      assert.ok(!prop);
+    });
+
     it("get property from navigation property of the entityType", function () {
       model.resolveModelPath = sinon.stub().returns({
         ends: [
@@ -114,6 +119,11 @@ describe("ComplexType (nw)", function () {
       assert.throws(() => {
         type.getProperty("toNavigationProperty/missingPropertyInNP");
       });
+      let missing = type.getProperty(
+        "toNavigationProperty/missingPropertyInNP",
+        false
+      );
+      assert.ok(!missing);
       assert.ok(model.resolveModelPath.calledWithExactly("RELATIONSHIP"));
     });
   });

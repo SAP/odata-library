@@ -150,6 +150,11 @@ describe("EntityType (nw)", function () {
     it("throw error when navigation property is not available", function () {
       assert.throws(() => type.getNavigationProperty("notNavProp"));
     });
+
+    it("doesn't throw error when navigation property is not available with no strict", function () {
+      let missing = type.getNavigationProperty("notNavProp", false);
+      assert.ok(!missing);
+    });
   });
 
   describe(".getParameter()", function () {

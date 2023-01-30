@@ -24,7 +24,7 @@ declare namespace EntityTypeExtender {
         export { createEntityTypeCommonExtension };
     }
 }
-declare function createEntityTypeCommonExtension(entityType: any, schema: any): {
+declare function createEntityTypeCommonExtension(entityType: any, schema: any, settings: any): {
     sideEffects: any;
 };
 //# sourceMappingURL=EntityTypeExtender.d.ts.map

@@ -404,12 +404,12 @@ describe("RequestDefinition", function () {
 
   describe(".value()", function () {
     it("property name is passed", function () {
-      request.value("PROPERTY_NAME");
+      assert.strictEqual(request.value("PROPERTY_NAME"), request._resource);
       assert.equal(request._isValue, true);
       assert.equal(request._valuePropertyName, "PROPERTY_NAME");
     });
     it("property name is missing", function () {
-      request.value();
+      assert.strictEqual(request.value(), request._resource);
       assert.equal(request._isValue, true);
       assert.ok(!_.has(request, "_valuePropertyName"));
     });

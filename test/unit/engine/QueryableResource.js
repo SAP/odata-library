@@ -363,7 +363,7 @@ describe("QueryableResource", function () {
       sinon
         .stub(entitySet.defaultRequest, "key")
         .returns(entitySet.defaultRequest);
-      assert.deepEqual(entitySet.key("A"), entitySet);
+      assert.deepEqual(entitySet.key("A"), entitySet.defaultRequest);
       assert.ok(entitySet.defaultRequest.key.calledWithExactly("A"));
     });
   });

@@ -22,7 +22,7 @@ declare class QueryableResource extends Resource {
     orderby(...args: any[]): QueryableResource;
     expand(...args: any[]): QueryableResource;
     search(pattern: any): QueryableResource;
-    key(entityKey: any): QueryableResource;
+    key(entityKey: any): EntitySet;
     /**
      * Send request to count of the EntitySet
      *

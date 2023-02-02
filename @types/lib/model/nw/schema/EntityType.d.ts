@@ -13,10 +13,11 @@ declare class EntityType extends ComplexType {
      * Gets navigation property by its name.
      *
      * @param {string} [name] navigation property name
+     * @param {bool} [strict] throw error if not found
      * @returns {Object} navigation property with given name or undefined, if property doesn't exist
      * @memberof EntityType
      */
-    getNavigationProperty(name?: string): any;
+    getNavigationProperty(name?: string, strict?: bool): any;
     /**
      * Gets entity type parameter. (SAP specific, used for implementing parametrized entity sets.)
      *

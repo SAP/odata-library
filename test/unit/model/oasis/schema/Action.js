@@ -60,30 +60,131 @@ describe("Action", function () {
       assert.ok(_.isArray(actionType.parameters));
     });
 
-    it("entityTypePath", function () {
-      let action = new Action({
-        $: {
-          Name: "ACTION1",
-          IsBound: "true",
-          EntitySetPath: "PATH",
-        },
-        Parameter: [
-          {
-            $: { Name: "Parameter1" },
+    describe("entityTypePath", function () {
+      it("EntitySetPath is defined", function () {
+        let action = new Action({
+          $: {
+            Name: "ACTION1",
+            IsBound: "true",
+            EntitySetPath: "PATH",
           },
-          {
-            $: { Name: "PATH", Type: "ENTTY_TYPE_PATH" },
-          },
-        ],
-        ReturnType: [
-          {
-            $: {
-              Type: "type",
+          Parameter: [
+            {
+              $: { Name: "Parameter1" },
             },
-          },
-        ],
+            {
+              $: { Name: "PATH", Type: "ENTTY_TYPE_PATH" },
+            },
+          ],
+          ReturnType: [
+            {
+              $: {
+                Type: "type",
+              },
+            },
+          ],
+        });
+        assert.strictEqual(action.entityTypePath, "ENTTY_TYPE_PATH");
       });
-      assert.strictEqual(action.entityTypePath, "ENTTY_TYPE_PATH");
+      it("EntitySetPath is missing", function () {
+        let action = new Action({
+          $: {
+            Name: "ACTION1",
+            IsBound: "true",
+          },
+          Parameter: [
+            {
+              $: { Name: "Parameter1" },
+            },
+            {
+              $: { Name: "_it", Type: "ENTTY_TYPE_PATH" },
+            },
+          ],
+          ReturnType: [
+            {
+              $: {
+                Type: "type",
+              },
+            },
+          ],
+        });
+        assert.strictEqual(action.entityTypePath, "ENTTY_TYPE_PATH");
+      });
+    });
+
+    describe("entityType", function () {
+      it("EntityType is defined as single entity", function () {
+        let action = new Action({
+          $: {
+            Name: "ACTION1",
+            IsBound: "true",
+          },
+          Parameter: [
+            {
+              $: { Name: "Parameter1" },
+            },
+            {
+              $: { Name: "_it", Type: "ENTTY_TYPE" },
+            },
+          ],
+          ReturnType: [
+            {
+              $: {
+                Type: "type",
+              },
+            },
+          ],
+        });
+        assert.strictEqual(action.entityType, "ENTTY_TYPE");
+      });
+      it("EntityType is defined as collection", function () {
+        let action = new Action({
+          $: {
+            Name: "ACTION1",
+            IsBound: "true",
+          },
+          Parameter: [
+            {
+              $: { Name: "Parameter1" },
+            },
+            {
+              $: { Name: "_it", Type: "Collection(ENTTY_TYPE)" },
+            },
+          ],
+          ReturnType: [
+            {
+              $: {
+                Type: "type",
+              },
+            },
+          ],
+        });
+        assert.strictEqual(action.entityType, "ENTTY_TYPE");
+      });
+      it("EntityType is defined as non string", function () {
+        let action = new Action({
+          $: {
+            Name: "ACTION1",
+            IsBound: "true",
+          },
+          Parameter: [
+            {
+              $: { Name: "Parameter1" },
+            },
+            {
+              $: { Name: "_it", Type: 1 },
+            },
+          ],
+          ReturnType: [
+            {
+              $: {
+                Type: "type",
+              },
+            },
+          ],
+        });
+        assert.strictEqual(action.entityType, 1);
+      });
     });
 
     it("throws error on missing name or multiple return type", function () {

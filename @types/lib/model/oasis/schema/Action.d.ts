@@ -37,5 +37,9 @@ declare class Action extends AnnotationTarget {
      */
     resolveModelPath(): any;
 }
+declare namespace Action {
+    const DEFAULT_ENTITY_SET_PATH: string;
+    const COLLECTION_TYPE_REGEXP: RegExp;
+}
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=Action.d.ts.map

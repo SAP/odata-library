@@ -1,6 +1,17 @@
 # Changelog
 
-# 2.0.8
+# 2.1.1
+
+- [FIX] No strict mode for SideEffect annotation - Jakub Vaclavik
+- [FIX] Use default entityTypePath in Action definition - Norbert Volf
+
+# 2.1.0
+
+- [FEATURE] Added typescript types to project - Akos Szalay
+- [FIX] Fixed typo in documentation - Michael Scharf
+- [INTERNAL] Add documentation to replace raw value - Norbert Volf
+
+# 2.0.0
 
 - [FEATURE] Add support for explicit operator - Norbert Volf
   API has changed. Use value() for reading STREAM
@@ -271,3 +282,4 @@ Othe minor changes.
 - [FEATURE] Add search clause to EntitySet - Norbert Volf
 - [FEATURE] Enhance query parameters usage - Norbert Volf
 - [FIX] Remove superagnt prefix dependency - Norbert Volf
+

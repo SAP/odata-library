@@ -22,10 +22,11 @@ declare class ComplexType extends AnnotationTarget {
      * Gets property by its name.
      *
      * @param {string} [name] property name
+     * @param {bool} [strict] throw error if not found
      * @returns {Object} property with given name or undefined, if property doesn't exist
      * @memberof ComplexType
      */
-    getProperty(name?: string): any;
+    getProperty(name?: string, strict?: bool): any;
     /**
      * Resolves model path within this type.
      *

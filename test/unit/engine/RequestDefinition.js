@@ -400,6 +400,44 @@ describe("RequestDefinition", function () {
       assert.strictEqual(request._path, "/path/ALIAS.Confirm?URL_QUERY");
       assert.ok(entitySet.callAction.calledWithExactly(request));
     });
+    it("Action with parameters", function () {
+      entitySet.callAction = sinon.stub();
+      entitySet.metadata = {
+        model: {
+          getSchema: sinon.stub().returns({
+            alias: "ALIAS",
+          }),
+        },
+      };
+
+      request._headers = {};
+      request._resource.getParameterDefinition = () => ({
+        type: {
+          format: (x) => x,
+        },
+      });
+
+      request.populateActions([
+        {
+          name: "ParamAction",
+        },
+      ]);
+
+      request.actions.ParamAction({
+        a: 1,
+        b: 2,
+      });
+
+      assert.ok(entitySet.callAction.called);
+      assert.deepEqual(entitySet.callAction.args[0], [request]);
+      assert.deepEqual(request._payload, {
+        a: 1,
+        b: 2,
+      });
+      assert.deepEqual(request._headers, {
+        "Content-type": "application/json",
+      });
+    });
   });
 
   describe(".value()", function () {

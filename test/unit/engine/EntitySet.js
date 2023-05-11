@@ -154,6 +154,9 @@ describe("EntitySet", function () {
       let request = {
         _path: "PATH",
         _headers: "HEADERS",
+        _payload: {
+          a: 1,
+        },
       };
 
       innerAgent.batchManager = {};
@@ -163,9 +166,7 @@ describe("EntitySet", function () {
       entitySet.callAction(request);
       entitySet._handleAgentCall.getCall(0).args[0]();
 
-      assert.ok(
-        innerAgent.post.calledWith("PATH", "HEADERS", undefined, false)
-      );
+      assert.ok(innerAgent.post.calledWith("PATH", "HEADERS", '{"a":1}'));
     });
     it("use batch to call action", function () {
       let request = {
@@ -187,7 +188,12 @@ describe("EntitySet", function () {
       entitySet._handleBatchCall.getCall(0).args[0]();
 
       assert.ok(
-        defaultBatch.post.calledWith("PATH", "HEADERS", "DEFAULT_CHANGE_SET")
+        defaultBatch.post.calledWith(
+          "PATH",
+          "HEADERS",
+          undefined,
+          "DEFAULT_CHANGE_SET"
+        )
       );
       assert.ok(request.header.calledWith("Accept", "application/json"));
     });

@@ -1,5 +1,11 @@
 # Changelog
 
+# 2.1.2
+
+- [FIX] Security vulnerabilities in xml2js - Benjamin Warth
+- [FEATURE] Parameters for v4 actions - Jakub Vaclavik
+- [FIX] Fixed package.json type reference - Akos Szalay
+
 # 2.1.1
 
 - [FIX] No strict mode for SideEffect annotation - Jakub Vaclavik
@@ -282,4 +288,3 @@ Othe minor changes.
 - [FEATURE] Add search clause to EntitySet - Norbert Volf
 - [FEATURE] Enhance query parameters usage - Norbert Volf
 - [FIX] Remove superagnt prefix dependency - Norbert Volf
-

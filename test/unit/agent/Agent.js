@@ -2,7 +2,6 @@
 
 const assert = require("assert").strict;
 const sinon = require("sinon");
-const proxyquire = require("proxyquire");
 const _ = require("lodash");
 const agentUrl = require("../../../lib/agent/url");
 const xml2js = require("xml2js");
@@ -10,17 +9,14 @@ const tough = require("tough-cookie");
 const log = require("../../../lib/agent/log");
 const authentication = require("../../../lib/agent/authentication");
 const https = require("https");
+const Agent = require("../../../lib/agent/Agent");
 
-let Agent;
 let agent;
 let sandbox = sinon.createSandbox();
-let nodeFetch = sinon.stub();
 
 describe("lib/engine/Agent", function () {
   beforeEach(function () {
-    Agent = proxyquire("../../../lib/agent/Agent", {
-      "node-fetch": nodeFetch,
-    });
+    sandbox.stub(global, "fetch");
     sandbox.stub(tough, "CookieJar").returns({
       getCookieString: sinon.stub(),
       setCookie: sinon.stub(),
@@ -680,7 +676,7 @@ describe("lib/engine/Agent", function () {
       sinon.stub(agent, "readCookies").returns(Promise.resolve("COOKIES"));
       sinon.stub(agent, "appendHeaders");
       sandbox.stub(log, "logRequest");
-      nodeFetch.returns(Promise.resolve("RESPONSE"));
+      global.fetch.returns(Promise.resolve("RESPONSE"));
       sinon.stub(agent, "saveCookies").returns(Promise.resolve());
       sinon.stub(agent, "isResponseRedirect");
       sinon.stub(agent, "redirect").returns(Promise.resolve());
@@ -724,7 +720,7 @@ describe("lib/engine/Agent", function () {
           },
         ]);
         assert.ok(
-          nodeFetch.calledWithExactly("URL", {
+          global.fetch.calledWithExactly("URL", {
             redirect: "manual",
             defaultOption: "DEFAULT_OPTION",
           })
@@ -779,7 +775,7 @@ describe("lib/engine/Agent", function () {
           },
         ]);
         assert.ok(
-          nodeFetch.calledWithExactly("URL", {
+          global.fetch.calledWithExactly("URL", {
             redirect: "manual",
             defaultOption: "DEFAULT_OPTION",
           })
@@ -887,6 +883,7 @@ describe("lib/engine/Agent", function () {
         },
       };
       sinon.stub(agent, "fetch").returns("FETCH_PROMISE");
+      sinon.stub(agent, "nextRequestUrl").returnsArg(0);
       sandbox.stub(log, "logResponse");
     });
     it("normally processs HTTP request with redirect", function () {
@@ -913,6 +910,7 @@ describe("lib/engine/Agent", function () {
           true
         )
       );
+      assert.ok(agent.nextRequestUrl.calledWithExactly("LOCATION", response));
     });
     it("processs HTTP redirect with follow option ", function () {
       assert.equal(
@@ -939,6 +937,7 @@ describe("lib/engine/Agent", function () {
           true
         )
       );
+      assert.ok(agent.nextRequestUrl.calledWithExactly("LOCATION", response));
     });
     it("processs HTTP temporary redirect with follow option ", function () {
       response.status = 307;
@@ -964,6 +963,40 @@ describe("lib/engine/Agent", function () {
           true
         )
       );
+      assert.ok(agent.nextRequestUrl.calledWithExactly("LOCATION", response));
+    });
+  });
+
+  describe("nextRequestUrl", function () {
+    it("Correct inputs return correct URL", function () {
+      assert.equal(
+        agent.nextRequestUrl(
+          "https://localhost/login",
+          "https://localhost/login"
+        ),
+        "https://localhost/login"
+      );
+      assert.equal(
+        agent.nextRequestUrl("/login", {
+          url: "https://localhost.localdomain/path/",
+        }),
+        "https://localhost.localdomain/login"
+      );
+    });
+    it("Incorrect inputs raises error", function () {
+      assert.throws(() => {
+        agent.nextRequestUrl("://localhost/login", "https://localhost/login");
+      });
+      assert.throws(() => {
+        agent.nextRequestUrl("/login", {
+          request: {
+            url: "/path/",
+          },
+        });
+      });
+      assert.throws(() => {
+        agent.nextRequestUrl("/login", null);
+      });
     });
   });
 
@@ -1096,9 +1129,10 @@ describe("lib/engine/Agent", function () {
       response = {
         url: "URL",
         headers: {
-          raw: sinon.stub().returns({}),
+          getSetCookie: sinon.stub().returns([]),
         },
       };
+      sandbox.stub(tough.Cookie, "parse").returnsArg(0);
     });
     it("cookie header is not exists", function () {
       return agent.saveCookies(response).then(() => {
@@ -1107,7 +1141,7 @@ describe("lib/engine/Agent", function () {
     });
     it("cookie header exists", function () {
       let promise;
-      response.headers.raw.returns({ "set-cookie": ["COOKIE1", "COOKIE2"] });
+      response.headers.getSetCookie.returns(["COOKIE1", "COOKIE2"]);
       promise = agent.saveCookies(response);
       tough.CookieJar().setCookie.getCall(0).args[2](null, "COOKIE1");
       tough.CookieJar().setCookie.getCall(1).args[2](null, "COOKIE2");
@@ -1120,7 +1154,7 @@ describe("lib/engine/Agent", function () {
     });
     it("cookie saving raises error", function () {
       let promise;
-      response.headers.raw.returns({ "set-cookie": ["COOKIE1", "COOKIE2"] });
+      response.headers.getSetCookie.returns(["COOKIE1", "COOKIE2"]);
       promise = agent.saveCookies(response);
       tough.CookieJar().setCookie.getCall(0).args[2](null, "COOKIE1");
       tough.CookieJar().setCookie.getCall(1).args[2]("ERROR");

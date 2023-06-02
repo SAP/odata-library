@@ -175,42 +175,6 @@ describe("lib/agent/authentification/samlSap", function () {
     });
   });
 
-  describe("nextRequestUrl", function () {
-    it("Correct inputs return correct URL", function () {
-      assert.equal(
-        authenticator.nextRequestUrl(
-          "https://localhost/login",
-          "https://localhost/login"
-        ),
-        "https://localhost/login"
-      );
-      assert.equal(
-        authenticator.nextRequestUrl("/login", {
-          url: "https://localhost.localdomain/path/",
-        }),
-        "https://localhost.localdomain/login"
-      );
-    });
-    it("Incorrect inputs raises error", function () {
-      assert.throws(() => {
-        authenticator.nextRequestUrl(
-          "://localhost/login",
-          "https://localhost/login"
-        );
-      });
-      assert.throws(() => {
-        authenticator.nextRequestUrl("/login", {
-          request: {
-            url: "/path/",
-          },
-        });
-      });
-      assert.throws(() => {
-        authenticator.nextRequestUrl("/login", null);
-      });
-    });
-  });
-
   describe("samlHandshake", function () {
     it("SAML IdP accepted credentials", function () {
       sandbox
@@ -509,6 +473,7 @@ describe("lib/agent/authentification/samlSap", function () {
       };
       localAgent = {
         fetch: sinon.stub().returns("NEXT_SAML_HOOP"),
+        nextRequestUrl: sinon.stub().returns("URL"),
       };
     });
     it("SAML request does not exists", function () {
@@ -538,7 +503,6 @@ describe("lib/agent/authentification/samlSap", function () {
     });
     it("SAML request continues to next SAML hoop", function () {
       htmlDocument.querySelector.returns(htmlSamlRequestObject);
-      sandbox.stub(authenticator, "nextRequestUrl").returns("URL");
       getAttribute.onCall(0).returns("PARAMETER_VALUE_1");
       getAttribute.onCall(1).returns("parameter_1");
       getAttribute.onCall(2).returns("PARAMETER_VALUE_2");
@@ -553,7 +517,7 @@ describe("lib/agent/authentification/samlSap", function () {
         "NEXT_SAML_HOOP"
       );
       assert.ok(
-        authenticator.nextRequestUrl.calledWithExactly("FORM_ACTION", response)
+        localAgent.nextRequestUrl.calledWithExactly("FORM_ACTION", response)
       );
       assert.ok(localAgent.fetch.calledWith("URL"));
       assert.equal(localAgent.fetch.getCall(0).args[1].method, "POST");
@@ -571,6 +535,7 @@ describe("lib/agent/authentification/samlSap", function () {
   describe("submitLoginFormAction", function () {
     let response;
     let htmlDocument;
+    let localAgent;
     beforeEach(function () {
       htmlDocument = {
         querySelector: sinon.stub(),
@@ -581,6 +546,10 @@ describe("lib/agent/authentification/samlSap", function () {
             document: htmlDocument,
           },
         },
+      };
+      localAgent = {
+        fetch: sinon.stub().returns("POST_ACTION"),
+        nextRequestUrl: sinon.stub().returns("URL"),
       };
     });
     it("SAML request does not exists", function () {
@@ -593,10 +562,20 @@ describe("lib/agent/authentification/samlSap", function () {
         undefined
       );
     });
-    it("SAML request submit login form", function () {
-      let localAgent = {
-        fetch: sinon.stub().returns("POST_ACTION"),
+    it("SAML page contans error", function () {
+      const divElement = {
+        textContent: "ERROR_DESCRIPTION",
       };
+      htmlDocument.querySelector
+        .withArgs('div[role="alert"]')
+        .returns(divElement);
+      return authenticator
+        .submitLoginFormAction("SETTINGS", "LOCAL_AGENT", response)
+        .catch((err) => {
+          assert.strictEqual(err.message, "ERROR_DESCRIPTION");
+        });
+    });
+    it("SAML request submit login form", function () {
       let getAttribute = sinon.stub();
       let samlRequest = {
         form: {
@@ -621,7 +600,9 @@ describe("lib/agent/authentification/samlSap", function () {
       getAttribute.onCall(4).returns("password");
       getAttribute.onCall(5).returns("SAMLValue");
       getAttribute.onCall(6).returns("SAMLRequest");
-      sandbox.stub(authenticator, "nextRequestUrl").returns("URL");
+      htmlDocument.querySelector
+        .withArgs('div[role="alert"]')
+        .returns(undefined);
       htmlDocument.querySelector.returns(samlRequest);
       assert.equal(
         authenticator.submitLoginFormAction(
@@ -637,7 +618,7 @@ describe("lib/agent/authentification/samlSap", function () {
         "POST_ACTION"
       );
       assert.ok(
-        authenticator.nextRequestUrl.calledWithExactly("ACTION", response)
+        localAgent.nextRequestUrl.calledWithExactly("ACTION", response)
       );
       assert.equal(
         localAgent.fetch.getCall(0).args[1].body.get("username"),
@@ -658,6 +639,7 @@ describe("lib/agent/authentification/samlSap", function () {
   describe("submitRedirectFromLoginFormAction", function () {
     let response;
     let htmlDocument;
+    let localAgent;
     beforeEach(function () {
       htmlDocument = {
         querySelector: sinon.stub(),
@@ -669,21 +651,22 @@ describe("lib/agent/authentification/samlSap", function () {
           },
         },
       };
+      localAgent = {
+        fetch: sinon.stub().returns("POST_ACTION"),
+        nextRequestUrl: sinon.stub(),
+      };
     });
     it("SAML request does not exists", function () {
       assert.strictEqual(
         authenticator.submitRedirectFromLoginFormAction(
           "SETTINGS",
-          "LOCAL_AGENT",
+          localAgent,
           response
         ),
         undefined
       );
     });
     it("SAML request redirect got login form", function () {
-      let localAgent = {
-        fetch: sinon.stub().returns("POST_ACTION"),
-      };
       let getAttribute = sinon.stub();
       let samlRequest = {
         form: {
@@ -698,8 +681,8 @@ describe("lib/agent/authentification/samlSap", function () {
       getAttribute.withArgs("value").returns("VALUE");
       getAttribute.withArgs("name").returns("NAME");
       getAttribute.withArgs("action").returns("ACTION");
-      sandbox.stub(authenticator, "nextRequestUrl").returns("URL");
       htmlDocument.querySelector.returns(samlRequest);
+      localAgent.nextRequestUrl.returns("URL");
 
       assert.equal(
         authenticator.submitRedirectFromLoginFormAction(
@@ -710,7 +693,7 @@ describe("lib/agent/authentification/samlSap", function () {
         "POST_ACTION"
       );
       assert.ok(
-        authenticator.nextRequestUrl.calledWithExactly("ACTION", response)
+        localAgent.nextRequestUrl.calledWithExactly("ACTION", response)
       );
       assert.equal(
         localAgent.fetch.getCall(0).args[1].body.get("NAME"),

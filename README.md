@@ -4,6 +4,10 @@
 
 A NodeJS library to access OData services provided by the Netweaver server.
 
+## Prerequisites
+
+NodeJS is installed. Minimum version of NodeJS is 18.
+
 ## Installation
 
 ```shell

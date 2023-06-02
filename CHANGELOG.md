@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.2.0
+
+- [INTERNAL] Use internal Node fetch implementation - Norbert Volf
+
 # 2.1.2
 
 - [FIX] Security vulnerabilities in xml2js - Benjamin Warth

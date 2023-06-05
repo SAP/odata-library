@@ -249,6 +249,21 @@ declare class Agent {
      */
     private redirect;
     /**
+     * Create URL for next hop from current response and current
+     * action in form (form sometimes contains all URL and sometimes
+     * just path.
+     *
+     * @private
+     *
+     * @param {String} requestedUrl path or fullurl from action attribute
+     *        of SAML/Login form
+     * @param {Object} response object with last response which contains
+     *        requested URL
+     *
+     * @returns {String} full url
+     */
+    private nextRequestUrl;
+    /**
      * Read cookies from local cookie storag
      *
      * @private

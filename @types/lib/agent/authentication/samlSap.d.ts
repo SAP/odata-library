@@ -131,21 +131,6 @@ declare namespace authenticate {
      */
     function checkResponseFromLoginPage(responseAfterLoginSubmit: any): boolean;
     /**
-     * Create URL for next hop from current response and current
-     * action in form (form sometimes contains all URL and sometimes
-     * just path.
-     *
-     * @private
-     *
-     * @param {String} formAction path or fullurl from action attribute
-     *        of SAML/Login form
-     * @param {Object} response object with last response which contains
-     *        requested URL
-     *
-     * @returns {String} full url
-     */
-    function nextRequestUrl(formAction: string, response: any): string;
-    /**
      * Try to load service endpoint with SAP specific SAML authentication
      *
      * @private

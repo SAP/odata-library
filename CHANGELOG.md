@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.2.1
+
+- [INTERNAL] Use engine with implement getSetCookie in Fetch API
+
 # 2.2.0
 
 - [INTERNAL] Use internal Node fetch implementation - Norbert Volf

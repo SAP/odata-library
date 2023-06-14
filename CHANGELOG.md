@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.2.2
+
+- [FIX] Update type definitions for TypeScript - Norbert Volf
+
 # 2.2.1
 
 - [INTERNAL] Use engine with implement getSetCookie in Fetch API

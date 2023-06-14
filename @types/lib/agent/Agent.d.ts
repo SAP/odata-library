@@ -199,11 +199,11 @@ declare class Agent {
      * Determine path to result content
      *
      * @param {Boolean} isList true if result is array
-     * @param {IncomingMessage} result object with response from backend
+     * @param {Object} result object with response from backend
      *
      * @return {String} path with dot notation to content of response
      */
-    getResultPath(isList: boolean, result: IncomingMessage): string;
+    getResultPath(isList: boolean, result: any): string;
     /**
      * Initialize version dependent properties
      *

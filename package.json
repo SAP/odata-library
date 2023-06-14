@@ -1,6 +1,6 @@
 {
   "name": "@sap_oss/odata-library",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "OData client for testing Netweawer OData services.",
   "main": "index.js",
   "types": "./@types/index.d.ts",
@@ -33,7 +33,7 @@
   "keywords": [
     "OData"
   ],
-  "engines" : { "node" : ">18.16.0" },
+  "engines" : { "node" : ">18.15.0" },
   "author": "SAP SE",
   "license": "Apache-2.0",
   "devDependencies": {

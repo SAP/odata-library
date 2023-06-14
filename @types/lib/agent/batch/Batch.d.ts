@@ -20,7 +20,7 @@ declare class Batch extends Base {
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the post request
      * @param {Object} payload data which is converted to the JSON string and passed as body of POST request in batch
-     * @param {batch/ChangeSet} [changeSet] object which defines the changeset which
+     * @param {ChangeSet} [changeSet] object which defines the changeset which
      *        contains the requests if the parameter is not defined the batch will try
      *        to find the active changeset in the batch automatically
      *
@@ -37,9 +37,9 @@ declare class Batch extends Base {
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the GET request
      * @param {Object} payload data which is converted to the JSON string and passed as body of POST request
-     * @param {batch/ChangeSet} changeSet which contains newly created request
+     * @param {ChangeSet} changeSet which contains newly created request
      *
-     * @returns {batch/Request} instance of batch Request
+     * @returns {Request} instance of batch Request
      *
      * @private
      * @memberof Agent
@@ -51,9 +51,9 @@ declare class Batch extends Base {
      *
      * @private
      *
-     * @param {batch/ChangeSet} [changeSet] object which defines the changeset
+     * @param {ChangeSet} [changeSet] object which defines the changeset
      *
-     * @returns {batch/ChangeSet} correctly found changeSet from the batch or undefined
+     * @returns {ChangeSet} correctly found changeSet from the batch or undefined
      *
      * @memberof Batch
      */
@@ -65,24 +65,24 @@ declare class Batch extends Base {
      *
      * @public
      *
-     * @param {batch/ChangeSet|batch/Request} batchItem part of the batch a request or a changeset
+     * @param {ChangeSet|Request} batchItem part of the batch a request or a changeset
      *
      * @returns {Number} index of the batchItem or -1
      *
      * @memberof Batch
      */
-    public indexOf(batchItem: any): number;
+    public indexOf(batchItem: ChangeSet | Request): number;
     /**
      *
      * Create new changeset
      *
      * @public
      *
-     * @returns {batch/ChangeSet} created change set
+     * @returns {ChangeSet} created change set
      *
      * @memberof Batch
      */
-    public createChangeSet(): batch;
+    public createChangeSet(): ChangeSet;
     /**
      * Generate multipart/mixed content for the OData batch
      *
@@ -111,43 +111,43 @@ declare class Batch extends Base {
      *
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the GET request
-     * @param {batch/ChangeSet} changeSet which contains newly created request
+     * @param {ChangeSet} changeSet which contains newly created request
      * @param {Number} useResponseType requested type of response constant defined
      *        in lib/engine/responseType
      *
-     * @returns {batch/Request} instance of batch Request
+     * @returns {Request} instance of batch Request
      *
      * @memberof Agent
      */
-    get(inputUrl: string, headers: any, changeSet: any, useResponseType: number): batch;
+    get(inputUrl: string, headers: any, changeSet: ChangeSet, useResponseType: number): Request;
     /**
      * Create POST request in batch
      *
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the GET request
      * @param {Object} payload data which is converted to the JSON string and passed as body of POST request
-     * @param {batch/ChangeSet} changeSet which contains newly created request
+     * @param {ChangeSet} changeSet which contains newly created request
      *
-     * @returns {batch/Request} instance of batch Request
+     * @returns {Request} instance of batch Request
      *
      * @public
      * @memberof Agent
      */
-    public post(...args: any[]): batch;
+    public post(...args: any[]): Request;
     /**
      * Create PUT request in batch. The PUT request replaces entity by OData protocol
      *
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the GET request
      * @param {Object} payload data which is converted to the JSON string and passed as body of PUT request
-     * @param {batch/ChangeSet} changeSet which contains newly created request
+     * @param {ChangeSet} changeSet which contains newly created request
      *
-     * @returns {batch/Request} instance of batch Request
+     * @returns {Request} instance of batch Request
      *
      * @public
      * @memberof Agent
      */
-    public put(...args: any[]): batch;
+    public put(...args: any[]): Request;
     /**
      * Create MERGE request in batch. MERGE updates the entity.
      * It is supported by OData protocol 1.0 and 2.0
@@ -155,14 +155,14 @@ declare class Batch extends Base {
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the GET request
      * @param {Object} payload data which is converted to the JSON string and passed as body of MERGE request in batch
-     * @param {batch/ChangeSet} changeSet which contains newly created request
+     * @param {ChangeSet} changeSet which contains newly created request
      *
-     * @returns {batch/Request} instance of batch Request
+     * @returns {Request} instance of batch Request
      *
      * @public
      * @memberof Agent
      */
-    public merge(...args: any[]): batch;
+    public merge(...args: any[]): Request;
     /**
      * Create PATCH request in batch. Patch updates the entity.
      * It is supported by OData protocol version 3.0 and later.
@@ -170,26 +170,26 @@ declare class Batch extends Base {
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the GET request
      * @param {Object} payload data which is converted to the JSON string and passed as body of MERGE request in batch
-     * @param {batch/ChangeSet} changeSet which contains newly created request
+     * @param {ChangeSet} changeSet which contains newly created request
      *
-     * @returns {batch/Request} instance of batch Request
+     * @returns {Request} instance of batch Request
      *
      * @public
      * @memberof Agent
      */
-    public patch(...args: any[]): batch;
+    public patch(...args: any[]): Request;
     /**
      * Create DELETE request in batch
      *
      * @param {String} inputUrl relative path in the service
      * @param {Object} headers object which contains headers used for the GET request
-     * @param {batch/ChangeSet} changeSet which contains newly created request
+     * @param {ChangeSet} changeSet which contains newly created request
      *
-     * @returns {batch/Request} instance of batch Request
+     * @returns {Request} instance of batch Request
      *
      * @memberof Agent
      */
-    delete(inputUrl: string, headers: any, changeSet: any): batch;
+    delete(inputUrl: string, headers: any, changeSet: ChangeSet): Request;
     /**
      * Determine boundary from from headers
      *
@@ -202,4 +202,6 @@ declare class Batch extends Base {
     boundaryFromResponse(batchResponse: string): string;
 }
 import Base = require("./Base");
+import ChangeSet = require("./ChangeSet");
+import Request = require("./Request");
 //# sourceMappingURL=Batch.d.ts.map

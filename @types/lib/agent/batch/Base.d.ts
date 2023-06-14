@@ -15,10 +15,10 @@ declare class Base {
      * @param {String} boundaryPrefix the boundary prefix for the
      * 		  multipart content of the batch request
      *
-     * @private
+     * @public
      * @memberof Base
      */
-    private constructor();
+    constructor(listName: string, boundaryPrefix: string);
     /**
      * Add new item to the batch list object
      *

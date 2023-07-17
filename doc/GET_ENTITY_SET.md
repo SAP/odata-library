@@ -299,3 +299,22 @@ service.C_AllocationCycleTP.filter("IsActiveEntity eq true")
     assert.ok(result instanceof Buffer);
   });
 ```
+
+# Read Fetch API response instead of parsed data
+
+Use `raw` method to use plain response from Fetch API instead
+of parsed data from OData response.
+
+```javascript
+service.C_AllocationCycleTP.raw()
+  .get({
+    AllocationType: "ACDOC_CC",
+    AllocationCycle: "0LATAF2_3",
+    AllocationCycleStartDate: "datetime'2017-01-01T00%3A00%3A00'",
+    DraftUUID: "guid'00000000-0000-0000-0000-000000000000'",
+    IsActiveEntity: "true",
+  })
+  .then((res) => {
+    console.log(res);
+  });
+```

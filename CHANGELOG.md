@@ -1,5 +1,10 @@
 # Changelog
 
+# 2.2.3
+
+- [FEATURE] Add If-Match header to MERGE request - Michal Kopulety
+- [INTERNAL] Add response object usage to doc - Norbert Volf
+
 # 2.2.2
 
 - [FIX] Update type definitions for TypeScript - Norbert Volf
@@ -300,3 +305,4 @@ Othe minor changes.
 - [FEATURE] Add search clause to EntitySet - Norbert Volf
 - [FEATURE] Enhance query parameters usage - Norbert Volf
 - [FIX] Remove superagnt prefix dependency - Norbert Volf
+

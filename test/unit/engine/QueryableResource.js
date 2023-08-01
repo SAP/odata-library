@@ -503,9 +503,7 @@ describe("QueryableResource", function () {
         })
         .then(() => {
           assert(request.header.calledWith("Content-Type", "application/json"));
-          assert.ok(
-            request.header.calledWithExactly("If-Match", "*")
-          );
+          assert.ok(request.header.calledWithExactly("If-Match", "*"));
           assert.deepEqual(innerAgent.merge.getCall(0).args, [
             "/ENTITY_SET_NAME(keyParameter='keyValue')",
             request._headers,
@@ -533,9 +531,7 @@ describe("QueryableResource", function () {
         .then(() => {
           assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
           assert(request.header.calledWith("Content-Type", "application/json"));
-          assert.ok(
-            request.header.calledWithExactly("If-Match", "*")
-          );
+          assert.ok(request.header.calledWithExactly("If-Match", "*"));
           assert.deepEqual(innerAgent.merge.getCall(0).args, [
             "/ENTITY_SET_NAME(keyParameter='keyValue')",
             request._headers,
@@ -563,9 +559,7 @@ describe("QueryableResource", function () {
           assert.ok(
             request.header.calledWith("Content-Type", "application/json")
           );
-          assert.ok(
-            request.header.calledWithExactly("If-Match", "*")
-          );
+          assert.ok(request.header.calledWithExactly("If-Match", "*"));
           assert.ok(entitySet._handleAgentCall.getCall(0).args[0](request));
           assert.deepEqual(innerAgent.merge.getCall(0).args, [
             "/ENTITY_SET_NAME(keyParameter='keyValue')",
@@ -615,9 +609,7 @@ describe("QueryableResource", function () {
           assert.ok(
             request.header.calledWithExactly("Content-Type", "application/json")
           );
-          assert.ok(
-            request.header.calledWithExactly("If-Match", "*")
-          );
+          assert.ok(request.header.calledWithExactly("If-Match", "*"));
           assert.deepEqual(innerAgent.merge.getCall(0).args, [
             "/ENTITY_SET_NAME(keyParameter='keyValue')",
             request._headers,

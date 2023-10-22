@@ -110,6 +110,34 @@ describe("EdmxModel", function () {
       assert.ok(stub.calledWith("something"));
     });
 
+    it("namespace with dots", function () {
+      let model = new EdmxModel(
+        wrapServices([
+          {
+            Schema: [
+              {
+                $: {
+                  Namespace: "ns.sn",
+                },
+              },
+            ],
+          },
+        ])
+      );
+      let expected = {};
+      let stub = sinon
+        .stub(model.getSchema(), "resolveModelPath")
+        .returns(expected);
+      let actual = model.resolveModelPath("ns.sn.something");
+      assert.equal(actual, expected);
+      assert.ok(stub.called);
+
+      stub.reset();
+      model.resolveModelPath("ns.sn.something/something.something/...");
+      assert.equal(actual, expected);
+      assert.ok(stub.called);
+    });
+
     it("throws on invalid namespace", function () {
       let model = new EdmxModel(sampleMD);
       assert.throws(() => model.resolveModelPath("nothing.something"));

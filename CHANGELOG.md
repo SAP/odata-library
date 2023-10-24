@@ -1,5 +1,10 @@
 # Changelog
 
+# 2.2.4
+
+- [INTERNAL] Add definition for job - Norbert Volf
+- [FIX] Namespace with dots - Jakub Vaclavik
+
 # 2.2.3
 
 - [FEATURE] Add If-Match header to MERGE request - Michal Kopulety

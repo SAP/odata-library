@@ -170,7 +170,7 @@ You can pass additional headers for the delete method also
 			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
 			"IsActiveEntity": false
 		})
-		.header("Accept-Language", "cs,de;q=0.9"),
+		.header("Accept-Language", "cs,de;q=0.9")
 		.delete().then((res) => {
 			console.log("Deleted draft entity ", res);
 		});

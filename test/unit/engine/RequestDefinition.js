@@ -173,9 +173,7 @@ describe("RequestDefinition", function () {
   describe(".registerAssociations()", function () {
     beforeEach(function () {
       sinon.stub(request, "populateActions");
-      entitySet.entitySetModel = {
-        actions: "ACTIONS",
-      };
+      request._resource.actions = "ACTIONS";
     });
     afterEach(function () {
       assert.ok(request.populateActions.calledWithExactly("ACTIONS"));
@@ -326,118 +324,18 @@ describe("RequestDefinition", function () {
     });
   });
 
-  describe(".populateActions()", function () {
-    it("Empty or missing actions", function () {
-      request.populateActions();
-      request.populateActions(null);
-      request.populateActions([]);
-      assert.deepEqual(request.actions, {});
-    });
-    it("Actions without schema alias", function () {
-      let actions = [
-        {
+  it(".populateActions()", function () {
+    request._resource.actions = "ACTIONS";
+    let actions = [
+      {
+        createDirectCaller: sinon.stub().returns("caller"),
+        meta: {
           name: "Confirm",
         },
-      ];
-      entitySet.metadata = {
-        model: {
-          getSchema: sinon.stub().returns({}),
-        },
-      };
-      entitySet.urlQuery = sinon.stub().returns("URL_QUERY");
-      entitySet.callAction = sinon.stub();
-
-      request.populateActions(actions);
-      assert.ok(_.isFunction(request.Confirm));
-      assert.ok(_.isFunction(request.actions.Confirm));
-      request.Confirm();
-      assert.strictEqual(request._path, "/path/Confirm?URL_QUERY");
-      assert.ok(entitySet.callAction.calledWithExactly(request));
-    });
-    it("Actions with schema alias", function () {
-      let actions = [
-        {
-          name: "Confirm",
-        },
-      ];
-      entitySet.metadata = {
-        model: {
-          getSchema: sinon.stub().returns({
-            alias: "ALIAS",
-          }),
-        },
-      };
-      entitySet.urlQuery = sinon.stub().returns("URL_QUERY");
-      entitySet.callAction = sinon.stub();
-
-      request.populateActions(actions);
-      assert.ok(_.isFunction(request.Confirm));
-      assert.ok(_.isFunction(request.actions.Confirm));
-      request.Confirm();
-      assert.strictEqual(request._path, "/path/ALIAS.Confirm?URL_QUERY");
-      assert.ok(entitySet.callAction.calledWithExactly(request));
-    });
-    it("Action name is used for other service property name", function () {
-      let actions = [
-        {
-          name: "Confirm",
-        },
-      ];
-      entitySet.metadata = {
-        model: {
-          getSchema: sinon.stub().returns({
-            alias: "ALIAS",
-          }),
-        },
-      };
-      entitySet.urlQuery = sinon.stub().returns("URL_QUERY");
-      entitySet.callAction = sinon.stub();
-      request.Confirm = {};
-      request.populateActions(actions);
-      assert.deepEqual(request.Confirm, {});
-      assert.ok(_.isFunction(request.actions.Confirm));
-      request.actions.Confirm();
-      assert.strictEqual(request._path, "/path/ALIAS.Confirm?URL_QUERY");
-      assert.ok(entitySet.callAction.calledWithExactly(request));
-    });
-    it("Action with parameters", function () {
-      entitySet.callAction = sinon.stub();
-      entitySet.metadata = {
-        model: {
-          getSchema: sinon.stub().returns({
-            alias: "ALIAS",
-          }),
-        },
-      };
-
-      request._headers = {};
-      request._resource.getParameterDefinition = () => ({
-        type: {
-          format: (x) => x,
-        },
-      });
-
-      request.populateActions([
-        {
-          name: "ParamAction",
-        },
-      ]);
-
-      request.actions.ParamAction({
-        a: 1,
-        b: 2,
-      });
-
-      assert.ok(entitySet.callAction.called);
-      assert.deepEqual(entitySet.callAction.args[0], [request]);
-      assert.deepEqual(request._payload, {
-        a: 1,
-        b: 2,
-      });
-      assert.deepEqual(request._headers, {
-        "Content-type": "application/json",
-      });
-    });
+      },
+    ];
+    request.populateActions(actions);
+    assert.strictEqual(request.actions.Confirm, "caller");
   });
 
   describe(".value()", function () {

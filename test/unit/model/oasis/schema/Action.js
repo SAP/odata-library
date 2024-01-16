@@ -13,6 +13,12 @@ const sampleMD = {
     {
       $: {},
     },
+    {
+      $: {
+        Name: "path",
+      },
+      type: "boundType",
+    },
   ],
   ReturnType: [
     {
@@ -60,8 +66,8 @@ describe("Action", function () {
       assert.ok(_.isArray(actionType.parameters));
     });
 
-    describe("entityTypePath", function () {
-      it("EntitySetPath is defined", function () {
+    describe("boundTypeParameterName", function () {
+      it("boundTypeParameterName is defined", function () {
         let action = new Action({
           $: {
             Name: "ACTION1",
@@ -73,7 +79,7 @@ describe("Action", function () {
               $: { Name: "Parameter1" },
             },
             {
-              $: { Name: "PATH", Type: "ENTTY_TYPE_PATH" },
+              $: { Name: "PATH", Type: "ENTTY_TYPE" },
             },
           ],
           ReturnType: [
@@ -84,36 +90,9 @@ describe("Action", function () {
             },
           ],
         });
-        assert.strictEqual(action.entityTypePath, "ENTTY_TYPE_PATH");
+        assert.strictEqual(action.boundTypeParameterName, "PATH");
       });
-      it("EntitySetPath is missing", function () {
-        let action = new Action({
-          $: {
-            Name: "ACTION1",
-            IsBound: "true",
-          },
-          Parameter: [
-            {
-              $: { Name: "Parameter1" },
-            },
-            {
-              $: { Name: "_it", Type: "ENTTY_TYPE_PATH" },
-            },
-          ],
-          ReturnType: [
-            {
-              $: {
-                Type: "type",
-              },
-            },
-          ],
-        });
-        assert.strictEqual(action.entityTypePath, "ENTTY_TYPE_PATH");
-      });
-    });
-
-    describe("entityType", function () {
-      it("EntityType is defined as single entity", function () {
+      it("boundTypeParameterName is missing", function () {
         let action = new Action({
           $: {
             Name: "ACTION1",
@@ -135,55 +114,7 @@ describe("Action", function () {
             },
           ],
         });
-        assert.strictEqual(action.entityType, "ENTTY_TYPE");
-      });
-      it("EntityType is defined as collection", function () {
-        let action = new Action({
-          $: {
-            Name: "ACTION1",
-            IsBound: "true",
-          },
-          Parameter: [
-            {
-              $: { Name: "Parameter1" },
-            },
-            {
-              $: { Name: "_it", Type: "Collection(ENTTY_TYPE)" },
-            },
-          ],
-          ReturnType: [
-            {
-              $: {
-                Type: "type",
-              },
-            },
-          ],
-        });
-        assert.strictEqual(action.entityType, "ENTTY_TYPE");
-      });
-      it("EntityType is defined as non string", function () {
-        let action = new Action({
-          $: {
-            Name: "ACTION1",
-            IsBound: "true",
-          },
-          Parameter: [
-            {
-              $: { Name: "Parameter1" },
-            },
-            {
-              $: { Name: "_it", Type: 1 },
-            },
-          ],
-          ReturnType: [
-            {
-              $: {
-                Type: "type",
-              },
-            },
-          ],
-        });
-        assert.strictEqual(action.entityType, 1);
+        assert.strictEqual(action.boundTypeParameterName, "_it");
       });
     });
 
@@ -222,6 +153,7 @@ describe("Action", function () {
       actionType.initSchemaDependentProperties(schema);
       assert.equal(actionType.returnType.type, type);
       assert.equal(actionType.parameters[0].type, type);
+      assert.equal(actionType.boundType, type);
 
       actionType = new Action(sampleMinimalMD);
       actionType.initSchemaDependentProperties(schema);

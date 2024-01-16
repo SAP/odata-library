@@ -15,12 +15,14 @@ describe("Service", function () {
   let metadataClass;
   let EntitySet;
   let FunctionImport;
+  let Action;
 
   beforeEach(function () {
     parse = sinon.stub().returns("CONNECTION");
     Agent = sinon.stub();
     EntitySet = sinon.stub();
     FunctionImport = sinon.stub();
+    Action = sinon.stub();
     metadataClass = {
       model: {
         version: "1.0",
@@ -35,6 +37,7 @@ describe("Service", function () {
       "./model/Metadata": sinon.stub().returns(metadataClass),
       "./engine/EntitySet": EntitySet,
       "./engine/FunctionImport": FunctionImport,
+      "./engine/Action": Action,
     });
     sinon.stub(Service.prototype, "initializeProperties");
 
@@ -50,6 +53,7 @@ describe("Service", function () {
     it("Properties are initialized", function () {
       sinon.stub(service, "buildEntitySets").returns("ENTITY_SETS");
       sinon.stub(service, "buildFunctionImports").returns("FUNCTION_IMPORTS");
+      sinon.stub(service, "buildActions").returns("ACTIONS");
 
       service.initializeProperties("CONNECTION");
 
@@ -62,6 +66,7 @@ describe("Service", function () {
         assert.deepEqual(service.metadata, metadataClass);
         assert.equal(service.entitySets, "ENTITY_SETS");
         assert.equal(service.functionImports, "FUNCTION_IMPORTS");
+        assert.equal(service.actions, "ACTIONS");
         assert.ok(service.buildEntitySets.getCall(0).args[0] instanceof Agent);
         assert.deepEqual(
           service.buildEntitySets.getCall(0).args[1],
@@ -148,6 +153,61 @@ describe("Service", function () {
       assert.ok(service.FUNCTION_IMPORT_NAME1 instanceof Function);
 
       assert.equal(service.FUNCTION_IMPORT_NAME2, "FAKE");
+      assert.ok(agent.logger.warn.called);
+    });
+  });
+
+  describe(".buildActions()", function () {
+    it("Instances and possible shorthands created", function () {
+      let agent = {
+        logger: {
+          warn: sinon.spy(),
+        },
+      };
+
+      const entityTypeModel = {};
+      const metadata = {
+        model: {
+          getSchema: () => ({
+            actions: [
+              {
+                boundType: entityTypeModel,
+                name: "ACTION_NAME1",
+                isBound: true,
+              },
+              {
+                name: "ACTION_NAME2",
+                isBound: false,
+              },
+              {
+                name: "ACTION_NAME3",
+                isBound: false,
+              },
+            ],
+          }),
+        },
+      };
+      const entitySets = {
+        entitySet1: {
+          actions: [],
+          entityTypeModel: entityTypeModel,
+        },
+      };
+
+      sinon
+        .stub(Action.prototype, "createDirectCaller")
+        .returns("action-caller");
+
+      service.ACTION_NAME3 = "FAKE";
+      const actions = service.buildActions(agent, metadata, entitySets);
+
+      assert.ok(actions.ACTION_NAME2 instanceof Action);
+      assert.strict(service.ACTION_NAME2, "action-caller");
+
+      assert.strictEqual(entitySets.entitySet1.actions.length, 1);
+      assert.strict(entitySets.entitySet1.actions[0], "action-caller");
+
+      assert.equal(service.ACTION_NAME3, "FAKE");
       assert.ok(agent.logger.warn.called);
     });
   });

@@ -28,11 +28,7 @@ service.init.then(() => {
 
 # Call unbound Actions
 
-Unbound actions are implemented in limited scope. Unbound actions should be
-invoked through Action Imports. Current implementation assumes that Action
-Import Name is same as corresponding Unbound Action Name. This might not be
-allways the case according to OData documentation, but it is true for use
-cases we have now.
+Unbound actions are invoked through Action Imports and can be called same way as function imports.
 
 ```javascript
 service.init.then(() => {

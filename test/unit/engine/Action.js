@@ -39,13 +39,14 @@ describe("Action (engine)", function () {
 
   it(".createDirectCaller()", function () {
     const entity = {};
+    const actionImport = {};
 
     sinon.stub(action, "call");
-    const directCaller = action.createDirectCaller(entity);
+    const directCaller = action.createDirectCaller(entity, actionImport);
 
     directCaller("ARGUMENTS");
 
-    assert.ok(action.call.calledWith(entity, "ARGUMENTS"));
+    assert.ok(action.call.calledWith(entity, actionImport, "ARGUMENTS"));
   });
 
   it(".call()", function () {
@@ -363,6 +364,12 @@ describe("Action (engine)", function () {
     };
 
     assert.equal(action.getPath(entity), "/entity(...)/ns.an?urlQuery");
+    assert.equal(
+      action.getPath(undefined, {
+        name: "actionImport",
+      }),
+      "/actionImport?"
+    );
     assert.equal(action.getPath(), "/an?");
   });
 

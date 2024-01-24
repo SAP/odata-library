@@ -1,6 +1,11 @@
 # Changelog
 
-# 2.3.4
+# 2.3.1
+
+- [FIX] Allow avoid v4 "Missing Content-ID header in request within a change set" error - Jakub Vaclavik
+- [FIX] V2 service inicialization - Jakub Vaclavik
+
+# 2.3.0
 
 - [FIX] Object naming and path determination for action imports - Jakub Vaclavik
 - [FEATURE] Unbound actions and action parameters - Jakub Vaclavik

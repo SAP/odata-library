@@ -46,6 +46,20 @@ describe("agent/batch/Batch", function () {
         ].join("\n")
       );
 
+      request.contentId = "CONTENT-ID";
+      assert.equal(
+        request.payload("X-CSRF-TOKEN"),
+        [
+          "Content-Type: application/http",
+          "Content-Id: CONTENT-ID",
+          "x-csrf-token: X-CSRF-TOKEN",
+          "Content-Transfer-Encoding: binary\n",
+          "GET path/to/resource HTTP/1.1",
+          "Header: header-value",
+          "\n",
+        ].join("\n")
+      );
+
       request = new Request(
         "GET",
         "path/to/resource",

@@ -83,6 +83,7 @@ describe("CsdlSchema", function () {
       assert.strictEqual(schema.raw, emptySchemaMD);
       assert.deepEqual(schema.namespace, "ns");
       assert.equal(schema.settings, settings);
+      assert.ok(_.isArray(schema.actions));
       assert.ok(_.isArray(schema.associations));
       assert.ok(_.isArray(schema.complexTypes));
       assert.ok(_.isArray(schema.entityTypes));

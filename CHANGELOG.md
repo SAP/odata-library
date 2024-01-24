@@ -1,5 +1,11 @@
 # Changelog
 
+# 2.3.4
+
+- [FIX] Object naming and path determination for action imports - Jakub Vaclavik
+- [FEATURE] Unbound actions and action parameters - Jakub Vaclavik
+- [FIX] Update ACTIVE_OPERATIONS.md - Benjamin Warth
+
 # 2.2.4
 
 - [INTERNAL] Add definition for job - Norbert Volf

@@ -43,6 +43,7 @@ declare class Service {
      * @memberof Service
      */
     buildEntitySets(agent: Agent, metadata: Metadata): any;
+    buildActionObjects(agent: any, metadata: any, entitySets: any): any;
     /**
      * Creates Object with OData FunctionImport wrappers
      *

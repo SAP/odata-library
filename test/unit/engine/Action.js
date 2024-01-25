@@ -234,6 +234,7 @@ describe("Action (engine)", function () {
           .returns(Promise.resolve("RESPONSE_CONTENT"));
         action.defaultRequest._headers = "HEADERS";
         action.meta.name = "ACTION_NAME";
+        sinon.stub(action, "getPayload").returns({ a: 1, c: 4 });
 
         return action.post().then((res) => {
           assert.equal(res, "NORMALIZED_RESPONSE_CONTENT");
@@ -250,7 +251,13 @@ describe("Action (engine)", function () {
             request.header.getCall(1).calledWith("Accept", "application/json")
           );
           assert.ok(action.reset.called);
-          assert.ok(innerAgent.post.calledWith("/ACTION_NAME?", "HEADERS"));
+          assert.ok(
+            innerAgent.post.calledWith(
+              "/ACTION_NAME?",
+              "HEADERS",
+              '{"a":1,"c":4}'
+            )
+          );
         });
       });
       it("Success send request and receive raw response", function () {
@@ -386,7 +393,7 @@ describe("Action (engine)", function () {
         formatBody: (x) => x,
       },
     });
-    assert.strictEqual(action.getPayload(parameters, request), '{"a":1,"b":2}');
+    assert.deepEqual(action.getPayload(parameters, request), { a: 1, b: 2 });
     assert.ok(request.header.called);
     assert.deepEqual(request.header.args[0], [
       "Content-type",

@@ -229,14 +229,18 @@ describe("Action (engine)", function () {
         });
       });
       it("Success send request and receive response content", function () {
+        const entity = {
+          reset: sinon.stub(),
+        };
         innerAgent.post = sinon
           .stub()
           .returns(Promise.resolve("RESPONSE_CONTENT"));
         action.defaultRequest._headers = "HEADERS";
         action.meta.name = "ACTION_NAME";
         sinon.stub(action, "getPayload").returns({ a: 1, c: 4 });
+        sinon.stub(action, "getPath").returns("path");
 
-        return action.post().then((res) => {
+        return action.post(entity).then((res) => {
           assert.equal(res, "NORMALIZED_RESPONSE_CONTENT");
           assert.deepEqual(action.normalizeResponse.getCall(0).args, [
             "RESPONSE_CONTENT",
@@ -252,12 +256,10 @@ describe("Action (engine)", function () {
           );
           assert.ok(action.reset.called);
           assert.ok(
-            innerAgent.post.calledWith(
-              "/ACTION_NAME?",
-              "HEADERS",
-              '{"a":1,"c":4}'
-            )
+            innerAgent.post.calledWith("path", "HEADERS", '{"a":1,"c":4}')
           );
+          assert.ok(action.getPath.called);
+          assert.ok(entity.reset.called);
         });
       });
       it("Success send request and receive raw response", function () {

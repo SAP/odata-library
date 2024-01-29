@@ -66,58 +66,6 @@ describe("Action", function () {
       assert.ok(_.isArray(actionType.parameters));
     });
 
-    describe("boundTypeParameterName", function () {
-      it("boundTypeParameterName is defined", function () {
-        let action = new Action({
-          $: {
-            Name: "ACTION1",
-            IsBound: "true",
-            EntitySetPath: "PATH",
-          },
-          Parameter: [
-            {
-              $: { Name: "Parameter1" },
-            },
-            {
-              $: { Name: "PATH", Type: "ENTTY_TYPE" },
-            },
-          ],
-          ReturnType: [
-            {
-              $: {
-                Type: "type",
-              },
-            },
-          ],
-        });
-        assert.strictEqual(action.boundTypeParameterName, "PATH");
-      });
-      it("boundTypeParameterName is missing", function () {
-        let action = new Action({
-          $: {
-            Name: "ACTION1",
-            IsBound: "true",
-          },
-          Parameter: [
-            {
-              $: { Name: "Parameter1" },
-            },
-            {
-              $: { Name: "_it", Type: "ENTTY_TYPE" },
-            },
-          ],
-          ReturnType: [
-            {
-              $: {
-                Type: "type",
-              },
-            },
-          ],
-        });
-        assert.strictEqual(action.boundTypeParameterName, "_it");
-      });
-    });
-
     it("throws error on missing name or multiple return type", function () {
       assert.throws(
         () =>
@@ -157,6 +105,28 @@ describe("Action", function () {
 
       actionType = new Action(sampleMinimalMD);
       actionType.initSchemaDependentProperties(schema);
+
+      const p1 = {
+        $: {
+          Name: "P1",
+        },
+      };
+      actionType = new Action({
+        $: {
+          Name: "Action1",
+          IsBound: "true",
+        },
+        Parameter: [
+          p1,
+          {
+            $: {
+              Name: "P2",
+            },
+          },
+        ],
+      });
+      actionType.initSchemaDependentProperties(schema);
+      assert.equal(actionType.boundType, type);
     });
   });
 

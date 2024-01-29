@@ -97,7 +97,7 @@ declare class Action extends Resource {
      * @memberof Action
      */
     private getPath;
-    getPayload(parameters: any, request: any): string;
+    getPayload(parameters: any, request: any): {};
     /**
      * Normalize response and returns raw response or object or array
      *

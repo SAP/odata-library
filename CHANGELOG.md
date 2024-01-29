@@ -1,5 +1,10 @@
 # Changelog
 
+# 2.3.2
+
+- [FIX] Reset entity after bound action call - Jakub Vaclavik
+- [FIX] Correct action payload formatting in batch call - Jakub Vaclavik
+
 # 2.3.1
 
 - [FIX] Allow avoid v4 "Missing Content-ID header in request within a change set" error - Jakub Vaclavik
@@ -321,4 +326,3 @@ Othe minor changes.
 - [FEATURE] Add search clause to EntitySet - Norbert Volf
 - [FEATURE] Enhance query parameters usage - Norbert Volf
 - [FIX] Remove superagnt prefix dependency - Norbert Volf
-

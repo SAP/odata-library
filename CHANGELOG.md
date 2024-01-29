@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.3.3
+
+- [FIX] Binding parameter determination for Actions - Jakub Vaclavik
+
 # 2.3.2
 
 - [FIX] Reset entity after bound action call - Jakub Vaclavik
@@ -326,3 +330,4 @@ Othe minor changes.
 - [FEATURE] Add search clause to EntitySet - Norbert Volf
 - [FEATURE] Enhance query parameters usage - Norbert Volf
 - [FIX] Remove superagnt prefix dependency - Norbert Volf
+

@@ -114,7 +114,7 @@ describe("Action (engine)", function () {
         action._handleBatchCall.getCall(0).args[0]();
         assert.ok(
           innerAgent.batchManager.defaultBatch.post.calledWith(
-            "/ACTION_NAME?",
+            "/ACTION_NAME",
             "HEADERS",
             undefined,
             "DEFAULT_CHANGESET"
@@ -150,7 +150,7 @@ describe("Action (engine)", function () {
 
         assert.ok(
           innerAgent.batchManager.defaultBatch.post.calledWith(
-            "/ACTION_NAME?",
+            "/ACTION_NAME",
             "HEADERS",
             undefined,
             "DEFAULT_CHANGESET"
@@ -186,7 +186,7 @@ describe("Action (engine)", function () {
         action._handleBatchCall.getCall(0).args[0]();
         assert.ok(
           innerAgent.batchManager.defaultBatch.post.calledWith(
-            "/ACTION_NAME?",
+            "/ACTION_NAME",
             "HEADERS",
             undefined,
             "DEFAULT_CHANGESET"
@@ -284,7 +284,7 @@ describe("Action (engine)", function () {
             request.header.getCall(1).calledWith("Accept", "application/json")
           );
           assert.ok(action.reset.called);
-          assert.ok(innerAgent.post.calledWith("/ACTION_NAME?", "HEADERS"));
+          assert.ok(innerAgent.post.calledWith("/ACTION_NAME", "HEADERS"));
         });
       });
       it("Success send request and receive response content", function () {
@@ -304,7 +304,7 @@ describe("Action (engine)", function () {
             request.header.getCall(1).calledWith("Accept", "application/json")
           );
           assert.ok(action.reset.called);
-          assert.ok(innerAgent.post.calledWith("/ACTION_NAME?", "HEADERS"));
+          assert.ok(innerAgent.post.calledWith("/ACTION_NAME", "HEADERS"));
         });
       });
       it("Success send request and receive response content with array", function () {
@@ -328,7 +328,7 @@ describe("Action (engine)", function () {
             request.header.getCall(1).calledWith("Accept", "application/json")
           );
           assert.ok(action.reset.called);
-          assert.ok(innerAgent.post.calledWith("/ACTION_NAME?", "HEADERS"));
+          assert.ok(innerAgent.post.calledWith("/ACTION_NAME", "HEADERS"));
         });
       });
       it("Success send request and receive response content without csrf token", function () {
@@ -354,13 +354,14 @@ describe("Action (engine)", function () {
           );
           assert.ok(request.header.calledTwice);
           assert.ok(action.reset.called);
-          assert.ok(innerAgent.post.calledWith("/ACTION_NAME?", "HEADERS"));
+          assert.ok(innerAgent.post.calledWith("/ACTION_NAME", "HEADERS"));
         });
       });
     });
   });
 
   it(".getPath()", function () {
+    action.meta.boundType = {};
     action.meta.parameters = [
       {},
       {
@@ -369,17 +370,22 @@ describe("Action (engine)", function () {
     ];
     const entity = {
       getSingleResourcePath: sinon.stub().returns("entity(...)"),
+      getListResourcePath: sinon.stub().returns("entity"),
       urlQuery: sinon.stub().returns("urlQuery"),
     };
 
     assert.equal(action.getPath(entity), "/entity(...)/ns.an?urlQuery");
+
+    action.meta.boundType.elementType = {};
+    assert.equal(action.getPath(entity), "/entity/ns.an?urlQuery");
+
     assert.equal(
       action.getPath(undefined, {
         name: "actionImport",
       }),
-      "/actionImport?"
+      "/actionImport"
     );
-    assert.equal(action.getPath(), "/an?");
+    assert.equal(action.getPath(), "/an");
   });
 
   it(".getPayload()", function () {

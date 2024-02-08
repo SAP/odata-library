@@ -149,6 +149,67 @@ describe("EntitySet", function () {
     });
   });
 
+  describe(".addAction", function () {
+    it("instance action", function () {
+      entitySet.actions.length = 0;
+      entitySet.addAction(
+        {
+          meta: {
+            boundType: {},
+          },
+        },
+        innerAgent
+      );
+      assert.strictEqual(entitySet.actions.length, 1);
+    });
+    it("set action", function () {
+      let action = {
+        createDirectCaller: sinon.stub().returns("action_caller"),
+        meta: {
+          name: "ACTION1",
+          boundType: {
+            elementType: innerEntityTypeModel,
+          },
+        },
+      };
+      entitySet.actions.length = 0;
+      entitySet.addAction(action, innerAgent);
+      assert.strictEqual(entitySet.actions.length, 1);
+      assert.strictEqual(entitySet.ACTION1, "action_caller");
+
+      innerAgent.logger = {
+        warn: sinon.stub(),
+      };
+      entitySet.addAction(action, innerAgent);
+      assert.strictEqual(entitySet.actions.length, 2);
+      assert.ok(innerAgent.logger.warn.called);
+      assert.deepEqual(innerAgent.logger.warn.args[0], [
+        "Bound Action ACTION1 is not accessible as shorthand on entitySetName entity set.",
+      ]);
+    });
+  });
+
+  describe(".instanceActions", function () {
+    it("expose instance actions only", function () {
+      innerEntityTypeModel.key = [];
+      entitySet = new EntitySet(innerAgent, innerMetadata, innerEntitySetModel);
+      entitySet.actions.push({
+        meta: {
+          boundType: innerEntityTypeModel,
+        },
+      });
+      entitySet.actions.push({
+        meta: {
+          boundType: {
+            elementType: innerEntityTypeModel,
+          },
+        },
+      });
+
+      assert.strictEqual(entitySet.instanceActions.length, 1);
+    });
+  });
+
   describe(".callAction", function () {
     it("use standard request to call action", function () {
       let request = {

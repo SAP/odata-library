@@ -173,7 +173,7 @@ describe("RequestDefinition", function () {
   describe(".registerAssociations()", function () {
     beforeEach(function () {
       sinon.stub(request, "populateActions");
-      request._resource.actions = "ACTIONS";
+      request._resource.instanceActions = "ACTIONS";
     });
     afterEach(function () {
       assert.ok(request.populateActions.calledWithExactly("ACTIONS"));

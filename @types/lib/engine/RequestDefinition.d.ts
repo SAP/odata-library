@@ -247,11 +247,11 @@ declare class RequestDefinition {
     /**
      * Populate actions to the service object
      *
-     * @param {model.oasis.schema.Action[]} actions array of action defintions
+     * @param {engine.Action[]} actions array of action defintions
      *
      * @memberof RequestDefinition
      */
-    populateActions(actions: model.oasis.schema.Action[]): void;
+    populateActions(actions: engine.Action[]): void;
     actions: {};
     /**
      * Mark request definition as request for raw value ($value keyword)

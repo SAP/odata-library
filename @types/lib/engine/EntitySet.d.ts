@@ -49,6 +49,21 @@ declare class EntitySet extends QueryableResource {
      */
     private _getParametrizedListPath;
     /**
+     * Add action to entity set/ entity instance
+     *
+     * @param {Action} action bound action
+     * @param {Agent} agent - instance of the agent which handler HTTP requests
+     * @memberof EntitySet
+     */
+    addAction(action: Action, agent: Agent): void;
+    /**
+     * Gets actions bound to entity set instance (entity type).
+     *
+     * @readonly
+     * @memberof EntitySet
+     */
+    readonly get instanceActions(): any;
+    /**
      * Send request to bound ODataV4 action
      *
      * @public

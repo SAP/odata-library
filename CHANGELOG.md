@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.3.4
+
+- [FEATURE] Bound actions for collection typed resources - Jakub Vaclavik
+
 # 2.3.3
 
 - [FIX] Binding parameter determination for Actions - Jakub Vaclavik

@@ -9,7 +9,39 @@ describe("Extender (oasis)", function () {
     let schema = {
       entityContainers: [
         {
-          entitySets: [{}],
+          entitySets: [
+            {
+              annotations: [],
+            },
+            {
+              annotations: [
+                {
+                  term: "SAP__capabilities.SearchRestrictions",
+                  record: {
+                    value: {
+                      Searchable: {
+                        bool: "false",
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              annotations: [
+                {
+                  term: "SAP__capabilities.SearchRestrictions",
+                  record: {
+                    value: {
+                      Searchable: {
+                        bool: "true",
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
       entityTypes: [
@@ -28,5 +60,8 @@ describe("Extender (oasis)", function () {
     assert.ok(schema.entityTypes[0].properties[0].sap.sortable);
     assert.ok(_.has(schema.entityContainers[0].entitySets[0], "sap"));
     assert.ok(schema.entityContainers[0].entitySets[0].sap.pageable);
+    assert.ok(schema.entityContainers[0].entitySets[0].sap.searchable);
+    assert.ok(!schema.entityContainers[0].entitySets[1].sap.searchable);
+    assert.ok(schema.entityContainers[0].entitySets[2].sap.searchable);
   });
 });

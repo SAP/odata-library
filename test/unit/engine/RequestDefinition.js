@@ -72,7 +72,7 @@ describe("RequestDefinition", function () {
         request.count();
       });
     });
-    it("try run count on non-countable entity set", function () {
+    it("try run count on countable entity set", function () {
       request._resource.entitySetModel = {
         sap: {
           countable: true,
@@ -84,6 +84,16 @@ describe("RequestDefinition", function () {
         assert.equal(request._isCount, true);
         assert.ok(request.calculatePath.called);
         assert.ok(request._resource.executeGet.calledWithExactly(request));
+      });
+    });
+    it("try run count on v4 (countable) entity set", function () {
+      request._resource.entitySetModel = {
+        sap: {},
+      };
+      request._resource.executeGet = sinon.stub().returns(Promise.resolve());
+      sinon.stub(request, "calculatePath");
+      return request.count().then(() => {
+        assert.equal(request._isCount, true);
       });
     });
   });

@@ -1,5 +1,10 @@
 # Changelog
 
+# 2.3.5
+
+- [FIX] Enable action's payload for collection parameter - Sreelal Soman
+- [FIX] Provide compatibility capabilities on v4 entity set model - Jakub Vaclavik
+
 # 2.3.4
 
 - [FEATURE] Bound actions for collection typed resources - Jakub Vaclavik

@@ -400,16 +400,19 @@ describe("Action (engine)", function () {
     getParamDefinition.withArgs("a").returns({
       type: {
         formatBody: (x) => x,
-      }
+      },
     });
     getParamDefinition.withArgs("b").returns({
       type: {
         elementType: {
           formatBody: (x) => x,
-        }
-      }
+        },
+      },
     });
-    assert.deepEqual(action.getPayload(parameters, request), { a: 1, b: [{ c: 2 }] });
+    assert.deepEqual(action.getPayload(parameters, request), {
+      a: 1,
+      b: [{ c: 2 }],
+    });
     assert.ok(request.header.called);
     assert.deepEqual(request.header.args[0], [
       "Content-type",

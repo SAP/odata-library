@@ -391,17 +391,25 @@ describe("Action (engine)", function () {
   it(".getPayload()", function () {
     const parameters = {
       a: 1,
-      b: 2,
+      b: [{ c: 2 }],
     };
     const request = {
       header: sinon.stub(),
     };
-    sinon.stub(action, "getParameterDefinition").returns({
+    const getParamDefinition = sinon.stub(action, "getParameterDefinition");
+    getParamDefinition.withArgs("a").returns({
       type: {
         formatBody: (x) => x,
-      },
+      }
     });
-    assert.deepEqual(action.getPayload(parameters, request), { a: 1, b: 2 });
+    getParamDefinition.withArgs("b").returns({
+      type: {
+        elementType: {
+          formatBody: (x) => x,
+        }
+      }
+    });
+    assert.deepEqual(action.getPayload(parameters, request), { a: 1, b: [{ c: 2 }] });
     assert.ok(request.header.called);
     assert.deepEqual(request.header.args[0], [
       "Content-type",

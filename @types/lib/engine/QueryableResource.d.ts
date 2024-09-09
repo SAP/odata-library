@@ -60,6 +60,51 @@ declare class QueryableResource extends Resource {
      */
     post(body: string): Promise<any>;
     /**
+     * Determine if the body is plain request
+     *
+     * @param {String} body map of the new entity which is end to the new repository
+     *
+     * @return {Boolean} true if the body is plain request
+     */
+    isPlainRequest(body: string): boolean;
+    /**
+     * Check input parameters for post method
+     *
+     * @param {String} body map of the new entity which is end to the new repository
+     * @param {Batch} defaultBatch default batch for the request
+     *
+     * @return {Error} error if the parameters are not valid
+     */
+    checkPostParameters(body: string, defaultBatch: Batch): Error;
+    /**
+     * Send POST request without additional processing
+     *
+     * @param {String} path path to the entity set
+     * @param {String} body Buffer/FormData (or any other data with slug header)
+     *
+     * @return {Promise} returned promise is resolved when request is finished
+     */
+    postPlainRequest(path: string, body: string): Promise<any>;
+    /**
+     * Add POST request to the batch
+     *
+     * @param {String} path path to the entity set
+     * @param {String} body map of the new entity which is end to the new repository
+     * @param {Batch} defaultBatch default batch for the request
+     *
+     * @return {Promise} returned promise is resolved when request is finished
+     */
+    postBatchRequest(path: string, body: string, defaultBatch: Batch): Promise<any>;
+    /**
+     * Send POST request with JSON body (standard OData request)
+     *
+     * @param {String} path path to the entity set
+     * @param {String} body map of the new entity which is send to the odata endpoint
+     *
+     * @return {Promise} returned promise is resolved when request is finished
+     */
+    postJSONRequest(path: string, body: string): Promise<any>;
+    /**
      * Send request to update an entity by HTTP PUT method
      *
      * @param {String} body map of new data for the entity

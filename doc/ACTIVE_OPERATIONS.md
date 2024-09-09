@@ -23,6 +23,61 @@ return service.CorrespondenceOutputSet.post({
 });
 ```
 
+## Upload file to the backend
+
+You can upload the file to the backend by using the EntitySet.post method. The entity set
+endpoint is used as a file upload endpoint. The file is uploaded as a binary data. The
+binary data is passed as a parameter of the EntitySet.post method. The binary data are
+Buffer or FormData object. FormData object emulates the form data sent by the browser.
+
+### Upload file as a Buffer
+
+The simplest way (if it is supported by the backend) is to upload the file as a Buffer.
+
+```javascript
+let fileContent = Buffer.from("Hello World", "utf8");
+service.XMLUpload.header("slug", "//NORBERT_TEST||PAYM")
+  .post(fileContent)
+  .then((response) => {
+    response.text().then((text) => {
+      assert.ok(response.status === 201);
+      assert.ok(text.match(/imported/));
+    });
+  });
+```
+
+### Upload file as a FormData (browser emulation)
+
+The backend supports in some cases FormData object. The FormData object is used to
+emulate the form data sent by the browser. This is more complex example with reading
+file from backend.
+
+```javascript
+const formData = new FormData();
+
+fs.readFile("./test/resources/uploaBankFormatFile.xml")
+  .then((content) => {
+    const blob = new Blob([content], { type: "text/xml" });
+    formData.append("file", blob, {
+      name: "xmlFormatUpload",
+      filename: "QMATE_CONSULTING.xml",
+    });
+    formData.append("_charset_", "UTF-8");
+    formData.append("xmlFormatUpload-data", "");
+  })
+  .then(() =>
+    service.XMLUpload.queryParameter("FILENAME", "XMLUPLOAD.XML")
+      .queryParameter("BCONTEXT", "USER DEFAULTS")
+      .header("slug", "//NORBERT_TEST||PAYM")
+      .post(formData)
+  )
+  .then((response) => response.text())
+  .then((text) => {
+    assert.ok(response.status === 201);
+    assert.ok(text.match(/imported/));
+  });
+```
+
 ## Navigation property
 
 Use Association.post to create a new entry referenced by already initialized EntitySet
@@ -163,15 +218,15 @@ service.C_PaymentRequest.delete({
 You can pass additional headers for the delete method also
 
 ```javascript
-    let service  = new Service();
-	service .C_PaymentRequest
-		.key({
-			"PaymentRequest": "861",
-			"DraftUUID": "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
-			"IsActiveEntity": false
-		})
-		.header("Accept-Language", "cs,de;q=0.9")
-		.delete().then((res) => {
-			console.log("Deleted draft entity ", res);
-		});
+let service = new Service();
+service.C_PaymentRequest.key({
+  PaymentRequest: "861",
+  DraftUUID: "0894ef30-1ccd-1ed8-bdde-86bb77adbb96",
+  IsActiveEntity: false,
+})
+  .header("Accept-Language", "cs,de;q=0.9")
+  .delete()
+  .then((res) => {
+    console.log("Deleted draft entity ", res);
+  });
 ```

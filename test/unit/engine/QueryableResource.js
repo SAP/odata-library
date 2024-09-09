@@ -369,75 +369,224 @@ describe("QueryableResource", function () {
   });
 
   describe(".post()", function () {
-    let body;
-    let request;
     beforeEach(function () {
-      body = {
-        keyParameter: "keyValue",
-        parameter: "value",
-      };
-      sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
-      sinon.stub(entitySet, "bodyProperties").returns("BODY_PROPERTIES");
-      sinon.stub(entitySet, "getListResourcePath").returns("ENTITY_SET_NAME");
-      innerAgent.post = sinon.stub().returns();
-      request = entitySet.defaultRequest;
-      sinon.stub(request, "header");
-      sinon.stub(request, "payload");
-      request._headers = {};
       innerAgent.batchManager = {};
+      sinon.stub(entitySet, "getListResourcePath").returns("ENTITY_SET_NAME");
+      sinon.stub(entitySet, "urlQuery");
+      sinon.stub(entitySet, "checkPostParameters");
+      sinon.stub(entitySet, "isPlainRequest");
+      sinon.stub(entitySet, "postPlainRequest");
+      sinon.stub(entitySet, "postBatchRequest");
+      sinon.stub(entitySet, "postJSONRequest");
     });
-    it("Successfully creates entity and return parsed data", function () {
-      request._payload = "BODY_PROPERTIES";
-      return entitySet
-        .post(body)
-        .then(() => {
-          return entitySet._handleAgentCall.getCall(0).args[0](request);
-        })
-        .then(() => {
-          assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-          assert.ok(
-            request.header.calledWith("Content-Type", "application/json")
-          );
-          assert.ok(
-            innerAgent.post.calledWith(
-              "/ENTITY_SET_NAME",
-              request._headers,
-              JSON.stringify("BODY_PROPERTIES")
-            )
-          );
-        });
+
+    it("invalid parameters", function () {
+      entitySet.checkPostParameters.returns("ERROR");
+      return entitySet.post("BODY").catch((err) => {
+        assert.strictEqual(err, "ERROR");
+        assert.ok(
+          entitySet.checkPostParameters.calledWithExactly("BODY", undefined)
+        );
+        assert.ok(entitySet.isPlainRequest.notCalled);
+        assert.ok(entitySet.postPlainRequest.notCalled);
+        assert.ok(entitySet.postBatchRequest.notCalled);
+        assert.ok(entitySet.postJSONRequest.notCalled);
+      });
     });
-    it("Failed to create entity", function () {
-      entitySet._handleAgentCall.returns(Promise.reject(new Error("ERROR")));
-      return entitySet
-        .raw(true)
-        .post(body)
-        .catch((err) => {
-          assert.equal(err.message, "ERROR");
-        });
+
+    it("send plain request", function () {
+      entitySet.isPlainRequest.returns(true);
+      entitySet.postPlainRequest.returns(Promise.resolve());
+      return entitySet.post("BODY").then(() => {
+        assert.ok(
+          entitySet.checkPostParameters.calledWithExactly("BODY", undefined)
+        );
+        assert.ok(entitySet.isPlainRequest.calledWithExactly("BODY"));
+        assert.ok(
+          entitySet.postPlainRequest.calledWithExactly(
+            "/ENTITY_SET_NAME",
+            "BODY"
+          )
+        );
+        assert.ok(entitySet.postBatchRequest.notCalled);
+        assert.ok(entitySet.postJSONRequest.notCalled);
+      });
     });
-    it("Successfully creates entity and return parsed data inside batch", function () {
-      let cb;
-      let post = sinon.stub();
+
+    it("send batch request", function () {
       innerAgent.batchManager = {
-        defaultBatch: {
-          post: post,
-        },
-        defaultChangeSet: "DEFAULT_CHANGESET",
+        defaultBatch: "DEFAULT_BATCH",
       };
-      sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
-      request._payload = "BODY_PROPERTIES";
+      entitySet.postBatchRequest.returns(Promise.resolve());
 
-      assert.ok(entitySet.post(body), "PROMISE");
+      return entitySet.post("BODY").then(() => {
+        assert.ok(
+          entitySet.checkPostParameters.calledWithExactly(
+            "BODY",
+            "DEFAULT_BATCH"
+          )
+        );
+        assert.ok(entitySet.isPlainRequest.calledWithExactly("BODY"));
+        assert.ok(
+          entitySet.postBatchRequest.calledWithExactly(
+            "/ENTITY_SET_NAME",
+            "BODY",
+            "DEFAULT_BATCH"
+          )
+        );
+        assert.ok(entitySet.postPlainRequest.notCalled);
+        assert.ok(entitySet.postJSONRequest.notCalled);
+      });
+    });
 
-      cb = entitySet._handleBatchCall.getCall(0).args[0];
-      cb();
+    it("send json (standard odata) request", function () {
+      entitySet.postJSONRequest.returns(Promise.resolve());
 
-      assert.ok(request.payload.calledWithExactly("BODY_PROPERTIES"));
-      assert.ok(request.header.calledWithExactly("Accept", "application/json"));
+      return entitySet.post("BODY").then(() => {
+        assert.ok(
+          entitySet.checkPostParameters.calledWithExactly("BODY", undefined)
+        );
+        assert.ok(entitySet.isPlainRequest.calledWithExactly("BODY"));
+        assert.ok(
+          entitySet.postJSONRequest.calledWithExactly(
+            "/ENTITY_SET_NAME",
+            "BODY"
+          )
+        );
+        assert.ok(entitySet.postPlainRequest.notCalled);
+        assert.ok(entitySet.postBatchRequest.notCalled);
+      });
+    });
+  });
+
+  it("isPlainRequest", function () {
+    assert.strictEqual(entitySet.isPlainRequest({}), false);
+    assert.strictEqual(entitySet.isPlainRequest("STRING"), false);
+    assert.strictEqual(entitySet.isPlainRequest(100), false);
+    assert.strictEqual(entitySet.isPlainRequest(true), false);
+    assert.strictEqual(entitySet.isPlainRequest(null), false);
+    assert.strictEqual(entitySet.isPlainRequest(undefined), false);
+    assert.strictEqual(entitySet.isPlainRequest([]), false);
+    assert.strictEqual(entitySet.isPlainRequest(Buffer.from("")), true);
+    assert.strictEqual(entitySet.isPlainRequest(new FormData()), true);
+    entitySet.defaultRequest._headers = {
+      slug: "SLUG",
+    };
+    assert.strictEqual(entitySet.isPlainRequest("STRING"), true);
+  });
+
+  it("checkPostParameters", function () {
+    sinon.stub(entitySet, "isPlainRequest").withArgs("BODY").returns(false);
+    assert.strictEqual(
+      entitySet.checkPostParameters("BODY", "BATCH"),
+      undefined
+    );
+
+    entitySet.isPlainRequest.withArgs("BODY").returns(true);
+    assert.strictEqual(
+      entitySet.checkPostParameters("BODY", "BATCH").message,
+      "Plain or file request is not supported for batch requests."
+    );
+
+    entitySet.agent.settings = {};
+    assert.strictEqual(
+      entitySet.checkPostParameters("BODY").message,
+      "Buffer is not supported for this entity type."
+    );
+
+    entitySet.agent.settings = { strict: false };
+    assert.strictEqual(entitySet.checkPostParameters("BODY"), undefined);
+
+    entitySet.entityTypeModel.hasStream = true;
+    assert.strictEqual(entitySet.checkPostParameters("BODY"), undefined);
+  });
+
+  it("postPlainRequest", function () {
+    entitySet.defaultRequest.payload = sinon.stub();
+    entitySet.agent.post = sinon.stub().returns(Promise.resolve());
+    sinon.stub(entitySet, "_handleAgentCall");
+
+    entitySet.postPlainRequest("PATH", "BODY");
+    return entitySet._handleAgentCall
+      .getCall(0)
+      .args[0]({
+        _headers: "HEADERS",
+        _payload: "BODY",
+      })
+      .then(() => {
+        assert.ok(entitySet.defaultRequest.payload.calledWithExactly("BODY"));
+        assert.ok(
+          entitySet.agent.post.calledWithExactly("PATH", "HEADERS", "BODY")
+        );
+      });
+  });
+
+  it("postBatchRequest", function () {
+    const defaultBatch = {
+      post: sinon.stub().returns("PROMISE"),
+    };
+    const defaultRequest = entitySet.defaultRequest;
+    entitySet.agent.batchManager = {
+      defaultChangeSet: "DEFAULT_CHANGESET",
+    };
+    defaultRequest.payload = sinon.stub();
+    defaultRequest._payload = "BODY_PROPERTIES";
+    defaultRequest.header = sinon.stub();
+    sinon.stub(entitySet, "_handleBatchCall").returns(Promise.resolve());
+    sinon.stub(entitySet, "bodyProperties").returns("BODY_PROPERTIES");
+
+    return entitySet.postBatchRequest("PATH", "BODY", defaultBatch).then(() => {
+      assert.ok(entitySet.bodyProperties.calledWithExactly("BODY"));
+      assert.ok(defaultRequest.payload.calledWithExactly("BODY_PROPERTIES"));
       assert.strictEqual(
-        entitySet._handleBatchCall.getCall(0).args[1],
-        innerAgent.batchManager.defaultBatch
+        entitySet._handleBatchCall.getCall(0).args[0](),
+        "PROMISE"
+      );
+      assert.deepEqual(defaultRequest.header.args, [
+        ["Accept", "application/json"],
+      ]);
+      assert.ok(
+        entitySet._handleBatchCall.calledWithExactly(
+          sinon.match.func,
+          defaultBatch
+        )
+      );
+      assert.deepEqual(defaultBatch.post.args, [
+        ["PATH", {}, "BODY_PROPERTIES", "DEFAULT_CHANGESET"],
+      ]);
+    });
+  });
+
+  it("postJSONRequest", function () {
+    const defaultRequest = entitySet.defaultRequest;
+
+    entitySet.agent.post = sinon.stub().returns("PROMISE");
+
+    defaultRequest.payload = sinon.stub();
+    defaultRequest.header = sinon.stub();
+    defaultRequest._headers = "HEADERS";
+    defaultRequest._payload = "PAYLOAD";
+    sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
+    sinon
+      .stub(entitySet, "bodyProperties")
+      .withArgs("BODY")
+      .returns("BODY_PROPERTIES");
+
+    return entitySet.postJSONRequest("PATH", "BODY").then(() => {
+      assert.ok(defaultRequest.payload.calledWithExactly("BODY_PROPERTIES"));
+      assert.ok(entitySet._handleAgentCall.calledWithExactly(sinon.match.func));
+      assert.strictEqual(
+        entitySet._handleAgentCall.getCall(0).args[0](defaultRequest),
+        "PROMISE"
+      );
+      assert.ok(
+        defaultRequest.header.calledWithExactly(
+          "Content-Type",
+          "application/json"
+        )
+      );
+      assert.ok(
+        entitySet.agent.post.calledWithExactly("PATH", "HEADERS", '"PAYLOAD"')
       );
     });
   });

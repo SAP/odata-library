@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.4.0
+
+- [FEATURE] Use post to upload files by odata endpoint - Norbert Volf
+
 # 2.3.5
 
 - [FIX] Enable action's payload for collection parameter - Sreelal Soman

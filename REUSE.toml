@@ -1,0 +1,10 @@
+version = 1
+SPDX-PackageName = "OData-library"
+SPDX-PackageSupplier = "Norbert Volf <norbert.volf@sap.com>"
+SPDX-PackageDownloadLocation = "https://github.com/SAP/odata-library"
+
+[[annotations]]
+path = ["lib/**", "test/**", "doc/**", "README.md", "CHANGELOG.md", "gulpfile.js", "index.js", "package-lock.json", "package.json", ".eslintrc", ".gitignore", ".npmrc", ".npmignore", ".husky/**", "tsconfig.json", "@types/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2020 SAP Norbert Volf"
+SPDX-License-Identifier = "Apache-2.0"

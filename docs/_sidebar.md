@@ -1,0 +1,7 @@
+- [Getting started](/)
+- [Read](GET_ENTITY_SET.md)
+- [Create, update and delete](ACTIVE_OPERATIONS.md)
+- [Support for Entity Data Model types](EDM_TYPES.md)
+- [Connect to services](INITIALIZE.md)
+- [How to use async/await](EXAMPLES.md)
+- [Validate OData model](MODEL.md)

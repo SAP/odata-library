@@ -4,9 +4,9 @@
 
 A NodeJS library to access OData services provided by the Netweaver server.
 
-## Prerequisites
+## Documentation
 
-NodeJS is installed. Minimum version of NodeJS is 18.
+Documentation is [here](https://sap.github.io/odata-library/).
 
 ## Installation
 
@@ -32,26 +32,6 @@ service.init
     console.log(result);
   });
 ```
-
-## Upgrade to version 1.x from 0.x
-
-"ca" parameter is not supported (due to use fetch instead of
-superagent). Use environment variable `NODE_EXTRA_CA_CERTS`
-to define custom certificate authority.
-
-```
-export NODE_EXTRA_CA_CERTS=[your CA certificate file path]
-```
-
-## Documentations
-
-- [Read](doc/GET_ENTITY_SET.md) entities from the OData service
-- [Create, update and delete](doc/ACTIVE_OPERATIONS.md) entities
-- [Support for Entity Data Model types](doc/EDM_TYPES.md) and conversion of the Javascript variables to the OData primitives
-- [Connect to services](doc/INITIALIZE.md) and define connection configuration
-- [Writing tests](doc/TESTS.md) and running test with the testing frameworks
-- [How to use async/await](doc/EXAMPLES.md) to avoid promises
-- Validate OData [model](doc/MODEL.md)
 
 ## Contact Us
 

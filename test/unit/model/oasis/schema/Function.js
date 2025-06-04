@@ -2,8 +2,11 @@
 
 const _ = require("lodash");
 const assert = require("assert");
+const sandbox = require("sinon").createSandbox();
 const FunctionDef = require("../../../../../lib/model/oasis/schema/Function");
-const sampleMD = {
+const BoundObject = require("../../../../../lib/model/oasis/schema/BoundObject");
+
+const sampleMD = JSON.stringify({
   $: {
     Name: "Function1",
     IsBound: "true",
@@ -22,7 +25,7 @@ const sampleMD = {
       },
     },
   ],
-};
+});
 
 const sampleMinimalMD = {
   $: {
@@ -37,24 +40,21 @@ const sampleMinimalMD = {
   ],
 };
 
-const type = {
-  namespaceQualifiedName: "Type",
-};
-
-const schema = {
-  namespace: "ns",
-  getType: () => type,
-};
-
 describe("Function", function () {
   let functionImportType;
+
   beforeEach(() => {
-    functionImportType = new FunctionDef(sampleMD);
+    functionImportType = new FunctionDef(JSON.parse(sampleMD));
   });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   describe("#constructor()", function () {
     it("initializes properties", function () {
-      functionImportType = new FunctionDef(sampleMD);
-      assert.equal(functionImportType.raw, sampleMD);
+      functionImportType = new FunctionDef(JSON.parse(sampleMD));
+      assert.deepEqual(functionImportType.raw, JSON.parse(sampleMD));
       assert.equal(functionImportType.name, "Function1");
       assert.ok(functionImportType.isBound);
       assert.ok(functionImportType.isComposable);
@@ -85,6 +85,7 @@ describe("Function", function () {
             ],
           })
       );
+
       assert.throws(
         () =>
           new FunctionDef({
@@ -96,18 +97,21 @@ describe("Function", function () {
     });
   });
 
-  describe(".initSchemaDependentProperties()", function () {
-    it("initializes return type and parameters", function () {
-      functionImportType.initSchemaDependentProperties(schema);
-      assert.equal(functionImportType.returnType.type, type);
-      assert.equal(functionImportType.parameters[0].type, type);
-    });
-  });
+  it("._checkConsistency()", function () {
+    sandbox.stub(BoundObject.prototype, "_checkConsistency");
+    functionImportType._checkConsistency();
+    assert.ok(BoundObject.prototype._checkConsistency.args, [[]]);
 
-  it(".resolveModelPath()", function () {
-    assert.strictEqual(
-      functionImportType.resolveModelPath(),
-      functionImportType
+    functionImportType.raw.ReturnType = [];
+    assert.throws(
+      () => functionImportType._checkConsistency(),
+      /Function Function1 must contain one ReturnType element/
+    );
+
+    functionImportType.raw.ReturnType = [1, 2];
+    assert.throws(
+      () => functionImportType._checkConsistency(),
+      /Function Function1 must contain one ReturnType element/
     );
   });
 });

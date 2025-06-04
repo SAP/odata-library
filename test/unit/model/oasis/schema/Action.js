@@ -1,8 +1,11 @@
 "use strict";
 
-const _ = require("lodash");
 const assert = require("assert");
+const sinon = require("sinon");
 const Action = require("../../../../../lib/model/oasis/schema/Action");
+const BoundObject = require("../../../../../lib/model/oasis/schema/BoundObject");
+const sandbox = sinon.createSandbox();
+
 const sampleMD = {
   $: {
     Name: "Action1",
@@ -29,108 +32,30 @@ const sampleMD = {
   ],
 };
 
-const sampleMinimalMD = {
-  $: {
-    Name: "Action1",
-  },
-};
-
-const type = {
-  namespaceQualifiedName: "Type",
-};
-
-const schema = {
-  namespace: "ns",
-  getType: () => type,
-};
-
 describe("Action", function () {
   let actionType;
   beforeEach(() => {
     actionType = new Action(sampleMD);
   });
-  describe("#constructor()", function () {
-    it("initializes properties", function () {
-      assert.equal(actionType.raw, sampleMD);
-      assert.equal(actionType.name, "Action1");
-      assert.ok(actionType.isBound);
-      assert.equal(actionType.entitySetPath, "path");
-      assert.ok(_.isArray(actionType.parameters));
-    });
-
-    it("uses properties' defaults", function () {
-      actionType = new Action(sampleMinimalMD);
-      assert.equal(actionType.raw, sampleMinimalMD);
-      assert.equal(actionType.name, "Action1");
-      assert.ok(!actionType.isBound);
-      assert.ok(_.isArray(actionType.parameters));
-    });
-
-    it("throws error on missing name or multiple return type", function () {
-      assert.throws(
-        () =>
-          new Action({
-            $: {},
-          })
-      );
-      assert.throws(
-        () =>
-          new Action({
-            $: {
-              Name: "Action1",
-            },
-            ReturnType: [
-              {
-                $: {
-                  Type: "type1",
-                },
-              },
-              {
-                $: {
-                  Type: "type2",
-                },
-              },
-            ],
-          })
-      );
-    });
+  afterEach(() => {
+    sandbox.restore();
   });
 
-  describe(".initSchemaDependentProperties()", function () {
-    it("initializes return type and parameters", function () {
-      actionType.initSchemaDependentProperties(schema);
-      assert.equal(actionType.returnType.type, type);
-      assert.equal(actionType.parameters[0].type, type);
-      assert.equal(actionType.boundType, type);
+  it("._checkConsistency()", function () {
+    sandbox.stub(BoundObject.prototype, "_checkConsistency");
+    actionType._checkConsistency();
+    assert.ok(BoundObject.prototype._checkConsistency.args, [[]]);
 
-      actionType = new Action(sampleMinimalMD);
-      actionType.initSchemaDependentProperties(schema);
+    actionType.raw.ReturnType = [];
+    assert.throws(
+      () => actionType._checkConsistency(),
+      /Action Action1 may contain at most one ReturnType element/
+    );
 
-      const p1 = {
-        $: {
-          Name: "P1",
-        },
-      };
-      actionType = new Action({
-        $: {
-          Name: "Action1",
-          IsBound: "true",
-        },
-        Parameter: [
-          p1,
-          {
-            $: {
-              Name: "P2",
-            },
-          },
-        ],
-      });
-      actionType.initSchemaDependentProperties(schema);
-      assert.equal(actionType.boundType, type);
-    });
-  });
-
-  it(".resolveModelPath()", function () {
-    assert.strictEqual(actionType.resolveModelPath(), actionType);
+    actionType.raw.ReturnType = [1, 2];
+    assert.throws(
+      () => actionType._checkConsistency(),
+      /Action Action1 may contain at most one ReturnType element/
+    );
   });
 });

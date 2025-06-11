@@ -4,8 +4,10 @@ const assert = require("assert").strict;
 const sinon = require("sinon");
 const EntitySet = require("../../../lib/engine/EntitySet");
 const NavigationProperty = require("../../../lib/engine/NavigationProperty");
+const BoundableAction = require("../../../lib/engine/BoundableAction");
+const BoundableFunction = require("../../../lib/engine/BoundableFunction");
 
-describe("EntitySet", function () {
+describe("engine/EntitySet", function () {
   let schema;
   let entitySet;
   let innerAgent;
@@ -149,43 +151,59 @@ describe("EntitySet", function () {
     });
   });
 
-  describe(".addAction", function () {
+  describe(".addBoundObject", function () {
     it("instance action", function () {
+      let action = new BoundableAction(innerAgent, {
+        boundType: {},
+      });
       entitySet.actions.length = 0;
-      entitySet.addAction(
-        {
-          meta: {
-            boundType: {},
-          },
-        },
-        innerAgent
-      );
+      entitySet.addBoundObject(action, innerAgent);
       assert.strictEqual(entitySet.actions.length, 1);
     });
-    it("set action", function () {
-      let action = {
-        createDirectCaller: sinon.stub().returns("action_caller"),
-        meta: {
+    it("add action", function () {
+      let action = new BoundableAction(
+        {},
+        {
           name: "ACTION1",
           boundType: {
             elementType: innerEntityTypeModel,
           },
-        },
-      };
+        }
+      );
+
+      action.createDirectCaller = sinon.stub().returns("action_caller");
       entitySet.actions.length = 0;
-      entitySet.addAction(action, innerAgent);
+      entitySet.addBoundObject(action, innerAgent);
       assert.strictEqual(entitySet.actions.length, 1);
       assert.strictEqual(entitySet.ACTION1, "action_caller");
 
       innerAgent.logger = {
         warn: sinon.stub(),
       };
-      entitySet.addAction(action, innerAgent);
+      entitySet.addBoundObject(action, innerAgent);
       assert.strictEqual(entitySet.actions.length, 2);
       assert.ok(innerAgent.logger.warn.called);
       assert.deepEqual(innerAgent.logger.warn.args[0], [
-        "Bound Action ACTION1 is not accessible as shorthand on entitySetName entity set.",
+        "Boundable resource ACTION1 is not accessible as shorthand on entitySetName entity set.",
       ]);
+    });
+    it("add function", function () {
+      let boundableFunction = new BoundableFunction(
+        {},
+        {
+          name: "FUNCTION1",
+          boundType: {
+            elementType: innerEntityTypeModel,
+          },
+        }
+      );
+
+      boundableFunction.createDirectCaller = sinon
+        .stub()
+        .returns("function_caller");
+      entitySet.addBoundObject(boundableFunction, innerAgent);
+      assert.deepEqual(entitySet.functions, [boundableFunction]);
+      assert.strictEqual(entitySet.FUNCTION1, "function_caller");
     });
   });
 

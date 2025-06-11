@@ -4,7 +4,7 @@ const assert = require("assert");
 const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 
-describe("Action (engine)", function () {
+describe("engine/BoundableAction", function () {
   var Action;
   var action;
   var actionProperties;
@@ -27,7 +27,7 @@ describe("Action (engine)", function () {
       },
     };
 
-    Action = proxyquire("../../../lib/engine/Action", {});
+    Action = proxyquire("../../../lib/engine/BoundableAction", {});
     action = new Action(innerAgent, actionModel);
   });
 
@@ -418,77 +418,5 @@ describe("Action (engine)", function () {
       "Content-type",
       "application/json",
     ]);
-  });
-
-  describe(".normalizeResponse", function () {
-    let rawResponse;
-
-    beforeEach(function () {
-      rawResponse = {
-        json: sinon.stub(),
-        headers: {
-          get: sinon.stub(),
-        },
-      };
-
-      innerAgent._listResultPath = "d.results";
-      innerAgent._instanceResultPath = "d";
-    });
-
-    it("raw response requested", function () {
-      return action
-        .normalizeResponse(rawResponse, true)
-        .then((normalizedResponse) => {
-          assert.equal(normalizedResponse, rawResponse);
-        });
-    });
-    it("invalid content type", function () {
-      return action
-        .normalizeResponse(rawResponse, false)
-        .then((normalizedResponse) => {
-          assert.equal(normalizedResponse, rawResponse);
-        });
-    });
-    it("non-json content type", function () {
-      rawResponse.headers.get.returns("text/plain");
-      return action
-        .normalizeResponse(rawResponse, false)
-        .then((normalizedResponse) => {
-          assert.equal(normalizedResponse, rawResponse);
-        });
-    });
-    it("without specified content", function () {
-      rawResponse.headers.get.returns("application/json");
-      rawResponse.json.returns(Promise.resolve("RESULT"));
-      return action
-        .normalizeResponse(rawResponse, false)
-        .then((normalizedResponse) => {
-          assert.equal(normalizedResponse, "RESULT");
-        });
-    });
-    it("array content", function () {
-      rawResponse.headers.get.returns("application/json");
-      rawResponse.json.returns(
-        Promise.resolve({
-          d: {
-            results: [],
-          },
-        })
-      );
-      return action
-        .normalizeResponse(rawResponse, false)
-        .then((normalizedResponse) => {
-          assert.deepEqual(normalizedResponse, []);
-        });
-    });
-    it("object content", function () {
-      rawResponse.headers.get.returns("application/json");
-      rawResponse.json.returns(Promise.resolve({ d: {} }));
-      return action
-        .normalizeResponse(rawResponse, false)
-        .then((normalizedResponse) => {
-          assert.deepEqual(normalizedResponse, {});
-        });
-    });
   });
 });

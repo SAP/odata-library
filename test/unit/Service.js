@@ -42,7 +42,7 @@ describe("Service", function () {
       "./model/Metadata": sinon.stub().returns(metadataClass),
       "./engine/EntitySet": EntitySet,
       "./engine/FunctionImport": FunctionImport,
-      "./engine/Action": Action,
+      "./engine/BoundableAction": Action,
       "./engine/ActionImport": ActionImport,
     });
     sinon.stub(Service.prototype, "initializeProperties");
@@ -168,6 +168,85 @@ describe("Service", function () {
     });
   });
 
+  it("buildFunctionObjects", function () {
+    let agent = {
+      logger: {
+        warn: sinon.spy(),
+      },
+    };
+    const entityTypeModel = {};
+    const schema = {
+      functions: [
+        {
+          boundType: entityTypeModel,
+          name: "FunctionName1",
+          isBound: true,
+        },
+        {
+          boundType: {
+            elementType: entityTypeModel,
+          },
+          name: "FunctionName2",
+          isBound: true,
+        },
+        {
+          name: "FunctionName3",
+          isBound: false,
+        },
+      ],
+    };
+    const metadata = {
+      model: {
+        getSchema: sinon.stub().returns(schema),
+      },
+    };
+    const entitySets = {
+      entitySet1: {
+        addBoundObject: sinon.stub(),
+        entityTypeModel: entityTypeModel,
+      },
+    };
+
+    const functionImports = service.buildFunctionObjects(
+      agent,
+      metadata,
+      entitySets
+    );
+
+    assert.deepEqual(functionImports, {});
+    assert.deepEqual(agent.logger.warn.args, [
+      [
+        "Unbound functions are not currently supported. The function FunctionName3 will not be accessible.",
+      ],
+    ]);
+
+    assert.strictEqual(
+      entitySets.entitySet1.addBoundObject.getCall(0).args[1],
+      agent
+    );
+    const boundFunction1 =
+      entitySets.entitySet1.addBoundObject.getCall(0).args[0];
+    assert.deepEqual(boundFunction1.meta, {
+      name: "FunctionName1",
+      boundType: entityTypeModel,
+      isBound: true,
+    });
+
+    assert.strictEqual(
+      entitySets.entitySet1.addBoundObject.getCall(1).args[1],
+      agent
+    );
+    const boundFunction2 =
+      entitySets.entitySet1.addBoundObject.getCall(1).args[0];
+    assert.deepEqual(boundFunction2.meta, {
+      boundType: {
+        elementType: entityTypeModel,
+      },
+      name: "FunctionName2",
+      isBound: true,
+    });
+  });
+
   describe(".buildActionObjects()", function () {
     it("Instances and possible shorthands created", function () {
       let agent = {
@@ -210,7 +289,7 @@ describe("Service", function () {
       };
       const entitySets = {
         entitySet1: {
-          addAction: sinon.stub(),
+          addBoundObject: sinon.stub(),
           entityTypeModel: entityTypeModel,
         },
       };
@@ -228,14 +307,17 @@ describe("Service", function () {
       );
       assert.strict(service.ACTION_NAME2, "action-caller");
 
-      assert.strictEqual(entitySets.entitySet1.addAction.args.length, 2);
+      assert.strictEqual(entitySets.entitySet1.addBoundObject.args.length, 2);
       assert.strictEqual(
-        entitySets.entitySet1.addAction.args[0][0].meta.name,
+        entitySets.entitySet1.addBoundObject.args[0][0].meta.name,
         "ACTION_NAME1"
       );
-      assert.strictEqual(entitySets.entitySet1.addAction.args[0][1], agent);
       assert.strictEqual(
-        entitySets.entitySet1.addAction.args[1][0].meta.name,
+        entitySets.entitySet1.addBoundObject.args[0][1],
+        agent
+      );
+      assert.strictEqual(
+        entitySets.entitySet1.addBoundObject.args[1][0].meta.name,
         "ACTION_NAME4"
       );
 

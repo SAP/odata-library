@@ -43,7 +43,28 @@ declare class Service {
      * @memberof Service
      */
     buildEntitySets(agent: Agent, metadata: Metadata): any;
-    buildActionObjects(agent: any, metadata: any, entitySets: any): any;
+    /**
+     * Build endpoints for Functions of OData service (version 4.0)
+     *
+     * @param {Agent} agent - instance of the agent which handler HTTP requests
+     * @param {Metadata} metadata - instance of the metadata object which keep serviice metadata
+     * @param {Object} entitySets - object which contains EntitySets instances for bound functions
+     *
+     * @return {Object}  empty object, because unbound functions are not supported
+     *  @memberof Service
+     */
+    buildFunctionObjects(agent: Agent, metadata: Metadata, entitySets: any): any;
+    /**
+     * Build endpoints for Actions of OData service (version 4.0)
+     *
+     * @param {Agent} agent - instance of the agent which handler HTTP requests
+     * @param {Metadata} metadata - instance of the metadata object which keep serviice metadata
+     * @param {Object} entitySets - object which contains EntitySets instances for bound actions
+     *
+     * @return {Object}  returns map which contains ActionImport instances
+     *  @memberof Service
+     */
+    buildActionObjects(agent: Agent, metadata: Metadata, entitySets: any): any;
     /**
      * Creates Object with OData FunctionImport wrappers
      *

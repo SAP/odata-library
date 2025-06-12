@@ -1,5 +1,12 @@
 # Changelog
 
+# 2.5.0
+
+- [FEATURE] Add support for functions - Norbert Volf
+- [FEATURE] Share schema for Action and Function - Norbert Volf
+- [INTERNAL] Move documentation to github pages - Norbert Volf
+- [INTERNAL] Bump serialize-javascript and mocha - dependabot[bot]
+
 # 2.4.0
 
 - [FEATURE] Use post to upload files by odata endpoint - Norbert Volf
@@ -343,4 +350,3 @@ Othe minor changes.
 - [FEATURE] Add search clause to EntitySet - Norbert Volf
 - [FEATURE] Enhance query parameters usage - Norbert Volf
 - [FIX] Remove superagnt prefix dependency - Norbert Volf
-

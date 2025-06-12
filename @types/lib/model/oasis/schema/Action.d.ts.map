@@ -1,1 +1,1 @@
-{"version":3,"file":"Action.d.ts","sourceRoot":"","sources":["../../../../../lib/model/oasis/schema/Action.js"],"names":[],"mappings":";AAOA;;;;;;;GAOG;AACH;IACE;;;;OAIG;IACH,8BAyBC;IAED;;;;;;;OAOG;IACH,mDAHa,MAAM,CAsBlB;IAED;;;;OAIG;IACH,0BAUC;IAED;;;;;OAKG;IACH,wBAEC;CACF"}
+{"version":3,"file":"Action.d.ts","sourceRoot":"","sources":["../../../../../lib/model/oasis/schema/Action.js"],"names":[],"mappings":";AAKA;;;;;;;GAOG;AACH;IACE,4BAAgC;CAgBjC"}

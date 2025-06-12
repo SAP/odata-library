@@ -5,3 +5,5 @@
 - [Connect to services](INITIALIZE.md)
 - [How to use async/await](EXAMPLES.md)
 - [Validate OData model](MODEL.md)
+- [Actions](ACTIONS.md)
+- [Functions](FUNCTIONS.md)

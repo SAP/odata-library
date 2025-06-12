@@ -26,15 +26,15 @@ declare class FunctionImport extends Resource {
      */
     private createDirectCaller;
     /**
-     * Call post/get method (base on the metadata) to create FunctionImport request
+     * Call post/get method (base on the metadata) to create FunctionImport
+     * request
      *
      * @public
      *
      * @param {Object} [parameters] is object which contains key/values definiton
-     *                            of parameter names and values (see service metadata
-     *                            for parameter names). The parameter is not mandatory,
-     *                            because parameters could be defined by queryParameter
-     *                            or parameter method
+     *        of parameter names and values (see service metadata for parameter
+     *        names). The parameter is not mandatory, because parameters could be
+     *        defined by queryParameter or parameter method
      *
      * @return {Promise} promise which is resolved/rejected when request is done
      *

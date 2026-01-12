@@ -1,8 +1,10 @@
 "use strict";
 
-const assert = require("assert");
+const assert = require("assert").strict;
 const sinon = require("sinon");
 const EdmxModel = require("../../../lib/model/EdmxModel");
+const NwCsdlSchema = require("../../../lib/model/nw/CsdlSchema");
+const OasisCsdlSchema = require("../../../lib/model/oasis/CsdlSchema");
 
 function wrapServices(services) {
   return {
@@ -48,7 +50,8 @@ describe("EdmxModel", function () {
       let model = new EdmxModel(sampleMD, settings);
       assert.strictEqual(model.raw, sampleMD);
       assert.strictEqual(model.version, "1.0");
-      assert.deepEqual(model.schemas, [{}]);
+      assert.equal(model.schemas.length, 1);
+      assert.ok(model.schemas[0] instanceof NwCsdlSchema);
       assert.equal(model.schemas[0].settings, settings);
     });
 
@@ -141,6 +144,15 @@ describe("EdmxModel", function () {
     it("throws on invalid namespace", function () {
       let model = new EdmxModel(sampleMD);
       assert.throws(() => model.resolveModelPath("nothing.something"));
+    });
+  });
+
+  it("#getSchemaTypeByVersion", function () {
+    assert.equal(EdmxModel.getSchemaTypeByVersion("1.0"), NwCsdlSchema);
+    assert.equal(EdmxModel.getSchemaTypeByVersion("4.0"), OasisCsdlSchema);
+    assert.equal(EdmxModel.getSchemaTypeByVersion("4.01"), OasisCsdlSchema);
+    assert.throws(() => {
+      EdmxModel.getSchemaTypeByVersion("2.0");
     });
   });
 });

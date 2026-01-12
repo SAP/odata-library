@@ -647,7 +647,7 @@ describe("lib/engine/Agent", function () {
       agent = new Agent({
         url: "URL",
       });
-      agent.setServiceVersion("4.0");
+      agent.setServiceVersion("4.1");
       assert.strictEqual(agent.getResultPath(false, result), "");
     });
   });
@@ -656,15 +656,26 @@ describe("lib/engine/Agent", function () {
     it("invalid version", function () {
       assert.throws(function () {
         agent.setServiceVersion(null);
-      });
+      }, /OData Service version/);
+      assert.throws(function () {
+        agent.setServiceVersion("3.0");
+      }, /OData Service version/);
     });
     it("paths for version 1", function () {
       agent.setServiceVersion("1.0");
+      assert.equal(agent.serviceVersion, "1.0");
       assert.equal(agent._listResultPath, "d.results");
       assert.equal(agent._instanceResultPath, "d");
     });
     it("paths for version 4", function () {
       agent.setServiceVersion("4.0");
+      assert.equal(agent.serviceVersion, "4.0");
+      assert.equal(agent._listResultPath, "value");
+      assert.equal(agent._instanceResultPath, "");
+    });
+    it("paths for version 4.01", function () {
+      agent.setServiceVersion("4.01");
+      assert.equal(agent.serviceVersion, "4.01");
       assert.equal(agent._listResultPath, "value");
       assert.equal(agent._instanceResultPath, "");
     });

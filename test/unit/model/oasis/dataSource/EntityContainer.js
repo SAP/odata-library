@@ -136,7 +136,7 @@ describe("EntityContainer (oasis)", function () {
     it("throws error on unknown path", function () {
       let container = new EntityContainer(sampleContainerMD);
       container.initSchemaDependentProperties(sampleSchema);
-      assert.throws(() => container.resolveModelPath("missingOne").name);
+      assert.equal(container.resolveModelPath("missingOne"), container);
     });
 
     it("throws error on ambiguous", function () {

@@ -5,7 +5,7 @@ export = Response;
  * @public
  * @class Response
  */
-declare class Response extends EventEmitter<[never]> {
+declare class Response extends EventEmitter {
     /**
      * Initialize instance of the batch Response class
      *

@@ -1,5 +1,12 @@
 # Changelog
 
+# 2.6.0
+
+- [FEATURE] Add Support for Bound Action with Type - Norbert Volf
+- [FEATURE] Add deep path annotations - Norbert Volf
+- [FEATURE] Enable container annotations - Norbert Volf
+- [FEATURE] Enable version 4.01 - Norbert Volf
+
 # 2.5.0
 
 - [FEATURE] Add support for functions - Norbert Volf

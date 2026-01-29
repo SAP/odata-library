@@ -56,11 +56,16 @@ describe("Service", function () {
   });
 
   describe(".initializeProperties()", function () {
-    it("Properties are initialized", function () {
+    beforeEach(function () {
       sinon.stub(service, "buildEntitySets").returns("ENTITY_SETS");
       sinon.stub(service, "buildFunctionImports").returns("FUNCTION_IMPORTS");
       sinon.stub(service, "buildActionObjects").returns("ACTION_IMPORTS");
+      sinon
+        .stub(service, "buildFunctionObjects")
+        .returns("FUNCTION_IMPORTS_V4");
+    });
 
+    it("properties are initialized for version 1,2,3 are initialized", function () {
       service.initializeProperties("CONNECTION");
 
       assert.ok(service.init instanceof Promise);
@@ -84,6 +89,45 @@ describe("Service", function () {
         assert.deepEqual(
           service.buildFunctionImports.getCall(0).args[1],
           metadataClass
+        );
+        assert.deepEqual(service.buildActionObjects.args[0], [
+          service.agent,
+          metadataClass,
+          "ENTITY_SETS",
+        ]);
+      });
+    });
+
+    it("properties for version 4 are initialized", function () {
+      metadataClass.model.version = "4.01";
+
+      service.initializeProperties("CONNECTION");
+
+      assert.ok(service.init instanceof Promise);
+      assert.ok(service.metadata === undefined);
+      assert.ok(service.agent instanceof Agent);
+      assert.ok(Agent.getCall(0).calledWithExactly("CONNECTION"));
+
+      return service.init.then(() => {
+        assert.deepEqual(service.metadata, metadataClass);
+        assert.equal(service.entitySets, "ENTITY_SETS");
+        assert.equal(service.functionImports, "FUNCTION_IMPORTS_V4");
+        assert.equal(service.actionImports, "ACTION_IMPORTS");
+        assert.ok(service.buildEntitySets.getCall(0).args[0] instanceof Agent);
+        assert.deepEqual(
+          service.buildEntitySets.getCall(0).args[1],
+          metadataClass
+        );
+        assert.ok(
+          service.buildFunctionObjects.getCall(0).args[0] instanceof Agent
+        );
+        assert.deepEqual(
+          service.buildFunctionObjects.getCall(0).args[1],
+          metadataClass
+        );
+        assert.deepEqual(
+          service.buildFunctionObjects.getCall(0).args[2],
+          "ENTITY_SETS"
         );
         assert.deepEqual(service.buildActionObjects.args[0], [
           service.agent,

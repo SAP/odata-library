@@ -127,6 +127,15 @@ describe("EntityContainer (oasis)", function () {
       );
     });
 
+    it("resolves deep path annotations", function () {
+      let container = new EntityContainer(sampleContainerMD);
+      container.initSchemaDependentProperties(sampleSchema);
+      assert.equal(
+        container.resolveModelPath("ActionImport1/Config/Characteristics").name,
+        "ActionImport1"
+      );
+    });
+
     it("resolves singletons", function () {
       let container = new EntityContainer(sampleContainerMD);
       container.initSchemaDependentProperties(sampleSchema);
@@ -136,7 +145,7 @@ describe("EntityContainer (oasis)", function () {
     it("throws error on unknown path", function () {
       let container = new EntityContainer(sampleContainerMD);
       container.initSchemaDependentProperties(sampleSchema);
-      assert.throws(() => container.resolveModelPath("missingOne").name);
+      assert.equal(container.resolveModelPath("missingOne"), container);
     });
 
     it("throws error on ambiguous", function () {

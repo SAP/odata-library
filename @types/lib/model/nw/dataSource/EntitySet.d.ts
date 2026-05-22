@@ -10,13 +10,20 @@ export = EntitySet;
  */
 declare class EntitySet extends AnnotationTarget {
     /**
+     * Creates an instance of AssociationEnd.
+     * @param {Object} rawMetadata raw metadata object for the association end
+     * @param {CsdlSchema} schema to resolve association reference
+     * @memberof EntitySet
+     */
+    constructor(rawMetadata: Object, schema: CsdlSchema);
+    /**
      * Gets info on parameterization of the entity set
      *
      * @param {CsdlSchema} schema to resolve association reference
      * @returns {Object} info with {Bool} isParameterized and {NavigationProperty} valuesAssociation, if isParameterized is true
      * @memberof EntitySet
      */
-    getParameterizationInfo(schema: CsdlSchema): any;
+    getParameterizationInfo(schema: CsdlSchema): Object;
 }
 import AnnotationTarget = require("../../oasis/annotations/AnnotationTarget");
 //# sourceMappingURL=EntitySet.d.ts.map

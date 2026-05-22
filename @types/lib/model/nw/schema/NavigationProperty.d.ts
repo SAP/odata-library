@@ -24,7 +24,7 @@ declare class NavigationProperty extends AnnotationTarget {
      * @returns {Object} navigation property target
      * @memberof NavigationProperty
      */
-    getTarget(schema: CsdlSchema): any;
+    getTarget(schema: CsdlSchema): Object;
 }
 import AnnotationTarget = require("../../oasis/annotations/AnnotationTarget");
 //# sourceMappingURL=NavigationProperty.d.ts.map

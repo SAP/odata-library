@@ -13,7 +13,7 @@ declare class Agent {
      *
      * @memberof Agent
      */
-    constructor(settings: any);
+    constructor(settings: Object);
     /**
      * Initialize object merged with user definined options
      * for fetch and passed as options to the node-fetch
@@ -22,7 +22,7 @@ declare class Agent {
      *
      * @returns {Object} initialized options
      */
-    initializeDefaultFetchOptions(settings: any): any;
+    initializeDefaultFetchOptions(settings: Object): Object;
     /**
      * Initialize logger instance
      *
@@ -32,7 +32,7 @@ declare class Agent {
      *
      * @memberof Agent
      */
-    initializeLogger(settings: any): any;
+    initializeLogger(settings: Object): Object;
     /**
      * Convert parameters map to query string
      *
@@ -42,7 +42,7 @@ declare class Agent {
      *
      * @memberof Agent
      */
-    metadataSearch(parameters: any): string;
+    metadataSearch(parameters: Object): string;
     /**
      * Send requests to service metadata
      *
@@ -167,7 +167,7 @@ declare class Agent {
      *
      * @memberof Agent
      */
-    delete(inputUrl: string, headers: any): Promise<any>;
+    delete(inputUrl: string, headers: Object): Promise<any>;
     /**
      * Send request to fetch CSRF token from backend.
      *
@@ -203,7 +203,7 @@ declare class Agent {
      *
      * @return {String} path with dot notation to content of response
      */
-    getResultPath(isList: boolean, result: any): string;
+    getResultPath(isList: boolean, result: Object): string;
     /**
      * Initialize version dependent properties
      *
@@ -220,7 +220,7 @@ declare class Agent {
      *
      * @returns {Promise} promise which is resolved when HTTP request is done
      */
-    public fetch(requestUrl: string, opts?: any): Promise<any>;
+    public fetch(requestUrl: string, opts?: Object): Promise<any>;
     /**
      * Append counter to the response as identification for content log
      * after its processing
@@ -305,9 +305,5 @@ declare class Agent {
      */
     private saveCookies;
     setAuthorizationHeaders(authorizationHeaders: any): void;
-    [CSRF_TOKEN]: any;
-    [AUTH_HEADERS]: any;
 }
-declare const CSRF_TOKEN: unique symbol;
-declare const AUTH_HEADERS: unique symbol;
 //# sourceMappingURL=Agent.d.ts.map

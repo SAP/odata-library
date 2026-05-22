@@ -17,7 +17,7 @@ declare class FunctionImport {
      * @param {CsdlSchema} schema to resolve association reference
      * @memberof FunctionImport
      */
-    constructor(rawMetadata: any, schema: CsdlSchema);
+    constructor(rawMetadata: Object, schema: CsdlSchema);
     /**
      * Gets parameter by its name.
      *
@@ -32,7 +32,7 @@ declare class FunctionImport {
      * @returns {Object} legacy api object
      * @memberof FunctionImport
      */
-    getLegacyApiObject(): any;
+    getLegacyApiObject(): Object;
 }
 import FunctionImportParameter = require("./FunctionImportParameter");
 //# sourceMappingURL=FunctionImport.d.ts.map

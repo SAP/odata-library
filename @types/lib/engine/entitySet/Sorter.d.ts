@@ -11,7 +11,7 @@ declare class Sorter {
      * @param {string} parts parts of the orderby clause
      * @memberof Sorter
      */
-    constructor(entityType: any, parts: string);
+    constructor(entityType: Object, parts: string);
     /**
      * Validates the input
      *
@@ -20,7 +20,7 @@ declare class Sorter {
      * @param {Object} entityType information about EntityType parsed from Metadata
      * @param {string} parts parts of the orderby clause
      */
-    validate(entityType: any, parts: string): void;
+    validate(entityType: Object, parts: string): void;
     /**
      * Convert sorter to the URI Component
      *

@@ -13,7 +13,7 @@ declare class NavigationPropertyBinding extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata navigation property binding
      * @memberof NavigationPropertyBinding
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=NavigationPropertyBinding.d.ts.map

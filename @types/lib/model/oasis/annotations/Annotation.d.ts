@@ -16,6 +16,6 @@ declare class Annotation {
      * @param {Object} expressionBuilder expression builder for creating value objects
      * @memberof Annotation
      */
-    constructor(rawMetadata: any, expressionBuilder: any);
+    constructor(rawMetadata: Object, expressionBuilder: Object);
 }
 //# sourceMappingURL=Annotation.d.ts.map

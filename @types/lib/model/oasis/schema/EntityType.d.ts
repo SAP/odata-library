@@ -16,7 +16,7 @@ declare class EntityType extends ComplexType {
      *
      * @memberof EntityType
      */
-    constructor(rawMetadata: any, metaModel: EdmxModel);
+    constructor(rawMetadata: Object, metaModel: EdmxModel);
     /**
      * Creates entity type 'key' property.
      *

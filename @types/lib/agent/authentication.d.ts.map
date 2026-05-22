@@ -1,1 +1,1 @@
-{"version":3,"file":"authentication.d.ts","sourceRoot":"","sources":["../../../lib/agent/authentication.js"],"names":[],"mappings":";;;;;;;;;AAiCuB,8EAiBtB;AAkB0B,kFAqB1B;AAwB0B,sFAmD1B;AAmBgC,iDAPtB,KAAK,+BAGH,KAAK,CAsBjB"}
+{"version":3,"file":"authentication.d.ts","sourceRoot":"","sources":["../../../lib/agent/authentication.js"],"names":[],"mappings":";;;;;;;;;AAiCuB,oCAVZ,KAAK,qCA2Bf;AAkB0B,wCAVhB,KAAK,qCA+Bf;AAwB0B,2EAThB,MAAM,QA4DhB;AAmBgC,iDAPtB,KAAK,yBACL,MAAM,GAEJ,KAAK,CAsBjB"}

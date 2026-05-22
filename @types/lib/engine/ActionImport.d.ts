@@ -21,7 +21,7 @@ declare class ActionImport {
      * @param {Object} metadata information about ActionImport from Metadata
      * @memberof ActionImport
      */
-    constructor(action: Action, metadata: any);
+    constructor(action: Action, metadata: Object);
     /**
      * Create function which directly call's action import without
      * additional selection of the \"call\" method.

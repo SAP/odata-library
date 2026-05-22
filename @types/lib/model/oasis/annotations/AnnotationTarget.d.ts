@@ -15,7 +15,7 @@ declare class AnnotationTarget {
      *
      * @memberof AnnotationTarget
      */
-    constructor(rawMetadata: any, model: any);
+    constructor(rawMetadata: Object, model: Object);
     annotations: any[];
     /**
      * Applies external target annoations.
@@ -25,7 +25,7 @@ declare class AnnotationTarget {
      *
      * @param {Object[]} [annotations] Annotations (container) elements
      */
-    applyAnnotations(annotations?: any[]): void;
+    applyAnnotations(annotations?: Object[]): void;
     /**
      * Checks if annotations contains specific term.
      *
@@ -39,6 +39,6 @@ declare class AnnotationTarget {
      * @returns {Object} legacy api object
      * @memberof AnnotationTarget
      */
-    getLegacyApiObject(): any;
+    getLegacyApiObject(): Object;
 }
 //# sourceMappingURL=AnnotationTarget.d.ts.map

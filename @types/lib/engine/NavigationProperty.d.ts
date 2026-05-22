@@ -16,7 +16,7 @@ declare class NavigationProperty extends QueryableResource {
      * @public
      * @memberof NavigationProperty
      */
-    constructor(source: EntitySet, navigationProperty: any, metadata: Metadata);
+    constructor(source: EntitySet, navigationProperty: Object, metadata: Metadata);
     /**
      * Indicates of the NavigationProperty Multiplicity is multiple or not
      * @returns {Boolean} true if the multiplicity is *
@@ -30,7 +30,7 @@ declare class NavigationProperty extends QueryableResource {
      * @returns {NavigationProperty} association instance @see NavigationProperty.js
      * @memberof NavigationProperty
      */
-    createNavigationProperty(metadata: Metadata, navigationProperty: any): NavigationProperty;
+    createNavigationProperty(metadata: Metadata, navigationProperty: Object): NavigationProperty;
     /**
      * Set key definiton for the entity set reading
      *

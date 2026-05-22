@@ -13,7 +13,7 @@ declare class EnumTypeMemeber extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for enum member
      * @memberof EnumTypeMemeber
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=EnumTypeMemeber.d.ts.map

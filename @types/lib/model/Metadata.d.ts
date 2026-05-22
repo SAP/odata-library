@@ -20,7 +20,7 @@ declare class Metadata {
      * @param {Object} [settings] settings for the metadata
      * @memberof Metadata
      */
-    constructor(rawMetadata?: any[], settings?: any);
+    constructor(rawMetadata?: Object[], settings?: Object);
     listEntitySetNames(namespace: any): any;
     /**
      * Create list of FunctionImport names
@@ -56,7 +56,7 @@ declare class Metadata {
      *
      * @memberof Metadata
      */
-    getEntitySet(namespace?: string, name?: string): any;
+    getEntitySet(namespace?: string, name?: string): Object;
     /**
      * Get definition of the FunctionImport based on the metadata
      *
@@ -100,7 +100,7 @@ declare class Metadata {
      *}
      * @memberof Metadata
      */
-    getFunctionImport(namespace?: string, name?: string): any;
+    getFunctionImport(namespace?: string, name?: string): Object;
     /**
      * Collect information about EntityType from metadata
      *
@@ -111,6 +111,6 @@ declare class Metadata {
      *
      * @memberof Metadata
      */
-    getEntityType(namespace?: string, name?: string): any;
+    getEntityType(namespace?: string, name?: string): Object;
 }
 //# sourceMappingURL=Metadata.d.ts.map

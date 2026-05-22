@@ -38,7 +38,7 @@ declare class CsdlSchema {
      *
      * @memberof CsdlSchema
      */
-    constructor(rawMetadata: any, settings?: any, metaModel: EdmxModel);
+    constructor(rawMetadata: Object, settings?: Object, metaModel: EdmxModel);
     /**
      * Gets an EntityType defined in schema
      *
@@ -53,7 +53,7 @@ declare class CsdlSchema {
      * @param {string} [name] (optional) name of the container.
      * @returns {Object} entity container
      */
-    getEntityContainer(name?: string): any;
+    getEntityContainer(name?: string): Object;
     /**
      * Gets a Type available in schema
      *
@@ -80,21 +80,21 @@ declare class CsdlSchema {
      * @returns {Object} schema element
      * @memberof CsdlSchema
      */
-    resolveModelPath(path: string): any;
+    resolveModelPath(path: string): Object;
     /**
      * Applies annotations to target elements structures.
      *
      * @param {Object[]} annotationsData raw annotaions data
      * @memberof CsdlSchema
      */
-    applyAnnotations(annotationsData: any[]): void;
+    applyAnnotations(annotationsData: Object[]): void;
     /**
      * Applies annotation based vendor extensions.
      *
      * @param {Object} [settings] parsing settings
      * @memberof CsdlSchema
      */
-    applyExtensions(settings?: any): void;
+    applyExtensions(settings?: Object): void;
     /**
      * Creates path structure from model path.
      *

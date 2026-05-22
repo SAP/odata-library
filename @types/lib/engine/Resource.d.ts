@@ -11,7 +11,7 @@ declare class Resource {
      * @param {Object} defaults default parameters for the resource, based on the class
      * @memberof Resource
      */
-    constructor(agent: Agent, defaults?: any);
+    constructor(agent: Agent, defaults?: Object);
     /**
      * Gets new instance of default values.
      *
@@ -28,7 +28,7 @@ declare class Resource {
      * @protected
      */
     protected reset(): void;
-    _requestDefinition: RequestDefinition;
+    _requestDefinition: RequestDefinition | undefined;
     /**
      * Normalize default parameters to adding mandatory properties
      *
@@ -38,7 +38,7 @@ declare class Resource {
      *
      * @memberof Resource
      */
-    normalizeDefaults(defaults: any): any;
+    normalizeDefaults(defaults: Object): Object;
     /**
      * Check default parameters used by the Resource class
      *
@@ -48,9 +48,9 @@ declare class Resource {
      *
      * @memberof Resource
      */
-    checkDefaults(defaults: any): any;
-    parameter(parameterName: any, parameterValue: any): Resource;
-    parameters(parameters: any): Resource;
+    checkDefaults(defaults: Object): Object;
+    parameter(parameterName: any, parameterValue: any): this;
+    parameters(parameters: any): this;
     /**
      * Create new request definnition object for this entity.
      *
@@ -126,7 +126,7 @@ declare class Resource {
      *
      * @memberof Resource
      */
-    urlQuery(defaultQueryParameters?: any): string;
+    urlQuery(defaultQueryParameters?: Object): string;
     /**
      * Gets (persistent) OData request definition for this entity set.
      *

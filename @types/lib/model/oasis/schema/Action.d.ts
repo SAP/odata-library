@@ -17,7 +17,7 @@ declare class Action extends BoundObject {
      * @returns {Boolean} true if the action matches the model path
      * @memberof Action
      */
-    matchModelPath(parsedPath: any): boolean;
+    matchModelPath(parsedPath: Object): boolean;
     /**
      * Checks whether the action is bound by the given type name.
      *

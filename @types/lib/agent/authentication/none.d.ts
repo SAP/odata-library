@@ -9,8 +9,8 @@ export = authenticate;
  * @return {Promise} the promise is resolved when endpoint is correctly loaded,
  *                       the promise is rejected othewise
  */
-declare function authenticate(settings: any, agent: any, endpointUrl: string): Promise<any>;
+declare function authenticate(settings: Object, agent: any, endpointUrl: string): Promise<any>;
 declare namespace authenticate {
-    const authenticatorName: string;
+    let authenticatorName: string;
 }
 //# sourceMappingURL=none.d.ts.map

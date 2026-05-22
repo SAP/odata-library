@@ -13,7 +13,7 @@ declare class AssociationEnd {
      * @param {Object} rawMetadata raw metadata object for the association end
      * @memberof AssociationEnd
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Initializes schema dependent properties. Decoupled from constructor,
      * because it needs to resolve schema (type) references.

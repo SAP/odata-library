@@ -44,7 +44,7 @@ declare class Action {
      *
      * @memberof Action
      */
-    public call(entity?: EntitySet, actionImport?: ActionImport, parameters?: any): Promise<any>;
+    public call(entity?: EntitySet, actionImport?: ActionImport, parameters?: Object): Promise<any>;
     /**
      * Gets parameter definition.
      *
@@ -96,6 +96,6 @@ declare class Action {
      * @memberof Action
      */
     private getPath;
-    getPayload(parameters: any, request: any): {};
+    getPayload(parameters: any, request: any): {} | undefined;
 }
 //# sourceMappingURL=BoundableAction.d.ts.map

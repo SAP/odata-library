@@ -9,12 +9,19 @@ export = EntitySet;
  */
 declare class EntitySet extends AnnotationTarget {
     /**
+     * Creates an instance of EntitySet.
+     * @param {Object} rawMetadata raw metadata object for the entity set
+     * @param {CsdlSchema} schema to resolve entity type reference
+     * @memberof EntitySet
+     */
+    constructor(rawMetadata: Object, schema: CsdlSchema);
+    /**
      * Gets info on parameterization of the entity set
      *
      * @returns {Object} info with {Bool} isParameterized and {NavigationProperty} valuesAssociation, if isParameterized is true
      * @memberof EntitySet
      */
-    getParameterizationInfo(): any;
+    getParameterizationInfo(): Object;
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=EntitySet.d.ts.map

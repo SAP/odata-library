@@ -16,13 +16,13 @@ declare class FunctionImportParameter {
      * @param {CsdlSchema} schema to resolve model references
      * @memberof FunctionImportParameter
      */
-    constructor(rawMetadata: any, schema: CsdlSchema);
+    constructor(rawMetadata: Object, schema: CsdlSchema);
     /**
      * Gets legacy api object. (XML casing, maybe some other changes.)
      *
      * @returns {Object} legacy api object
      * @memberof FunctionImport
      */
-    getLegacyApiObject(): any;
+    getLegacyApiObject(): Object;
 }
 //# sourceMappingURL=FunctionImportParameter.d.ts.map

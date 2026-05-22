@@ -16,7 +16,7 @@ declare class BoundObject extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for an action
      * @memberof BoundObject
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Checks properties consistency, i.e. mandatory properties, return type.
      *
@@ -38,7 +38,7 @@ declare class BoundObject extends AnnotationTarget {
      * @returns {Object} itself
      * @memberof Function
      */
-    resolveModelPath(): any;
+    resolveModelPath(): Object;
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=BoundObject.d.ts.map

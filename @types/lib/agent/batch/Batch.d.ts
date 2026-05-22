@@ -119,7 +119,7 @@ declare class Batch extends Base {
      *
      * @memberof Agent
      */
-    get(inputUrl: string, headers: any, changeSet: ChangeSet, useResponseType: number): Request;
+    get(inputUrl: string, headers: Object, changeSet: ChangeSet, useResponseType: number): Request;
     /**
      * Create POST request in batch
      *
@@ -189,7 +189,7 @@ declare class Batch extends Base {
      *
      * @memberof Agent
      */
-    delete(inputUrl: string, headers: any, changeSet: ChangeSet): Request;
+    delete(inputUrl: string, headers: Object, changeSet: ChangeSet): Request;
     /**
      * Determine boundary from from headers
      *

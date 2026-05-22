@@ -12,7 +12,7 @@ declare class FunctionImport extends Resource {
      * @param {Object} functionImportProperties information about FunctionImport from Metadata
      * @memberof FunctionImport
      */
-    constructor(agent: Agent, functionImportProperties: any);
+    constructor(agent: Agent, functionImportProperties: Object);
     /**
      * Create function which directly call's function import without
      * additional selection of the \"call\" method.
@@ -40,7 +40,7 @@ declare class FunctionImport extends Resource {
      *
      * @memberof FunctionImport
      */
-    public call(parameters?: any): Promise<any>;
+    public call(parameters?: Object): Promise<any>;
     /**
      * Gets parameter definition.
      *
@@ -91,7 +91,7 @@ declare class FunctionImport extends Resource {
      *
      * @memberof FunctionImport
      */
-    normalizeResponse(rawResponse: IncomingMessage, raw: boolean): any | any[];
+    normalizeResponse(rawResponse: IncomingMessage, raw: boolean): Object | any[];
     /**
      * Take FunctionImport parameters from queryParamters
      *

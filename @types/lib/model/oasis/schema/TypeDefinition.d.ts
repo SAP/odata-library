@@ -13,7 +13,7 @@ declare class TypeDefinition extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for type definition
      * @memberof TypeDefinition
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Initializes schema dependent properties. Decoupled from constructor,
      * because it needs to resolve schema (type) references.

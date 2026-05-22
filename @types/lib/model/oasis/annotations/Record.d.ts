@@ -14,6 +14,6 @@ declare class Record {
      * @param {Object} expressionBuilder expression builder for creating value objects
      * @memberof Record
      */
-    constructor(rawMetadata: any, expressionBuilder: any);
+    constructor(rawMetadata: Object, expressionBuilder: Object);
 }
 //# sourceMappingURL=Record.d.ts.map

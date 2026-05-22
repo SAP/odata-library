@@ -18,6 +18,6 @@ declare class Extender {
      * @param {Object} [settings] sparsing settings
      * @memberof Extender
      */
-    static apply(schema?: CsdlSchema, settings?: any): void;
+    static apply(schema?: CsdlSchema, settings?: Object): void;
 }
 //# sourceMappingURL=Extender.d.ts.map

@@ -15,6 +15,6 @@ declare class Collection extends Array<any> {
      * @param {Object} expressionBuilder expression builder for creating value objects
      * @memberof Collection
      */
-    constructor(rawMetadata: any, expressionBuilder: any);
+    constructor(rawMetadata: Object, expressionBuilder: Object);
 }
 //# sourceMappingURL=Collection.d.ts.map

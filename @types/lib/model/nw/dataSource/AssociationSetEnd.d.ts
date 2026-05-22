@@ -15,6 +15,6 @@ declare class AssociationSetEnd {
      * @param {Association} association for which the AssociationSet is being defined.
      * @memberof AssociationSetEnd
      */
-    constructor(rawMetadata: any, schema: CsdlSchema, association: Association);
+    constructor(rawMetadata: Object, schema: CsdlSchema, association: Association);
 }
 //# sourceMappingURL=AssociationSetEnd.d.ts.map

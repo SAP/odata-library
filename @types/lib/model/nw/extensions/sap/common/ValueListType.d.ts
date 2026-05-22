@@ -14,6 +14,6 @@ declare class ValueListType {
      * @param {Object} [settings] parsing settings
      * @memberof ValueListType
      */
-    constructor(annotation?: Annotation, schema?: CsdlSchema, settings?: any);
+    constructor(annotation?: Annotation, schema?: CsdlSchema, settings?: Object);
 }
 //# sourceMappingURL=ValueListType.d.ts.map

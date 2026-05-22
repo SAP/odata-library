@@ -1,4 +1,3 @@
-export declare const ODataTestClient: typeof import("./lib/Service");
-declare const Service_1: typeof import("./lib/Service");
-export { Service_1 as Service };
+export let ODataTestClient: typeof import("./lib/Service");
+export let Service: typeof import("./lib/Service");
 //# sourceMappingURL=index.d.ts.map

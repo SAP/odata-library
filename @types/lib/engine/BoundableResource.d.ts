@@ -13,7 +13,7 @@ declare class BoundableResource extends Resource {
      * @param {Object} metadata information about BoundableResource from Metadata
      * @memberof BoundableResource
      */
-    constructor(agent: Agent, metadata: any);
+    constructor(agent: Agent, metadata: Object);
     /**
      * Normalize response and returns raw response or object or array
      *
@@ -24,7 +24,7 @@ declare class BoundableResource extends Resource {
      *
      * @memberof BoundableResource
      */
-    normalizeResponse(rawResponse: IncomingMessage, raw: boolean): any | any[];
+    normalizeResponse(rawResponse: IncomingMessage, raw: boolean): Object | any[];
 }
 import Resource = require("./Resource");
 //# sourceMappingURL=BoundableResource.d.ts.map

@@ -8,6 +8,13 @@ export = Singleton;
  * @extends {AnnotationTarget}
  */
 declare class Singleton extends AnnotationTarget {
+    /**
+     * Creates an instance of Singleton.
+     * @param {Object} rawMetadata raw metadata object for the singleton
+     * @param {CsdlSchema} schema to resolve type reference
+     * @memberof Singleton
+     */
+    constructor(rawMetadata: Object, schema: CsdlSchema);
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=Singleton.d.ts.map

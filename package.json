@@ -8,7 +8,7 @@
     "http-parser-js": "^0.5.10",
     "jsdom": "^29.1.1",
     "lodash": "^4.18.1",
-    "tough-cookie": "^4.1.4",
+    "tough-cookie": "^6.0.1",
     "xml2js": "^0.6.2"
   },
   "scripts": {

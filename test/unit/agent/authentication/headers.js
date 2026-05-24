@@ -45,6 +45,15 @@ describe("lib/agent/authentification/headers", function () {
     });
   });
 
+  it("Request endpoint returns invalid response", function () {
+    sandbox.stub(authBasic, "isValidResponse").returns(false);
+    agent.fetch.returns(Promise.resolve("INVALID_RESPONSE"));
+    return authenticator(settings, agent, "ENDPOINT_URL").catch((err) => {
+      assert.ok(err instanceof Error);
+      assert.ok(err.message.match(/headers failed/));
+    });
+  });
+
   it("Request endpoint fails with basic authorization ", function () {
     agent.fetch.returns(Promise.reject("ERROR"));
     return authenticator(settings, agent, "ENDPOINT_URL").catch((err) => {

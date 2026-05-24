@@ -156,5 +156,15 @@ describe("engine/BoundableFunction", function () {
         "/PREFIX/FOR/LIST_RESOURCE_PATH/TestNamespace.TestFunction(key1=value1, key2=value2)"
       );
     });
+
+    it("generates path using getSingleResourcePath when no elementType", function () {
+      const parameters = { key1: "value1" };
+
+      boundableFunctionMetadata.boundType = {};
+      assert.strictEqual(
+        boundableFunction.generatePath(entity, parameters),
+        "/PREFIX/FOR/SINGLE_RESOURCE_PATH/TestNamespace.TestFunction(key1=value1)"
+      );
+    });
   });
 });

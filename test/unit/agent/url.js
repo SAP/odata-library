@@ -78,6 +78,11 @@ describe("url", function () {
       url.normalize("/EntitySet?$count=1", "https://example.com/path/"),
       "https://example.com/path/EntitySet?$count=1"
     );
+    assert.equal(
+      url.normalize("/EntitySet", "https://example.com/path"),
+      "https://example.com/path/EntitySet",
+      "base without trailing slash keeps its path and appends input"
+    );
     assert.throws(function () {
       url.normalize();
     });
@@ -91,8 +96,16 @@ describe("url", function () {
       url.appendSearch("https://localhost/?bar=1", "foo=2"),
       "https://localhost/?bar=1&foo=2"
     );
+    assert.equal(
+      url.appendSearch("https://localhost/", ""),
+      "https://localhost/",
+      "empty string additionalSearch returns url unchanged"
+    );
     assert.throws(() => {
       url.appendSearch("https://localhost/?bar=1");
+    });
+    assert.throws(() => {
+      url.appendSearch("https://localhost/?bar=1", 42);
     });
     assert.throws(() => {
       url.appendSearch();

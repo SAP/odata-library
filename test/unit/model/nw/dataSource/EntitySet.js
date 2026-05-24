@@ -98,6 +98,18 @@ describe("EntitySet (nw)", function () {
       let info = set.getParameterizationInfo(schema);
       assert.ok(!info.isParameterized);
     });
+
+    it("returns non-parametrized info when semantics is not 'parameters'", function () {
+      let et = {
+        sap: {
+          semantics: "aggregate",
+        },
+      };
+
+      let set = new EntitySet(sampleSetMD, getSchema(et));
+      let info = set.getParameterizationInfo(getSchema({}));
+      assert.ok(!info.isParameterized);
+    });
   });
 
   describe(".getLegacyApiObject()", function () {

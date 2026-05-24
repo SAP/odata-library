@@ -210,4 +210,33 @@ describe("NavigationProperty", function () {
     assert.ok(innerSource.reset.called);
     assert.ok(Parent.prototype.reset.called);
   });
+
+  describe(".getSingleResourcePath()", function () {
+    it("returns list path with key predicate when isMultiple", function () {
+      sinon.stub(navigationProperty, "isMultiple").returns(true);
+      sinon
+        .stub(navigationProperty, "getListResourcePath")
+        .returns("EntitySet/NavProp");
+      sinon.stub(navigationProperty, "keyProperties").returns({ KEY1: "'A'" });
+      sinon.stub(navigationProperty, "keyPredicate").returns("KEY1='A'");
+      const path = navigationProperty.getSingleResourcePath();
+      assert.equal(path, "EntitySet/NavProp(KEY1='A')");
+    });
+
+    it("returns list path directly when not isMultiple", function () {
+      sinon.stub(navigationProperty, "isMultiple").returns(false);
+      sinon
+        .stub(navigationProperty, "getListResourcePath")
+        .returns("EntitySet/NavProp");
+      const path = navigationProperty.getSingleResourcePath();
+      assert.equal(path, "EntitySet/NavProp");
+    });
+  });
+
+  it(".getListResourcePath()", function () {
+    innerNavigationProperty.name = "NavProp";
+    innerSource.getSingleResourcePath = sinon.stub().returns("EntitySet(1)");
+    const path = navigationProperty.getListResourcePath();
+    assert.equal(path, "EntitySet(1)/NavProp");
+  });
 });

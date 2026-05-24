@@ -389,8 +389,19 @@ describe("agent/batch/Response", function () {
     assert.deepEqual(response.plain("d.results", "d"), 5);
   });
 
+  it(".plain returns itself when result is falsy (no matching path)", function () {
+    response.request = { responseType: responseType.ENTITY };
+    response.body = {};
+    const result = response.plain("d.results", "nonexistent");
+    assert.strictEqual(result, response);
+  });
+
   it(".json", function () {
     response.body = { body: "BODY" };
     response.json().then((body) => assert.deepEqual(body, { body: "BODY" }));
+  });
+
+  it(".setEncoding", function () {
+    assert.doesNotThrow(() => response.setEncoding("utf8"));
   });
 });

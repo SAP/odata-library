@@ -348,6 +348,25 @@ describe("RequestDefinition", function () {
     assert.strictEqual(request.actions.Confirm, "caller");
   });
 
+  it(".populateActions() warns when shorthand already exists", function () {
+    request._resource.agent = {
+      logger: { warn: sinon.stub() },
+    };
+    const actions = [
+      {
+        createDirectCaller: sinon.stub().returns("caller"),
+        meta: { name: "Confirm" },
+      },
+    ];
+    request.Confirm = "ALREADY_EXISTS";
+    request.populateActions(actions);
+    assert.ok(
+      request._resource.agent.logger.warn.calledWith(
+        sinon.match(/Confirm.*shorthand/)
+      )
+    );
+  });
+
   describe(".value()", function () {
     it("property name is passed", function () {
       assert.strictEqual(request.value("PROPERTY_NAME"), request._resource);

@@ -17,7 +17,7 @@ declare class EntityTypeExtender {
      * @param {Object} [settings] sparsing settings
      * @memberof EntityTypeExtender
      */
-    static process(entityType: any, schema?: CsdlSchema, settings?: any): void;
+    static process(entityType: Object, schema?: CsdlSchema, settings?: Object): void;
 }
 declare namespace EntityTypeExtender {
     namespace _ {

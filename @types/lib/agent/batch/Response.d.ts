@@ -5,7 +5,7 @@ export = Response;
  * @public
  * @class Response
  */
-declare class Response extends EventEmitter {
+declare class Response extends EventEmitter<[never]> {
     /**
      * Initialize instance of the batch Response class
      *
@@ -161,7 +161,7 @@ declare class Response extends EventEmitter {
      *
      * @memberof agent/batch/Response
      */
-    public plain(listResultPath: string, instanceResultPath: string): any[] | any;
+    public plain(listResultPath: string, instanceResultPath: string): any[] | Object;
     /**
      * It is mimicry for Fetch API Response json method
      *

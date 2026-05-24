@@ -14,7 +14,7 @@ declare class Property extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for property
      * @memberof Property
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Initializes schema dependent properties. Decoupled from constructor,
      * because it needs to resolve schema (type) references.

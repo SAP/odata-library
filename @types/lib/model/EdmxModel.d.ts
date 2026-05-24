@@ -31,7 +31,7 @@ declare class EdmxModel {
      * @returns {Object} edmx data service
      * @memberof EdmxModel
      */
-    static getService(rawMetadata: any): any;
+    static getService(rawMetadata: Object): Object;
     /**
      * Get CSDL schema implementation by Edmx version.
      * '1.0': mix of MC and OASIS standards
@@ -50,7 +50,7 @@ declare class EdmxModel {
      * @param {Object} [settings] settings for the metadata
      * @memberof EdmxModel
      */
-    constructor(rawMetadata: any, settings?: any);
+    constructor(rawMetadata: Object, settings?: Object);
     /**
      * Gets default DataService Schema from metadata object.
      *
@@ -71,14 +71,14 @@ declare class EdmxModel {
      * @param {Object} anotherModel another edmx model with just annotations in default schema
      * @returns {object} this to allow method chaining.
      */
-    merge(anotherModel: any): object;
+    merge(anotherModel: Object): object;
     /**
      * Applies vendor schema extensions.
      *
      * @param {Object} [settings] parsing settings
      * @memberof EdmxModel
      */
-    applySchemaExtensions(settings?: any): void;
+    applySchemaExtensions(settings?: Object): void;
     /**
      * Resolves model path expression.
      *
@@ -95,6 +95,6 @@ declare class EdmxModel {
      * @returns {Object} schema element
      * @memberof EdmxModel
      */
-    resolveModelPath(path: string): any;
+    resolveModelPath(path: string): Object;
 }
 //# sourceMappingURL=EdmxModel.d.ts.map

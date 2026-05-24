@@ -17,7 +17,7 @@ declare class EntityType extends ComplexType {
      * @returns {Object} navigation property with given name or undefined, if property doesn't exist
      * @memberof EntityType
      */
-    getNavigationProperty(name?: string, strict?: bool): any;
+    getNavigationProperty(name?: string, strict?: bool): Object;
     /**
      * Gets entity type parameter. (SAP specific, used for implementing parametrized entity sets.)
      *
@@ -26,7 +26,7 @@ declare class EntityType extends ComplexType {
      * @returns {Object} parameter or undefined
      * @memberof EntityType
      */
-    getParameter(name?: string, schema?: CsdlSchema): any;
+    getParameter(name?: string, schema?: CsdlSchema): Object;
     /**
      * Resolves model path within this type.
      *
@@ -35,7 +35,7 @@ declare class EntityType extends ComplexType {
      * @returns {Object} model element
      * @memberof EntityType
      */
-    resolveModelPath(path?: string, schema?: CsdlSchema): any;
+    resolveModelPath(path?: string, schema?: CsdlSchema): Object;
     /**
      * Creates entity type 'key' property.
      *

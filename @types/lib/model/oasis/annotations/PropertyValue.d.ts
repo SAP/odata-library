@@ -14,6 +14,6 @@ declare class PropertyValue {
      * @param {Object} expressionBuilder expression builder for creating value objects
      * @memberof PropertyValue
      */
-    constructor(rawMetadata: any, expressionBuilder: any);
+    constructor(rawMetadata: Object, expressionBuilder: Object);
 }
 //# sourceMappingURL=PropertyValue.d.ts.map

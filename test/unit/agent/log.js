@@ -36,6 +36,12 @@ describe("lib/engine/agent/log", function () {
     );
   });
 
+  it(".logResponse defaults method to GET when method is absent", function () {
+    let logger = { debug: sinon.stub() };
+    log.logResponse(logger, "1", "URL", {}, { status: 200, headers: {} });
+    assert.ok(logger.debug.getCall(0).args[0].includes("\tGET\t"));
+  });
+
   it(".logRequest", function () {
     let logger = {
       debug: sinon.stub(),
@@ -48,5 +54,11 @@ describe("lib/engine/agent/log", function () {
       logger.debug.getCall(0).args[0],
       'Request #COUNTER\tPOST\tREQUEST_URL\t{"headers":"HEADERS"}'
     );
+  });
+
+  it(".logRequest defaults method to GET when method is absent", function () {
+    let logger = { debug: sinon.stub() };
+    log.logRequest(logger, "1", "URL", { headers: "HEADERS" });
+    assert.ok(logger.debug.getCall(0).args[0].includes("\tGET\t"));
   });
 });

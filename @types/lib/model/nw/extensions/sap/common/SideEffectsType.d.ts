@@ -15,7 +15,7 @@ declare class SideEffectsType {
      * @param {Object} [settings] settings for the metadata
      * @memberof SideEffectsType
      */
-    constructor(annotation?: Annotation, entityType?: EntityType, schema?: CsdlSchema, settings?: any);
+    constructor(annotation?: Annotation, entityType?: EntityType, schema?: CsdlSchema, settings?: Object);
 }
 declare namespace SideEffectsType {
     namespace _ {

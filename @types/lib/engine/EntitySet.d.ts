@@ -13,8 +13,8 @@ declare class EntitySet extends QueryableResource {
      * @param {Object} entitySetModel information about EntitySet parsed from Metadata
      * @memberof EntitySet
      */
-    constructor(agent: Agent, metadata: Metadata, entitySetModel: any);
-    isParameterized: boolean;
+    constructor(agent: Agent, metadata: Metadata, entitySetModel: Object);
+    isParameterized: boolean | undefined;
     valuesAssociation: any;
     /**
      * Creates a new NavigationProperty
@@ -23,14 +23,14 @@ declare class EntitySet extends QueryableResource {
      * @returns {Association} association instance @see NavigationProperty.js
      * @memberof EntitySet
      */
-    createNavigationProperty(metadata: Metadata, navigationProperty: any): Association;
+    createNavigationProperty(metadata: Metadata, navigationProperty: Object): Association;
     /**
      * Gets navigation properties for current entity.
      *
      * @readonly
      * @memberof EntitySet
      */
-    readonly get navigationProperties(): {};
+    readonly get navigationProperties(): {} | undefined;
     /**
      * Gets parameter definition.
      *

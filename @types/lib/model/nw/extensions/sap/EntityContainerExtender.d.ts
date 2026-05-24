@@ -15,6 +15,6 @@ declare class EntityContainerExtender {
      * @param {Object} entityContainer schema element to be processed
      * @memberof EntityContainerExtender
      */
-    static process(entityContainer: any): void;
+    static process(entityContainer: Object): void;
 }
 //# sourceMappingURL=EntityContainerExtender.d.ts.map

@@ -205,6 +205,21 @@ describe("engine/EntitySet", function () {
       assert.deepEqual(entitySet.functions, [boundableFunction]);
       assert.strictEqual(entitySet.FUNCTION1, "function_caller");
     });
+
+    it("neither action nor function does not push to either list", function () {
+      const otherResource = {
+        meta: {
+          name: "OTHER",
+          boundType: {},
+        },
+        createDirectCaller: sinon.stub().returns("other_caller"),
+      };
+      const initialActionsLen = entitySet.actions.length;
+      const initialFunctionsLen = entitySet.functions.length;
+      entitySet.addBoundObject(otherResource, innerAgent);
+      assert.strictEqual(entitySet.actions.length, initialActionsLen);
+      assert.strictEqual(entitySet.functions.length, initialFunctionsLen);
+    });
   });
 
   describe(".instanceActions", function () {

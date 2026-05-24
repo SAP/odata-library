@@ -22,7 +22,7 @@ declare class Service {
      * @param {String|Object} [args] Settings which defines URL, authrization and additional parameters of the OData service
      * @memberof Service
      */
-    constructor(args?: string | any);
+    constructor(args?: string | Object);
     /**
      * Creates OData client properties
      *
@@ -31,7 +31,7 @@ declare class Service {
      *
      * @memberof Service
      */
-    initializeProperties(settings: any): void;
+    initializeProperties(settings: Object): void;
     /**
      * Creates Object with OData EntitySet wrappers
      *
@@ -42,7 +42,7 @@ declare class Service {
      *
      * @memberof Service
      */
-    buildEntitySets(agent: Agent, metadata: Metadata): any;
+    buildEntitySets(agent: Agent, metadata: Metadata): Object;
     /**
      * Build endpoints for Functions of OData service (version 4.0)
      *
@@ -53,7 +53,7 @@ declare class Service {
      * @return {Object}  empty object, because unbound functions are not supported
      *  @memberof Service
      */
-    buildFunctionObjects(agent: Agent, metadata: Metadata, entitySets: any): any;
+    buildFunctionObjects(agent: Agent, metadata: Metadata, entitySets: Object): Object;
     /**
      * Build endpoints for Actions of OData service (version 4.0)
      *
@@ -64,7 +64,7 @@ declare class Service {
      * @return {Object}  returns map which contains ActionImport instances
      *  @memberof Service
      */
-    buildActionObjects(agent: Agent, metadata: Metadata, entitySets: any): any;
+    buildActionObjects(agent: Agent, metadata: Metadata, entitySets: Object): Object;
     /**
      * Creates Object with OData FunctionImport wrappers
      *
@@ -75,7 +75,7 @@ declare class Service {
      *
      * @memberof Service
      */
-    buildFunctionImports(agent: Agent, metadata: Metadata): any;
+    buildFunctionImports(agent: Agent, metadata: Metadata): Object;
     /**
      * Create batch and register it to the agent's batch manager
      *
@@ -83,7 +83,7 @@ declare class Service {
      *
      * @memberof Service
      */
-    createBatch(): any;
+    createBatch(): Object;
     /**
      * Sends batch passed as parameter or default batch from agents batch manager
      *

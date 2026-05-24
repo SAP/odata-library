@@ -530,6 +530,30 @@ describe("lib/agent/authentification/samlSap", function () {
         "PARAMETER_VALUE_2"
       );
     });
+    it("SAML request uses empty string when form parameter value is null", function () {
+      htmlDocument.querySelector.returns(htmlSamlRequestObject);
+      getAttribute.onCall(0).returns(null);
+      getAttribute.onCall(1).returns("parameter_1");
+      getAttribute.onCall(2).returns(null);
+      getAttribute.onCall(3).returns("parameter_2");
+      getAttribute.onCall(4).returns("FORM_ACTION");
+      assert.strictEqual(
+        authenticator.submitRedirectToLoginFormAction(
+          "SETTINGS",
+          localAgent,
+          response
+        ),
+        "NEXT_SAML_HOOP"
+      );
+      assert.equal(
+        localAgent.fetch.getCall(0).args[1].body.get("parameter_1"),
+        ""
+      );
+      assert.equal(
+        localAgent.fetch.getCall(0).args[1].body.get("parameter_2"),
+        ""
+      );
+    });
   });
 
   describe("submitLoginFormAction", function () {
@@ -634,6 +658,39 @@ describe("lib/agent/authentification/samlSap", function () {
       );
       assert.equal(localAgent.fetch.getCall(0).args[0], "URL");
     });
+    it("SAML request uses empty string when non-username/password field value is null", function () {
+      let getAttribute = sinon.stub();
+      let samlRequest = {
+        form: {
+          getAttribute: getAttribute,
+          elements: [
+            { getAttribute: getAttribute },
+            { getAttribute: getAttribute },
+            { getAttribute: getAttribute },
+          ],
+        },
+      };
+      getAttribute.onCall(0).returns("ACTION");
+      getAttribute.onCall(1).returns("USERNAME");
+      getAttribute.onCall(2).returns("username");
+      getAttribute.onCall(3).returns("PASSWORD");
+      getAttribute.onCall(4).returns("password");
+      getAttribute.onCall(5).returns(null);
+      getAttribute.onCall(6).returns("SAMLRequest");
+      htmlDocument.querySelector
+        .withArgs('div[role="alert"]')
+        .returns(undefined);
+      htmlDocument.querySelector.returns(samlRequest);
+      authenticator.submitLoginFormAction(
+        { auth: { password: "PASS", username: "USER" } },
+        localAgent,
+        response
+      );
+      assert.equal(
+        localAgent.fetch.getCall(0).args[1].body.get("SAMLRequest"),
+        ""
+      );
+    });
   });
 
   describe("submitRedirectFromLoginFormAction", function () {
@@ -700,6 +757,27 @@ describe("lib/agent/authentification/samlSap", function () {
         "VALUE"
       );
       assert.equal(localAgent.fetch.getCall(0).args[0], "URL");
+    });
+    it("SAML request uses empty string when form parameter value is null", function () {
+      let getAttribute = sinon.stub();
+      let samlRequest = {
+        form: {
+          getAttribute: getAttribute,
+          elements: [{ getAttribute: getAttribute }],
+        },
+      };
+      getAttribute.withArgs("value").returns(null);
+      getAttribute.withArgs("name").returns("NAME");
+      getAttribute.withArgs("action").returns("ACTION");
+      htmlDocument.querySelector.returns(samlRequest);
+      localAgent.nextRequestUrl.returns("URL");
+
+      authenticator.submitRedirectFromLoginFormAction(
+        "SETTINGS",
+        localAgent,
+        response
+      );
+      assert.equal(localAgent.fetch.getCall(0).args[1].body.get("NAME"), "");
     });
   });
 

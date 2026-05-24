@@ -14,7 +14,7 @@ declare class AssociationSet {
      * @param {CsdlSchema} schema to resolve association reference
      * @memberof Association
      */
-    constructor(rawMetadata: any, schema: CsdlSchema);
+    constructor(rawMetadata: Object, schema: CsdlSchema);
     getEndByRole(role: any): any;
 }
 //# sourceMappingURL=AssociationSet.d.ts.map

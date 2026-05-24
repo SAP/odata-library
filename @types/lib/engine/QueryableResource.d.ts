@@ -14,14 +14,14 @@ declare class QueryableResource extends Resource {
      * @param {Object} entityTypeModel information about EntityType parsed from Metadata
      * @memberof QueryableResource
      */
-    constructor(agent: Agent, metadata: Metadata, entitySetModel: any, entityTypeModel: any);
-    top(top: any): QueryableResource;
-    select(...args: any[]): QueryableResource;
-    skip(skip: any): QueryableResource;
-    filter(filter: any): QueryableResource;
-    orderby(...args: any[]): QueryableResource;
-    expand(...args: any[]): QueryableResource;
-    search(pattern: any): QueryableResource;
+    constructor(agent: Agent, metadata: Metadata, entitySetModel: Object, entityTypeModel: Object);
+    top(top: any): this;
+    select(...args: any[]): this;
+    skip(skip: any): this;
+    filter(filter: any): this;
+    orderby(...args: any[]): this;
+    expand(...args: any[]): this;
+    search(pattern: any): this;
     key(entityKey: any): EntitySet;
     /**
      * Send request to count of the EntitySet
@@ -196,7 +196,7 @@ declare class QueryableResource extends Resource {
      *
      * @memberof QueryableResource
      */
-    protected keyPredicate(entityKey: any): string;
+    protected keyPredicate(entityKey: Object): string;
     /**
      * Gets path to the single entity (with key defined)
      * @returns {string} path to the single entity
@@ -259,7 +259,7 @@ declare class QueryableResource extends Resource {
      *
      * @returns {Object} checked navigation properties items
      */
-    processNavigationPropertyItems(navigationProperty: NavigationProperty, entityTypeProperties: any): any;
+    processNavigationPropertyItems(navigationProperty: NavigationProperty, entityTypeProperties: Object): Object;
     /**
      * Creates a new association
      *

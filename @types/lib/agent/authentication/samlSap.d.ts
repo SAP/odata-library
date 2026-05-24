@@ -12,9 +12,9 @@ export = authenticate;
  * @return {Promise} the promise is resolved when endpoint is correctly loaded,
  *                       the promise is rejected othewise
  */
-declare function authenticate(settings: any, agent: any, endpointUrl: string): Promise<any>;
+declare function authenticate(settings: Object, agent: any, endpointUrl: string): Promise<any>;
 declare namespace authenticate {
-    const authenticatorName: string;
+    let authenticatorName: string;
     /**
      * Main function which goes thru SAML redirects to login form. Fill login form
      * and check result from its. Redirects SAML response back to destinatioin system
@@ -31,7 +31,7 @@ declare namespace authenticate {
      * @returns {Promise} promise which is resolve by response from endpont url after
      *        authentication or rejected for invalid credentials.
      */
-    function samlHandshake(settings: any, agent: any, responseFromEndpointUrl: any): Promise<any>;
+    function samlHandshake(settings: Object, agent: any, responseFromEndpointUrl: Object): Promise<any>;
     /**
      * Process and reject error from endpointurl after SAML authentication.
      * Destination service could reject authorization or it could be down ...
@@ -73,9 +73,9 @@ declare namespace authenticate {
      * @returns {Function} generated handler
      */
     function generateFormHandler(actionFunctionName: string): Function;
-    const submitRedirectToLoginForm: Function;
-    const submitLoginForm: Function;
-    const submitRedirectFromLoginForm: Function;
+    let submitRedirectToLoginForm: Function;
+    let submitLoginForm: Function;
+    let submitRedirectFromLoginForm: Function;
     /**
      * Follow SAML from redirects to login form
      *
@@ -90,7 +90,7 @@ declare namespace authenticate {
      * @return {agent} request (which mimic Promise) and is is resolved/rejected when login page
      *         is found
      */
-    function submitRedirectToLoginFormAction(settings: any, localAgent: agent, response: any): agent;
+    function submitRedirectToLoginFormAction(settings: Object, localAgent: agent, response: Object): agent;
     /**
      * Submit SAP SAML login form
      *
@@ -104,7 +104,7 @@ declare namespace authenticate {
      * @return {agent} request (which mimic Promise) and is is resolved/rejected when login page
      *         is found
      */
-    function submitLoginFormAction(settings: any, localAgent: agent, response: any): agent;
+    function submitLoginFormAction(settings: Object, localAgent: agent, response: Object): agent;
     /**
      * Process SAML response redirects by forms
      *
@@ -118,7 +118,7 @@ declare namespace authenticate {
      * @return {agent} request (which mimic Promise) and is is resolved/rejected when all SAML response
      *         forms are processed
      */
-    function submitRedirectFromLoginFormAction(settings: any, agent: any, response: any): any;
+    function submitRedirectFromLoginFormAction(settings: Object, agent: any, response: Object): any;
     /**
      * Check valid response from login page. If response contains SAMLRequests
      * (sumbit from login page returns login page again) credentials is invalid.
@@ -129,7 +129,7 @@ declare namespace authenticate {
      *
      * @return {Boolean} credentials are correct/incorrect true/false
      */
-    function checkResponseFromLoginPage(responseAfterLoginSubmit: any): boolean;
+    function checkResponseFromLoginPage(responseAfterLoginSubmit: Object): boolean;
     /**
      * Try to load service endpoint with SAP specific SAML authentication
      *
@@ -142,7 +142,7 @@ declare namespace authenticate {
      * @return {Promise} the promise is resolved when endpoint is correctly loaded,
      *                       the promise is rejected othewise
      */
-    function isPossible(response: any): Promise<any>;
+    function isPossible(response: Object): Promise<any>;
     /**
      * Parse text from HTTP response to DOM
      *
@@ -152,6 +152,6 @@ declare namespace authenticate {
      *
      * @return {Promise} the promise is resolved when DOM is parsed
      */
-    function readDom(response: any): Promise<any>;
+    function readDom(response: Object): Promise<any>;
 }
 //# sourceMappingURL=samlSap.d.ts.map

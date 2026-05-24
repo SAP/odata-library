@@ -1,1 +1,1 @@
-{"version":3,"file":"cookie.d.ts","sourceRoot":"","sources":["../../../../lib/agent/authentication/cookie.js"],"names":[],"mappings":";AAIA;;;;;;;;;GASG;AACH,4FAKC;;IAED;;;;;;;;OAQG;IACH,yFA4BC;IAED;;;;;;;OAOG;IACH,iEAYC"}
+{"version":3,"file":"cookie.d.ts","sourceRoot":"","sources":["../../../../lib/agent/authentication/cookie.js"],"names":[],"mappings":";AAIA;;;;;;;;;GASG;AACH,wCAPW,MAAM,iDAYhB;;IAED;;;;;;;;OAQG;IACH,qCANW,MAAM,iDAkChB;IAED;;;;;;;OAOG;IACH,mCAJW,IAAI,CAAC,QAAQ,GAEZ,IAAI,CAAC,QAAQ,CAcxB"}

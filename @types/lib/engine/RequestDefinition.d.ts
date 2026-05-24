@@ -20,7 +20,7 @@ declare class RequestDefinition {
      * @memberof QueryableResource
      */
     count(): Promise<any>;
-    _isCount: boolean;
+    _isCount: boolean | undefined;
     /**
      * Sends GET request to the entity set.
      *
@@ -65,7 +65,7 @@ declare class RequestDefinition {
      *
      * @memberof QueryableResource
      */
-    key(entityKey: any): EntitySet;
+    key(entityKey: Object): EntitySet;
     _keyValue: any;
     /**
      * Add parameter to the current request
@@ -85,7 +85,7 @@ declare class RequestDefinition {
      * @returns {RequestDefinition} itself for chaining
      * @memberof RequestDefinition
      */
-    parameters(parameters?: any): RequestDefinition;
+    parameters(parameters?: Object): RequestDefinition;
     /**
      * After the call of the method the superagent response is resolved instead
      * of the plain objects
@@ -95,14 +95,14 @@ declare class RequestDefinition {
      * @memberof RequestDefinition
      */
     raw(): RequestDefinition;
-    _isRaw: boolean;
+    _isRaw: boolean | undefined;
     /**
      * Creates Object with OData Associations wrappers
      * @returns {RequestDefinition} itself for the chaining
      * @memberof RequestDefinition
      */
     registerAssociations(): RequestDefinition;
-    navigationProperties: {};
+    navigationProperties: {} | undefined;
     /**
      * Search parameter is SAP enhancement for fulltext search
      * in the EntitySet values
@@ -242,8 +242,8 @@ declare class RequestDefinition {
      *
      * @memberof RequestDefinition
      */
-    payload(payload: any): RequestDefinition;
-    _payload: any;
+    payload(payload: Object): RequestDefinition;
+    _payload: Object | undefined;
     /**
      * Populate actions to the service object
      *
@@ -252,7 +252,7 @@ declare class RequestDefinition {
      * @memberof RequestDefinition
      */
     populateActions(actions: engine.Action[]): void;
-    actions: {};
+    actions: {} | undefined;
     /**
      * Mark request definition as request for raw value ($value keyword)
      *
@@ -265,7 +265,7 @@ declare class RequestDefinition {
      * @memberof RequestDefinition
      */
     value(propertyName?: string, ...args: any[]): RequestDefinition;
-    _isValue: boolean;
-    _valuePropertyName: string;
+    _isValue: boolean | undefined;
+    _valuePropertyName: string | undefined;
 }
 //# sourceMappingURL=RequestDefinition.d.ts.map

@@ -14,7 +14,7 @@ declare class EntityContainer extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for entity container
      * @memberof EntityContainer
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Gets an EntitySet defined in container
      *
@@ -46,7 +46,7 @@ declare class EntityContainer extends AnnotationTarget {
      * @returns {Object} resolved container element
      * @memberof EntityContainer
      */
-    resolveModelPath(path?: strin): any;
+    resolveModelPath(path?: strin): Object;
 }
 import AnnotationTarget = require("../../oasis/annotations/AnnotationTarget");
 import EntitySet = require("./EntitySet");

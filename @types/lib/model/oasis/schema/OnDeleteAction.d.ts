@@ -13,7 +13,7 @@ declare class OnDeleteAction extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for enum member
      * @memberof OnDeleteAction
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=OnDeleteAction.d.ts.map

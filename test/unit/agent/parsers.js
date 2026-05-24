@@ -123,6 +123,24 @@ describe("parsers", function () {
         res.on.getCall(1).args[1]();
       }, 0);
     });
+
+    it("Receive invalid JSON with non-empty text attaches rawResponse and statusCode", function (done) {
+      let res = {
+        on: sinon.stub(),
+        setEncoding: sinon.stub(),
+        statusCode: 400,
+      };
+      parsers["application/json"](res, (err) => {
+        assert.ok(err);
+        assert.equal(err.rawResponse, "{invalid");
+        assert.equal(err.statusCode, 400);
+        done();
+      });
+      setTimeout(() => {
+        res.on.getCall(0).args[1]("{invalid");
+        res.on.getCall(1).args[1]();
+      }, 0);
+    });
   });
 
   describe("parseBinary()", function () {

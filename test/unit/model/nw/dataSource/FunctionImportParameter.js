@@ -74,6 +74,23 @@ describe("FunctionImportParameter", function () {
       );
     });
 
+    it("throws with descriptive error when mode invalid and strict setting exists", function () {
+      assert.throws(
+        () =>
+          new FunctionImportParameter(
+            {
+              $: {
+                Mode: "None",
+                Name: "name",
+                Type: "Edm.String",
+              },
+            },
+            Object.assign({ settings: { strict: true } }, sampleSchema)
+          ),
+        /Unknown mode/
+      );
+    });
+
     it("Do not throws error on invalid metadata for non-strict mode", function () {
       const functionImportParameter = new FunctionImportParameter(
         {

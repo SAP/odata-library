@@ -94,6 +94,10 @@ describe("agent/batch/Manager", function () {
       assert.strictEqual(manager.defaultBatch, undefined);
     });
 
+    it("Missing default batch returns undefined for defaultChangeSet", function () {
+      assert.strictEqual(manager.defaultChangeSet, undefined);
+    });
+
     it("Existing default changeset in default batch", function () {
       let testBatch = new Batch();
       let testChangeSet;

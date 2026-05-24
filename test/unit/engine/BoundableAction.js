@@ -392,6 +392,7 @@ describe("engine/BoundableAction", function () {
     const parameters = {
       a: 1,
       b: [{ c: 2 }],
+      d: "no-formatter",
     };
     const request = {
       header: sinon.stub(),
@@ -408,6 +409,9 @@ describe("engine/BoundableAction", function () {
           formatBody: (x) => x,
         },
       },
+    });
+    getParamDefinition.withArgs("d").returns({
+      type: {},
     });
     assert.deepEqual(action.getPayload(parameters, request), {
       a: 1,

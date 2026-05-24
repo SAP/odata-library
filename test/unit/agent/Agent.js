@@ -295,6 +295,14 @@ describe("lib/engine/Agent", function () {
           );
         });
     });
+
+    it("omits headers assignment when headers is not an object", function () {
+      return agent.sendRequest("get", "INPUT_URL", null).then((response) => {
+        assert.equal(response, "RESPONSE");
+        const fetchOpts = agent.fetch.getCall(0).args[1];
+        assert.deepEqual(fetchOpts.headers, {});
+      });
+    });
   });
 
   describe(".batch()", function () {
@@ -448,6 +456,27 @@ describe("lib/engine/Agent", function () {
         assert.equal(error, "ERROR");
       });
     });
+
+    it("uses defaultBatch when batch argument is not provided", function () {
+      let batchObject = {
+        payload: sinon.stub().returns("PAYLOAD"),
+        process: sinon.stub().returns(Promise.resolve("REQUEST_RESPONSES")),
+        boundary: sinon.stub().returns("BOUNDARY"),
+        resolve: sinon.stub(),
+      };
+      let promiseBatch = Promise.resolve("BATCH_RESPONSE");
+      promiseBatch.request = {};
+
+      sinon.stub(agent, "fetchToken").returns(Promise.resolve("X_CSRF_TOKEN"));
+      sinon.stub(agent, "sendRequest").returns(promiseBatch);
+      sinon.stub(agent, "normalizeBatchResponse").returns("NORMALIZED");
+      agent.batchManager.remove = sinon.stub();
+      agent.batchManager.batches.push(batchObject);
+
+      return agent.batch().then(() => {
+        assert.ok(batchObject.payload.called);
+      });
+    });
   });
 
   it(".put()", function () {
@@ -496,6 +525,14 @@ describe("lib/engine/Agent", function () {
       assert.ok(_.isFunction(logger.info));
       assert.ok(_.isFunction(logger.warn));
       assert.ok(_.isFunction(logger.error));
+    });
+    it("Default logger no-op methods do not throw", function () {
+      let logger = agent.initializeLogger({});
+      assert.doesNotThrow(() => logger.trace("msg"));
+      assert.doesNotThrow(() => logger.debug("msg"));
+      assert.doesNotThrow(() => logger.info("msg"));
+      assert.doesNotThrow(() => logger.warn("msg"));
+      assert.doesNotThrow(() => logger.error("msg"));
     });
     it("Create implicit logger", function () {
       let logger = {
@@ -696,6 +733,12 @@ describe("lib/engine/Agent", function () {
     it("invalid options", function () {
       assert.throws(function () {
         agent.fetch("URL", null);
+      });
+    });
+
+    it("uses default empty opts when opts not provided", function () {
+      return agent.fetch("URL").then(function () {
+        assert.ok(agent.readCookies.calledWithExactly("URL"));
       });
     });
     it("use fetch to handle normal http request ", function () {

@@ -174,6 +174,16 @@ describe("agent/batch/Batch", function () {
         assert.ok(err.message.match(/Boundary/));
       });
     });
+
+    it("handles end boundary with empty accumulator (acc.length === 0)", function () {
+      batchResponse.text = sinon
+        .stub()
+        .returns(Promise.resolve("--batch_AAAA-BBBB-CCCC--"));
+      batch.boundaryFromResponse.returns("batch_AAAA-BBBB-CCCC");
+      return batch.process(batchResponse).then((responses) => {
+        assert.deepEqual(responses, []);
+      });
+    });
   });
 
   describe(".defaultChangeSet", function () {

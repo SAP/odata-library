@@ -81,6 +81,13 @@ describe("Collection", function () {
 
       let collection = new Collection(md, builder);
       assert.equal(collection.length, 1);
+      assert.deepEqual(collection.conditionalItems, [{}]);
+    });
+
+    it("conditionalItems is undefined when no If items", function () {
+      let md = { String: ["s"] };
+      let collection = new Collection(md, builder);
+      assert.equal(collection.conditionalItems, undefined);
     });
   });
 });

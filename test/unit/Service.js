@@ -368,6 +368,27 @@ describe("Service", function () {
       assert.equal(service.ACTION_NAME3, "FAKE");
       assert.ok(agent.logger.warn.called);
     });
+
+    it("warns when shorthand for unbound action already exists", function () {
+      let agent = {
+        logger: { warn: sinon.spy() },
+      };
+      const metadata = {
+        model: {
+          getSchema: () => ({
+            actions: [{ name: "ACTION_CONFLICT", isBound: false }],
+            getEntityContainer: sinon.stub().returns({
+              actionImports: [{ action: { name: "ACTION_CONFLICT" } }],
+            }),
+          }),
+        },
+      };
+      service.ACTION_CONFLICT = "ALREADY_EXISTS";
+      service.buildActionObjects(agent, metadata, {});
+      assert.ok(
+        agent.logger.warn.calledWith(sinon.match(/ACTION_CONFLICT.*shorthand/))
+      );
+    });
   });
 
   it(".createBatch()", function () {
@@ -377,6 +398,20 @@ describe("Service", function () {
       },
     };
     assert.equal(service.createBatch(), "BATCH");
+  });
+
+  it(".defaultSchema getter returns schema from metadata", function () {
+    const schema = { entities: [] };
+    metadataClass.model.getSchema = sinon.stub().returns(schema);
+    sinon.stub(service, "buildEntitySets").returns({});
+    sinon.stub(service, "buildFunctionImports").returns({});
+    sinon.stub(service, "buildActionObjects").returns({});
+    sinon.stub(service, "buildFunctionObjects").returns({});
+    service.initializeProperties("CONNECTION");
+    return service.init.then(() => {
+      assert.strictEqual(service.defaultSchema, schema);
+      assert.ok(metadataClass.model.getSchema.called);
+    });
   });
 
   it(".sendBatch()", function () {

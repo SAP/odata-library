@@ -151,6 +151,23 @@ describe("agent/batch/Batch", function () {
     assert.deepEqual(request.body(), ['"PAYLOAD"']);
   });
 
+  it(".body throws for content with non-json Accept header", function () {
+    request = new Request(
+      "POST",
+      "/path/to/resource",
+      { Accept: "application/xml" },
+      "PAYLOAD"
+    );
+    assert.throws(() => request.body(), /not supported/);
+  });
+
+  it(".body returns empty array when no content", function () {
+    request = new Request("GET", "/path/to/resource", {
+      Accept: "application/json",
+    });
+    assert.deepEqual(request.body(), []);
+  });
+
   it(".process", function () {
     let resolveResponse;
     let rawResponseCheck;

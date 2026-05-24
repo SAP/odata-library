@@ -84,6 +84,28 @@ describe("BoundObject", function () {
     boundObjectType.initSchemaDependentProperties(schema);
     assert.equal(boundObjectType.returnType.type, type);
     assert.equal(boundObjectType.parameters[0].type, type);
+    assert.equal(boundObjectType.boundType, type);
+    assert.equal(boundObjectType.schema, schema);
+  });
+
+  it(".initSchemaDependentProperties without returnType", function () {
+    const minimalMD = {
+      $: { Name: "Function1" },
+      ReturnType: [{ $: { Type: "type" } }],
+    };
+    const bo = new BoundObject(minimalMD);
+    bo.initSchemaDependentProperties(schema);
+    assert.equal(bo.schema, schema);
+  });
+
+  it(".initSchemaDependentProperties without any returnType (covers false branch of has returnType)", function () {
+    const noReturnTypeMD = {
+      $: { Name: "Function1" },
+    };
+    const bo = new BoundObject(noReturnTypeMD);
+    bo.initSchemaDependentProperties(schema);
+    assert.equal(bo.schema, schema);
+    assert.equal(bo.returnType, undefined);
   });
 
   it(".resolveModelPath()", function () {

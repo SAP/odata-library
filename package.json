@@ -23,7 +23,6 @@
     "validate:eslint": "eslint \"lib/**/*.js\" \"test/**/*.js\"",
     "validate:test": "mocha -R progress --recursive ./test/unit/ ./test/func/",
     "watch": "nodemon -e js,xml -x \"npm run validate\"",
-    "watch2": "node --watch --watch-path=./lib --run validate",
     "build": "tsc",
     "prepare": "husky",
     "prepublishOnly": "npm run build"

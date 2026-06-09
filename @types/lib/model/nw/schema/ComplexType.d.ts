@@ -26,7 +26,7 @@ declare class ComplexType extends AnnotationTarget {
      * @returns {Object} property with given name or undefined, if property doesn't exist
      * @memberof ComplexType
      */
-    getProperty(name?: string, strict?: bool): any;
+    getProperty(name?: string, strict?: bool): Object;
     /**
      * Resolves model path within this type.
      *
@@ -34,7 +34,7 @@ declare class ComplexType extends AnnotationTarget {
      * @returns {Object} resolved element
      * @memberof ComplexType
      */
-    resolveModelPath(path?: string): any;
+    resolveModelPath(path?: string): Object;
 }
 import AnnotationTarget = require("../../oasis/annotations/AnnotationTarget");
 //# sourceMappingURL=ComplexType.d.ts.map

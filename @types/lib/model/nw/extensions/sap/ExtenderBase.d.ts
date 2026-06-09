@@ -17,7 +17,7 @@ declare class ExtenderBase {
      * @param {[Array]} attributes array of arrays defining attributes by name (kebap case) in first element and optional format function in second element
      * @memberof ExtenderBase
      */
-    static applyAttributeExtension(item: any, attributes: [any[]]): void;
+    static applyAttributeExtension(item: Object, attributes: [any[]]): void;
     /**
      * Applies extension object to schema element.
      *
@@ -26,7 +26,7 @@ declare class ExtenderBase {
      * @param {Object} extension extension object
      * @memberof ExtenderBase
      */
-    static applyExtension(item: any, extension: any): void;
+    static applyExtension(item: Object, extension: Object): void;
     /**
      * Creates sap extension for accessing attribute values.
      *
@@ -34,7 +34,7 @@ declare class ExtenderBase {
      * @param {[Array]} [attributes] array of arrays defining attributes by name (kebap case) in first element and optional format function in second element
      * @returns {Object} extension object
      */
-    static createAttributeExtension(source?: any, attributes?: [any[]]): any;
+    static createAttributeExtension(source?: Object, attributes?: [any[]]): Object;
     static defaultFalseBool(value: any): boolean;
     static defaultTrueBool(value: any): boolean;
 }

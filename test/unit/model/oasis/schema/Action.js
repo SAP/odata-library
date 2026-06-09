@@ -86,6 +86,12 @@ describe("Action", function () {
         false
       );
     });
+    it("no match when element name is completely different", function () {
+      assert.equal(
+        actionType.matchModelPath({ element: "DifferentAction" }),
+        false
+      );
+    });
   });
 
   describe("isBoundByType", function () {
@@ -120,6 +126,10 @@ describe("Action", function () {
       actionType.parameters[2].type = new EntityType({
         $: { Name: "EntityType1" },
       });
+      assert.equal(actionType.isBoundByType("ns.EntityType1"), false);
+    });
+    it("no thisParameter when none matches _it with EntityType", function () {
+      actionType.parameters[2].type = "not-an-entity-type";
       assert.equal(actionType.isBoundByType("ns.EntityType1"), false);
     });
   });

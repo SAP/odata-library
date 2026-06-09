@@ -344,6 +344,11 @@ describe("CsdlSchema", function () {
     });
   });
 
+  it(".applyExtensions()", function () {
+    const schema = new CsdlSchema(sampleSchemaMD, settings);
+    assert.doesNotThrow(() => schema.applyExtensions(settings));
+  });
+
   it("#parseModelPath", function () {
     assert.deepEqual(
       CsdlSchema.parseModelPath(

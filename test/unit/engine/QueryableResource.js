@@ -457,6 +457,20 @@ describe("QueryableResource", function () {
         assert.ok(entitySet.postBatchRequest.notCalled);
       });
     });
+
+    it("includes urlQuery in path when urlQuery returns a value", function () {
+      entitySet.urlQuery.returns("$format=json");
+      entitySet.postJSONRequest.returns(Promise.resolve());
+
+      return entitySet.post("BODY").then(() => {
+        assert.ok(
+          entitySet.postJSONRequest.calledWithExactly(
+            "/ENTITY_SET_NAME?$format=json",
+            "BODY"
+          )
+        );
+      });
+    });
   });
 
   it("isPlainRequest", function () {
@@ -595,6 +609,13 @@ describe("QueryableResource", function () {
     sandbox.stub(requestPut, "call");
     entitySet.put("BODY");
     assert.ok(requestPut.call.calledWithExactly("BODY", entitySet));
+  });
+
+  it(".get() delegates to defaultRequest.get", function () {
+    sinon.stub(entitySet.defaultRequest, "get").returns("GET_PROMISE");
+    const result = entitySet.get("ARG1", "ARG2");
+    assert.strictEqual(result, "GET_PROMISE");
+    assert.ok(entitySet.defaultRequest.get.calledWithExactly("ARG1", "ARG2"));
   });
 
   describe(".processUpdateCall()", function () {
@@ -807,6 +828,18 @@ describe("QueryableResource", function () {
         innerAgent.batchManager.defaultBatch
       );
     });
+
+    it("throws for zero body arguments", function () {
+      assert.throws(() => {
+        entitySet.processUpdateCall("merge");
+      }, /Invalid body parameter/);
+    });
+
+    it("throws for more than two body arguments", function () {
+      assert.throws(() => {
+        entitySet.processUpdateCall("merge", {}, {}, {});
+      }, /Invalid body parameter/);
+    });
   });
 
   it(".merge()", function () {
@@ -831,6 +864,76 @@ describe("QueryableResource", function () {
       sinon.stub(entitySet, "key");
     });
     it("Successfully deletes an entry", function () {});
+
+    it("delegates to agent.delete via _handleAgentCall when no batch", function () {
+      innerAgent.batchManager = {};
+      innerEntitySetModel.name = "ENTITY_SET_NAME";
+      innerEntityTypeModel.key = [{ name: "Id", type: defaultType }];
+      entitySet.defaultRequest._keyValue = { Id: "'1'" };
+      sinon
+        .stub(entitySet, "getSingleResourcePath")
+        .returns("ENTITY_SET_NAME(Id='1')");
+      sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
+
+      entitySet.delete();
+
+      assert.ok(entitySet._handleAgentCall.calledOnce);
+    });
+
+    it("invokes agent.delete with If-Match header via _handleAgentCall callback", function () {
+      innerAgent.batchManager = {};
+      innerEntitySetModel.name = "ENTITY_SET_NAME";
+      innerEntityTypeModel.key = [{ name: "Id", type: defaultType }];
+      entitySet.defaultRequest._keyValue = { Id: "'1'" };
+      sinon
+        .stub(entitySet, "getSingleResourcePath")
+        .returns("ENTITY_SET_NAME(Id='1')");
+      innerAgent.delete = sinon
+        .stub()
+        .returns(Promise.resolve("DELETE_RESULT"));
+      sinon.stub(entitySet, "_handleAgentCall").callsFake((cb) => {
+        const request = { header: sinon.stub(), _headers: "HEADERS" };
+        return Promise.resolve(cb(request));
+      });
+
+      return entitySet.delete().then(() => {
+        assert.ok(innerAgent.delete.calledOnce);
+        assert.ok(
+          innerAgent.delete.getCall(0).args[0].includes("ENTITY_SET_NAME")
+        );
+      });
+    });
+
+    it("passes key properties before deleting when argument is given", function () {
+      innerAgent.batchManager = {};
+      sinon
+        .stub(entitySet, "getSingleResourcePath")
+        .returns("ENTITY_SET_NAME(Id='1')");
+      sinon.stub(entitySet, "_handleAgentCall").returns(Promise.resolve());
+
+      entitySet.delete({ Id: "1" });
+
+      assert.ok(entitySet.key.calledWithExactly({ Id: "1" }));
+    });
+
+    it("uses batch delete when defaultBatch exists", function () {
+      const batchDelete = sinon.stub().returns("BATCH_PROMISE");
+      innerAgent.batchManager = {
+        defaultBatch: { delete: batchDelete },
+        defaultChangeSet: "DEFAULT_CHANGESET",
+      };
+      sinon
+        .stub(entitySet, "getSingleResourcePath")
+        .returns("ENTITY_SET_NAME(Id='1')");
+      sinon.stub(entitySet, "_handleBatchCall").returns(Promise.resolve());
+
+      entitySet.delete();
+
+      assert.ok(entitySet._handleBatchCall.calledOnce);
+      const cb = entitySet._handleBatchCall.getCall(0).args[0];
+      cb();
+      assert.ok(batchDelete.calledOnce);
+    });
   });
 
   describe(".raw()", function () {
@@ -908,9 +1011,32 @@ describe("QueryableResource", function () {
       );
       assert.ok(request.header.calledWith("Accept", "application/json"));
     });
-  });
 
-  describe(".count()", function () {
+    it("does not set Accept header in batch for ENTITY_VALUE response type", function () {
+      const getMethod = sinon.stub();
+      const request = entitySet.request();
+
+      sinon.stub(request, "header");
+      request._path = "PATH";
+      request._headers = {};
+      innerAgent.batchManager = {
+        defaultBatch: { get: getMethod },
+        defaultChangeSet: "DEFAULT_CHANGESET",
+      };
+      sinon.stub(entitySet, "_handleBatchCall").returns("PROMISE");
+      sinon.stub(request, "calculatePath");
+      sandbox
+        .stub(responseType, "determine")
+        .returns(responseType.ENTITY_VALUE);
+
+      entitySet.executeGet(request);
+
+      const cb = entitySet._handleBatchCall.getCall(0).args[0];
+      cb();
+
+      assert.ok(request.calculatePath.called);
+      assert.ok(request.header.notCalled);
+    });
     it("count by default request", function () {
       entitySet._requestDefinition = {
         count: sinon.stub().returns(Promise.resolve()),
@@ -1097,6 +1223,15 @@ describe("QueryableResource", function () {
         entityTypeProperties
       )
     );
+  });
+
+  it(".processNavigationProperties() throws when entityTypeModel is not an object", function () {
+    assert.throws(() => {
+      entitySet.processNavigationProperties({}, null);
+    }, /entityTypeModel is mandatory/);
+    assert.throws(() => {
+      entitySet.processNavigationProperties({}, undefined);
+    }, /entityTypeModel is mandatory/);
   });
 
   describe(".processNavigationPropertyItems()", function () {
@@ -1351,6 +1486,18 @@ describe("QueryableResource", function () {
       assert(entitySet.reset.called);
       return promise;
     });
+
+    it("uses defaultRequest when no requestDefinition provided", function () {
+      const call = sinon.stub().returns(Promise.resolve("RESPONSE"));
+      sinon.stub(entitySet, "reset");
+      sinon.stub(entitySet, "determineRequestHeaders");
+      sinon.stub(entitySet, "determineResponseResult").returns("RESULT");
+      return entitySet._handleAgentCall(call).then(() => {
+        assert(
+          entitySet.determineRequestHeaders.calledWith(entitySet.defaultRequest)
+        );
+      });
+    });
   });
 
   describe(".determineRequestHeaders()", function () {
@@ -1503,5 +1650,9 @@ describe("QueryableResource", function () {
           assert.equal(res, "PARSED_COUNT");
         });
     });
+  });
+
+  it(".createNavigationProperty", function () {
+    assert.doesNotThrow(() => entitySet.createNavigationProperty());
   });
 });

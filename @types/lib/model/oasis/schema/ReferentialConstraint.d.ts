@@ -13,7 +13,7 @@ declare class ReferentialConstraint extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for enum member
      * @memberof ReferentialConstraint
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=ReferentialConstraint.d.ts.map

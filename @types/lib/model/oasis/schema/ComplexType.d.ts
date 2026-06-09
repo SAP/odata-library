@@ -13,7 +13,7 @@ declare class ComplexType extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for complex type
      * @memberof ComplexType
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     navigationProperties: any;
     /**
      * Initializes schema dependent properties. Decoupled from constructor,
@@ -33,7 +33,7 @@ declare class ComplexType extends AnnotationTarget {
      * @memberof ComplexType
      * @throws {Error} when property is not found
      */
-    getProperty(name?: string, strict?: bool): any;
+    getProperty(name?: string, strict?: bool): Object;
     /**
      * Gets navigation property by its name.
      *
@@ -43,7 +43,7 @@ declare class ComplexType extends AnnotationTarget {
      * @memberof EntityType
      * @throws {Error} when navigation property is not found
      */
-    getNavigationProperty(name?: string, strict?: bool): any;
+    getNavigationProperty(name?: string, strict?: bool): Object;
     /**
      * Resolves model path within this type.
      *
@@ -51,7 +51,7 @@ declare class ComplexType extends AnnotationTarget {
      * @returns {Object} model element
      * @memberof EntityType
      */
-    resolveModelPath(path?: string): any;
+    resolveModelPath(path?: string): Object;
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");
 //# sourceMappingURL=ComplexType.d.ts.map

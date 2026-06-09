@@ -139,6 +139,20 @@ describe("agent/batch/ChangeSet", function () {
         ]);
       });
     });
+    it("Multiple boundary headers resolves using last one", function () {
+      let payload = [
+        "Content-Type: multipart/mixed; boundary=changeset_FIRST",
+        "Content-Type: multipart/mixed; boundary=changeset_SECOND",
+        "--changeset_SECOND",
+        "--changeset_SECOND--",
+        "",
+      ];
+
+      return changeSet.process(payload).then((results) => {
+        assert.deepEqual(results, []);
+      });
+    });
+
     it("Missing boundary", function () {
       let payload = [
         "--changeset_a6be-a5ee-2c7e",

@@ -21,7 +21,7 @@ declare class Manager extends Base {
      * @public
      * @memberof Manager
      */
-    public add(): any;
+    public add(): Object;
     /**
      * Remove batch from the currently registered batch objects
      *
@@ -43,7 +43,7 @@ declare class Manager extends Base {
      * @public
      * @memberof Manager
      */
-    public has(batch: any): boolean;
+    public has(batch: Object): boolean;
     /**
      * Find index of batch passed as parameter. Raise error if batch is not
      * Batch type

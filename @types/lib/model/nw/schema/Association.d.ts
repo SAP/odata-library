@@ -13,7 +13,7 @@ declare class Association {
      * @param {Object} rawMetadata raw metadata object for the association
      * @memberof Association
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Initializes schema dependent properties. Decoupled from constructor,
      * because it needs to resolve schema (type) references.
@@ -29,7 +29,7 @@ declare class Association {
      * @returns {Object} resolved element
      * @memberof ComplexType
      */
-    resolveModelPath(path?: string): any;
+    resolveModelPath(path?: string): Object;
     /**
      * Find endpoint of the association
      *

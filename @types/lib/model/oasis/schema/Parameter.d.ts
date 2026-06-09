@@ -13,7 +13,7 @@ declare class Parameter extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for a return type
      * @memberof Parameter
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Initializes schema dependent properties. Decoupled from constructor,
      * because it needs to resolve schema (type) references.

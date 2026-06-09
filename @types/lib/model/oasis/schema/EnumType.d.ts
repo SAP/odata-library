@@ -13,7 +13,7 @@ declare class EnumType extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for enum type
      * @memberof EnumType
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     _checkConsistency(): void;
     _checkMembers(): void;
 }

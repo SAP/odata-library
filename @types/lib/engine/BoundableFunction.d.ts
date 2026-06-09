@@ -42,7 +42,7 @@ declare class BoundableFunction {
      *
      * @memberof BoundableFunction
      */
-    public call(entity?: EntitySet, parameters?: any): Promise<any>;
+    public call(entity?: EntitySet, parameters?: Object): Promise<any>;
     /**
      * Create batch/direct call to the function from the odata service.
      *

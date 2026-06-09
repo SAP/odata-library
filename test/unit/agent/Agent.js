@@ -5,7 +5,6 @@ const sinon = require("sinon");
 const _ = require("lodash");
 const agentUrl = require("../../../lib/agent/url");
 const xml2js = require("xml2js");
-const tough = require("tough-cookie");
 const log = require("../../../lib/agent/log");
 const authentication = require("../../../lib/agent/authentication");
 const https = require("https");
@@ -17,13 +16,11 @@ let sandbox = sinon.createSandbox();
 describe("lib/engine/Agent", function () {
   beforeEach(function () {
     sandbox.stub(global, "fetch");
-    sandbox.stub(tough, "CookieJar").returns({
-      getCookieString: sinon.stub(),
-      setCookie: sinon.stub(),
-    });
     agent = new Agent({
       url: "URL",
     });
+    sinon.stub(agent.cookieJar, "getCookieString").resolves("");
+    sinon.stub(agent.cookieJar, "setCookie").resolves();
   });
 
   afterEach(function () {
@@ -298,6 +295,14 @@ describe("lib/engine/Agent", function () {
           );
         });
     });
+
+    it("omits headers assignment when headers is not an object", function () {
+      return agent.sendRequest("get", "INPUT_URL", null).then((response) => {
+        assert.equal(response, "RESPONSE");
+        const fetchOpts = agent.fetch.getCall(0).args[1];
+        assert.deepEqual(fetchOpts.headers, {});
+      });
+    });
   });
 
   describe(".batch()", function () {
@@ -451,6 +456,27 @@ describe("lib/engine/Agent", function () {
         assert.equal(error, "ERROR");
       });
     });
+
+    it("uses defaultBatch when batch argument is not provided", function () {
+      let batchObject = {
+        payload: sinon.stub().returns("PAYLOAD"),
+        process: sinon.stub().returns(Promise.resolve("REQUEST_RESPONSES")),
+        boundary: sinon.stub().returns("BOUNDARY"),
+        resolve: sinon.stub(),
+      };
+      let promiseBatch = Promise.resolve("BATCH_RESPONSE");
+      promiseBatch.request = {};
+
+      sinon.stub(agent, "fetchToken").returns(Promise.resolve("X_CSRF_TOKEN"));
+      sinon.stub(agent, "sendRequest").returns(promiseBatch);
+      sinon.stub(agent, "normalizeBatchResponse").returns("NORMALIZED");
+      agent.batchManager.remove = sinon.stub();
+      agent.batchManager.batches.push(batchObject);
+
+      return agent.batch().then(() => {
+        assert.ok(batchObject.payload.called);
+      });
+    });
   });
 
   it(".put()", function () {
@@ -499,6 +525,14 @@ describe("lib/engine/Agent", function () {
       assert.ok(_.isFunction(logger.info));
       assert.ok(_.isFunction(logger.warn));
       assert.ok(_.isFunction(logger.error));
+    });
+    it("Default logger no-op methods do not throw", function () {
+      let logger = agent.initializeLogger({});
+      assert.doesNotThrow(() => logger.trace("msg"));
+      assert.doesNotThrow(() => logger.debug("msg"));
+      assert.doesNotThrow(() => logger.info("msg"));
+      assert.doesNotThrow(() => logger.warn("msg"));
+      assert.doesNotThrow(() => logger.error("msg"));
     });
     it("Create implicit logger", function () {
       let logger = {
@@ -699,6 +733,12 @@ describe("lib/engine/Agent", function () {
     it("invalid options", function () {
       assert.throws(function () {
         agent.fetch("URL", null);
+      });
+    });
+
+    it("uses default empty opts when opts not provided", function () {
+      return agent.fetch("URL").then(function () {
+        assert.ok(agent.readCookies.calledWithExactly("URL"));
       });
     });
     it("use fetch to handle normal http request ", function () {
@@ -1012,33 +1052,24 @@ describe("lib/engine/Agent", function () {
   });
 
   describe(".readCookies", function () {
-    let promise;
     it("read cookies with url as string", function () {
-      promise = agent.readCookies("URL");
-      assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
-      agent.cookieJar.getCookieString.getCall(0).args[1](null, "COOKIES");
-      return promise.then((cookies) => {
+      agent.cookieJar.getCookieString.resolves("COOKIES");
+      return agent.readCookies("URL").then((cookies) => {
+        assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
         assert.equal(cookies, "COOKIES");
       });
     });
     it("read cookies with url as HTTP response", function () {
-      promise = agent.readCookies({
-        url: "URL",
-      });
-      assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
-      agent.cookieJar.getCookieString.getCall(0).args[1](null, "COOKIES");
-      return promise.then((cookies) => {
+      agent.cookieJar.getCookieString.resolves("COOKIES");
+      return agent.readCookies({ url: "URL" }).then((cookies) => {
+        assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
         assert.equal(cookies, "COOKIES");
       });
     });
     it("read cookies rejected", function () {
-      promise = agent.readCookies({
-        url: "URL",
-      });
-      assert.ok(agent.cookieJar.getCookieString.calledWith("URL"));
-      agent.cookieJar.getCookieString.getCall(0).args[1]("ERROR", "COOKIES");
-      return promise.catch((err) => {
-        assert.equal(err, "ERROR");
+      agent.cookieJar.getCookieString.rejects("ERROR");
+      return agent.readCookies({ url: "URL" }).catch((err) => {
+        assert.equal(err.name, "ERROR");
       });
     });
   });
@@ -1143,37 +1174,31 @@ describe("lib/engine/Agent", function () {
           getSetCookie: sinon.stub().returns([]),
         },
       };
-      sandbox.stub(tough.Cookie, "parse").returnsArg(0);
     });
     it("cookie header is not exists", function () {
       return agent.saveCookies(response).then(() => {
-        assert.ok(tough.CookieJar().setCookie.notCalled);
+        assert.ok(agent.cookieJar.setCookie.notCalled);
       });
     });
     it("cookie header exists", function () {
-      let promise;
-      response.headers.getSetCookie.returns(["COOKIE1", "COOKIE2"]);
-      promise = agent.saveCookies(response);
-      tough.CookieJar().setCookie.getCall(0).args[2](null, "COOKIE1");
-      tough.CookieJar().setCookie.getCall(1).args[2](null, "COOKIE2");
-
-      return promise.then((result) => {
-        assert.deepEqual(result, ["COOKIE1", "COOKIE2"]);
-        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE1", "URL"));
-        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE2", "URL"));
+      response.headers.getSetCookie.returns(["foo=bar", "baz=qux"]);
+      agent.cookieJar.setCookie.resolves("SAVED_COOKIE");
+      return agent.saveCookies(response).then((result) => {
+        assert.equal(result.length, 2);
+        assert.ok(agent.cookieJar.setCookie.calledTwice);
+        assert.equal(agent.cookieJar.setCookie.getCall(0).args[1], "URL");
+        assert.equal(agent.cookieJar.setCookie.getCall(1).args[1], "URL");
       });
     });
     it("cookie saving raises error", function () {
-      let promise;
-      response.headers.getSetCookie.returns(["COOKIE1", "COOKIE2"]);
-      promise = agent.saveCookies(response);
-      tough.CookieJar().setCookie.getCall(0).args[2](null, "COOKIE1");
-      tough.CookieJar().setCookie.getCall(1).args[2]("ERROR");
-
-      return promise.catch((err) => {
-        assert.equal(err, "ERROR");
-        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE1", "URL"));
-        assert.ok(tough.CookieJar().setCookie.calledWith("COOKIE2", "URL"));
+      response.headers.getSetCookie.returns(["foo=bar", "baz=qux"]);
+      agent.cookieJar.setCookie
+        .onCall(0)
+        .resolves("SAVED_COOKIE")
+        .onCall(1)
+        .rejects(new Error("ERROR"));
+      return agent.saveCookies(response).catch((err) => {
+        assert.equal(err.message, "ERROR");
       });
     });
   });

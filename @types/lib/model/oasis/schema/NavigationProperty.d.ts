@@ -14,7 +14,7 @@ declare class NavigationProperty extends AnnotationTarget {
      * @param {Object} rawMetadata raw metadata object for NavigationProperty
      * @memberof NavigationProperty
      */
-    constructor(rawMetadata: any);
+    constructor(rawMetadata: Object);
     /**
      * Initializes schema dependent properties. Decoupled from constructor,
      * because it needs to resolve schema (type) references.
@@ -31,7 +31,7 @@ declare class NavigationProperty extends AnnotationTarget {
      * @returns {Object} navigation property target
      * @memberof NavigationProperty
      */
-    getTarget(schema: CsdlSchema, source: EntitySet | Singleton): any;
+    getTarget(schema: CsdlSchema, source: EntitySet | Singleton): Object;
     _processOnDelete(rawMetadata: any): void;
 }
 import AnnotationTarget = require("../annotations/AnnotationTarget");

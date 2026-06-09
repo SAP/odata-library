@@ -9,7 +9,7 @@ export = authenticate;
  * @return {Promise} the promise is resolved when endpoint is correctly loaded,
  *                       the promise is rejected othewise
  */
-declare function authenticate(settings: any, agent: any, endpointUrl: string): Promise<any>;
+declare function authenticate(settings: Object, agent: any, endpointUrl: string): Promise<any>;
 declare namespace authenticate {
     /**
      * Pass cookies for authentication to agent
@@ -20,7 +20,7 @@ declare namespace authenticate {
      *
      * @return {Promise} the promise is resolved when cookies are set
      */
-    function setCookiesToAgent(settings: any, agent: any, endpointUrl: string): Promise<any>;
+    function setCookiesToAgent(settings: Object, agent: any, endpointUrl: string): Promise<any>;
     /**
      * Check response from service endpoint to determine
      * connection status. Throws for invalid statuses
@@ -30,6 +30,6 @@ declare namespace authenticate {
      * @return {HTTP.Response} the valid response
      */
     function processResponse(response: HTTP.Response): HTTP.Response;
-    const authenticatorName: string;
+    let authenticatorName: string;
 }
 //# sourceMappingURL=cookie.d.ts.map

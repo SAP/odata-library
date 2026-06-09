@@ -17,7 +17,7 @@ declare class Request {
      * @public
      * @memberof Request
      */
-    constructor(httpMethod: string, inputUrl: string, headers: any, payload: string);
+    constructor(httpMethod: string, inputUrl: string, headers: Object, payload: string);
     responseType: any;
     /**
      * Generate HTTP request which is part of thh multipart/mixed content for the OData batch

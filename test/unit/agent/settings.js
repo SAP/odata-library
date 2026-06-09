@@ -713,6 +713,25 @@ describe("settings", function () {
         ).message.match("keyB")
       );
     });
+    it("found SSL definition with https and all mandatory keys present", function () {
+      assert.equal(
+        settings._.checkTLSDefinition(
+          {
+            MANDATORY_KEYS: ["auth.cert", "auth.key"],
+            source: {
+              "auth.cert": "CERT",
+              "auth.key": "KEY",
+            },
+          },
+          "CONNECTION_SETTINGS",
+          "PROCESS_ENV",
+          {
+            url: "https://localhost",
+          }
+        ),
+        undefined
+      );
+    });
   });
 
   describe("_.parseTLSDefinitions", function () {

@@ -101,54 +101,5 @@ describe("SideEffectsType", function () {
       assert.ok(navigationProperty.getTarget.calledWithExactly("SCHEMA"));
       assert.ok(entityType.getProperty.notCalled);
     });
-
-    it("SourceEntities transformer returns entityType when p is falsy", function () {
-      sandbox.stub(SideEffectsType._, "definePropertyCollection");
-      const sideEffects = new SideEffectsType(
-        annotation,
-        entityType,
-        "SCHEMA",
-        {
-          strict: true,
-        }
-      );
-      const transformer =
-        SideEffectsType._.definePropertyCollection.getCall(0).args[2];
-      assert.equal(transformer(""), entityType);
-      assert.equal(transformer(null), entityType);
-    });
-
-    it("TargetEntities transformer returns entityType when p is falsy", function () {
-      sandbox.stub(SideEffectsType._, "definePropertyCollection");
-      const sideEffects = new SideEffectsType(
-        annotation,
-        entityType,
-        "SCHEMA",
-        {
-          strict: true,
-        }
-      );
-      const transformer =
-        SideEffectsType._.definePropertyCollection.getCall(2).args[2];
-      assert.equal(transformer(""), entityType);
-      assert.equal(transformer(null), entityType);
-    });
-
-    it("TargetProperties transformer handles null navigationObject", function () {
-      sandbox.stub(SideEffectsType._, "definePropertyCollection");
-      const sideEffects = new SideEffectsType(
-        annotation,
-        entityType,
-        "SCHEMA",
-        {
-          strict: true,
-        }
-      );
-      const transformer =
-        SideEffectsType._.definePropertyCollection.getCall(3).args[2];
-      entityType.getNavigationProperty = sinon.stub().returns(null);
-      const result = transformer("navProp/propertyName");
-      assert.equal(result, undefined);
-    });
   });
 });

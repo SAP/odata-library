@@ -145,6 +145,17 @@ describe("CsdlSchema", function () {
       let schema = new CsdlSchema(sampleSchemaMD, settings);
       assert.throws(() => schema.getType("different.EntityType1"));
     });
+
+    it("accepts identifiers containing a hyphen (#160)", function () {
+      let schema = new CsdlSchema(sampleSchemaMD, settings);
+      // The type does not exist, so lookup still fails - but it must fail with
+      // "Unknown type", NOT with the regex rejection "Unknown type path format",
+      // proving the parser now tolerates '-' in identifiers.
+      assert.throws(
+        () => schema.getType("ns.a.VL_FOO_-BAR-BAZ"),
+        /Unknown type '.*'\./
+      );
+    });
   });
 
   describe(".resolveModelPath()", function () {
@@ -152,6 +163,17 @@ describe("CsdlSchema", function () {
       let schema = new CsdlSchema(sampleSchemaMD, settings);
       schema.resolveModelPath("ns.a.EntityType1");
       assert.throws(() => schema.resolveModelPath("ns.a.EntityType1/XX"));
+    });
+
+    it("accepts identifiers containing a hyphen (#160)", function () {
+      let schema = new CsdlSchema(sampleSchemaMD, settings);
+      // A hyphenated element name must get past the path regex and fail on the
+      // (expected) element lookup - "Can't find schema element" - rather than
+      // being rejected up front with "Unknown model path format".
+      assert.throws(
+        () => schema.resolveModelPath("ns.a.VL_FOO_-BAR-BAZ"),
+        /Can't find schema element for path/
+      );
     });
 
     it("throws on invalid schema", function () {

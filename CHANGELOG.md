@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.6.1
+
+- [FIX] Allow hyphens in model/type path identifiers (#160)
+
 # 2.6.0
 
 - [FEATURE] Add Support for Bound Action with Type - Norbert Volf
@@ -357,3 +361,4 @@ Othe minor changes.
 - [FEATURE] Add search clause to EntitySet - Norbert Volf
 - [FEATURE] Enhance query parameters usage - Norbert Volf
 - [FIX] Remove superagnt prefix dependency - Norbert Volf
+

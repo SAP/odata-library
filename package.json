@@ -1,6 +1,6 @@
 {
   "name": "@sap_oss/odata-library",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "OData client for testing Netweawer OData services.",
   "main": "index.js",
   "types": "./@types/index.d.ts",
@@ -24,7 +24,8 @@
     "validate:test": "mocha -R progress --recursive ./test/unit/ ./test/func/",
     "watch": "nodemon -e js,xml -x \"npm run validate\"",
     "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -39,9 +40,9 @@
   "author": "SAP SE",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.19.130",
     "eslint": "^8.8.0",
-    "husky": "^7.0.4",
+    "husky": "^9.1.7",
     "mocha": "^11.1.0",
     "nodemon": "^3.1.11",
     "nyc": "^18.0.0",
